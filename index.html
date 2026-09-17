@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#17130f">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg">
+<title>Baxtorian — D&D Character</title>
+<style>
+:root{--bg:#17130f;--panel:#251d17;--panel2:#30251d;--gold:#d8ad55;--text:#f4ead7;--muted:#b8a890;--red:#b94a42;--green:#557d58}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px system-ui,-apple-system,Segoe UI,sans-serif;padding-bottom:76px}
+header{padding:20px 16px 14px;background:linear-gradient(#211912,#17130f);position:sticky;top:0;z-index:5;border-bottom:1px solid #3d3024}
+h1{margin:0;color:var(--gold);font-size:26px}.sub{color:var(--muted);margin-top:3px}
+main{max-width:720px;margin:auto;padding:14px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.card{background:var(--panel);border:1px solid #443528;border-radius:12px;padding:13px;margin-bottom:10px}
+.card h2{font-size:15px;color:var(--gold);margin:0 0 10px;text-transform:uppercase;letter-spacing:.08em}
+.stat{text-align:center;background:var(--panel2);padding:10px;border-radius:9px}.stat b{display:block;font-size:25px}.stat span{font-size:12px;color:var(--muted)}
+.hp{display:flex;align-items:center;justify-content:center;gap:10px}.hp strong{font-size:34px}.hp button{width:44px;height:44px;font-size:22px}
+button{border:1px solid #5b4732;border-radius:9px;background:#3a2d22;color:var(--text);padding:9px 13px;font-weight:700}button:active{transform:scale(.96)}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.dice button{min-width:54px}
+.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #3a2e24}.row:last-child{border:0}
+input,textarea{width:100%;background:#17130f;color:var(--text);border:1px solid #51402f;border-radius:8px;padding:9px;font:inherit}textarea{min-height:100px;resize:vertical}
+nav{position:fixed;bottom:0;left:0;right:0;background:#211912;border-top:1px solid #443528;display:flex;justify-content:center;gap:5px;padding:9px;z-index:10}nav button{flex:1;max-width:180px}
+.tab{display:none}.tab.active{display:block}.roll{font-size:28px;text-align:center;padding:10px;color:var(--gold);min-height:48px}
+.badge{display:inline-block;background:#493a28;color:var(--gold);padding:4px 8px;border-radius:20px;font-size:12px;margin:3px}
+.stat input{width:100%;text-align:center;background:transparent;border:none;color:var(--text);font-size:25px;font-weight:700;padding:0;font-family:inherit}
+.stat input:focus{outline:none}
+#weaponsTable{font-size:13px;width:100%;border-collapse:collapse}
+#weaponsTable th,#weaponsTable td{padding:6px 4px;border-bottom:1px solid #3a2e24;text-align:center;white-space:nowrap}
+#weaponsTable th:first-child,#weaponsTable td:first-child{text-align:left;white-space:normal}
+#weaponsTable th{color:var(--gold);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+#weaponsTable input{background:#17130f;color:var(--text);border:1px solid #51402f;border-radius:6px;padding:4px;font:inherit;text-align:center}
+#weaponsTable input[data-field="name"]{width:110px;text-align:left}
+#weaponsTable input[data-field="dice"]{width:52px}
+#weaponsTable input[data-field]:not([data-field="name"]):not([data-field="dice"]){width:42px}
+.wpn-del{padding:6px 9px;background:#4a2b26;border-color:#6b3a32;flex-shrink:0}
+.feat-item{background:var(--panel2);border:1px solid #443528;border-radius:9px;padding:11px;margin-bottom:10px}
+.feat-item .feat-head{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.feat-item input[data-field="name"]{flex:1;font-weight:700;color:var(--gold);padding:8px 10px}
+.feat-item textarea{min-height:70px}
+</style>
+</head>
+<body>
+<header><h1>⚔️ Baxtorian “Bax”</h1><div class="sub">Dwarf • Fighter • Level 10 • Neutral</div></header>
+<main>
+<section id="home" class="tab active">
+<div class="grid">
+<div class="stat"><input type="number" id="level" data-save="level" value="10"><span>LEVEL</span></div><div class="stat"><b>Fighter</b><span>CLASS</span></div>
+<div class="stat"><b>Dwarf</b><span>RACE</span></div><div class="stat"><b>Neutral</b><span>ALIGNMENT</span></div>
+</div>
+<div class="card"><h2>Hit Points</h2><div class="hp"><button onclick="hp(-1)">−</button><strong id="hp">100</strong><button onclick="hp(1)">+</button></div><div style="text-align:center;color:var(--muted);margin-top:4px">Current HP</div></div>
+<div class="card"><h2>Quick Dice</h2><div class="dice actions">
+<button onclick="roll(4)">d4</button><button onclick="roll(6)">d6</button><button onclick="roll(8)">d8</button><button onclick="roll(10)">d10</button><button onclick="roll(12)">d12</button><button onclick="roll(20)">d20</button>
+</div><div id="roll" class="roll">Roll a die</div></div>
+<div class="card"><h2>Character Details</h2><div class="row"><span>Social Class</span><b>43</b></div><div class="row"><span>PSI Ability</span><b>—</b></div></div>
+</section>
+
+<section id="stats" class="tab">
+<div class="card"><h2>Ability Scores</h2><p style="color:var(--muted)">Add your scores from the character sheet below. They save automatically on this phone.</p>
+<div class="grid">
+<label>STR<input data-save="str" type="number"></label><label>DEX<input data-save="dex" type="number"></label>
+<label>CON<input data-save="con" type="number"></label><label>INT<input data-save="int" type="number"></label>
+<label>WIS<input data-save="wis" type="number"></label><label>CHA<input data-save="cha" type="number"></label>
+</div></div>
+<div class="card"><h2>Combat</h2>
+<div class="row"><span>Armour Class</span><input data-save="ac" type="number" style="width:80px"></div>
+<div class="row"><span>Initiative</span><input data-save="init" type="number" style="width:80px"></div>
+<div class="row"><span>Speed</span><input data-save="speed" type="number" style="width:80px"></div>
+</div></section>
+
+<section id="weapons" class="tab">
+<div class="card">
+<h2>Weapon Attacks</h2>
+<p style="color:var(--muted);margin-top:0">Each weapon has an Attack Roll row and a Damage Roll row. Total = Base + Str + Feats + Weapon bonus.</p>
+<div style="overflow-x:auto">
+<table id="weaponsTable">
+<thead><tr><th>Weapon</th><th>Roll</th><th>Dice</th><th>Base</th><th>Str</th><th>Feats</th><th>Wpn</th><th>Total</th><th></th></tr></thead>
+<tbody id="weaponsBody"></tbody>
+</table>
+</div>
+<button onclick="addWeapon()" style="margin-top:12px;width:100%">+ Add Weapon</button>
+</div>
+</section>
+
+<section id="feats" class="tab">
+<div class="card">
+<h2>Feats &amp; Maneuvers</h2>
+<p style="color:var(--muted);margin-top:0">Add each feat or maneuver, then write out what it does and its benefits.</p>
+<div id="featsList"></div>
+<button onclick="addFeat()" style="margin-top:12px;width:100%">+ Add Feat</button>
+</div>
+</section>
+
+<section id="notes" class="tab">
+<div class="card"><h2>Notes</h2><textarea data-save="notes" placeholder="Character notes, abilities, equipment, session notes..."></textarea></div>
+<div class="card"><h2>Custom Items</h2><input data-save="items" placeholder="Weapons, armour, equipment..."></div>
+</section>
+</main>
+<nav><button onclick="show('home')">⚔️ Character</button><button onclick="show('stats')">📊 Stats</button><button onclick="show('weapons')">🗡️ Weapons</button><button onclick="show('feats')">🧩 Feats</button><button onclick="show('notes')">📝 Notes</button></nav>
+<script>
+let current=Number(localStorage.getItem('bax_hp')); if(!Number.isFinite(current))current=100;
+function hp(n){current=Math.max(0,current+n);localStorage.setItem('bax_hp',current);document.getElementById('hp').textContent=current}
+function roll(n){let r=Math.floor(Math.random()*n)+1;document.getElementById('roll').textContent='d'+n+' → '+r}
+function show(id){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');scrollTo(0,0)}
+document.querySelectorAll('[data-save]').forEach(el=>{let k='bax_'+el.dataset.save;let saved=localStorage.getItem(k);el.value=(saved!==null&&saved!=='')?saved:el.value;el.addEventListener('input',()=>localStorage.setItem(k,el.value))});
+document.getElementById('hp').textContent=current;
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+
+// --- Weapon attack calculator ---
+let weapons=[];
+try{weapons=JSON.parse(localStorage.getItem('bax_weapons')||'[]')}catch(e){weapons=[]}
+weapons.forEach(w=>{w.atk=Object.assign(blankRoll(),w.atk);w.dmg=Object.assign(blankRoll(),w.dmg)});
+function saveWeapons(){localStorage.setItem('bax_weapons',JSON.stringify(weapons))}
+function blankRoll(){return{dice:'',base:0,str:0,feats:0,wpn:0}}
+function updateWeaponDice(id,rollType,value){const w=weapons.find(w=>w.id===id);if(!w)return;w[rollType].dice=value;saveWeapons();renderWeapons()}
+function formatTotal(o){
+  const sum=total(o);
+  const dice=(o.dice||'').trim();
+  if(!dice) return String(sum);
+  if(sum===0) return dice;
+  return dice+' '+(sum>=0?'+ ':'- ')+Math.abs(sum);
+}
+function addWeapon(){weapons.push({id:Date.now(),name:'New Weapon',atk:blankRoll(),dmg:blankRoll()});saveWeapons();renderWeapons()}
+function removeWeapon(id){weapons=weapons.filter(w=>w.id!==id);saveWeapons();renderWeapons()}
+function updateWeaponName(id,value){const w=weapons.find(w=>w.id===id);if(!w)return;w.name=value;saveWeapons()}
+function updateWeaponField(id,rollType,field,value){const w=weapons.find(w=>w.id===id);if(!w)return;w[rollType][field]=Number(value)||0;saveWeapons();renderWeapons()}
+function total(o){return(o.base||0)+(o.str||0)+(o.feats||0)+(o.wpn||0)}
+function renderWeapons(){
+  const body=document.getElementById('weaponsBody');
+  if(!weapons.length){body.innerHTML='<tr><td colspan="9" style="color:var(--muted);padding:14px;text-align:center;white-space:normal">No weapons yet — add one above.</td></tr>';return}
+  body.innerHTML=weapons.map(w=>`
+    <tr>
+      <td rowspan="2"><input data-field="name" value="${w.name.replace(/"/g,'&quot;')}" onchange="updateWeaponName(${w.id},this.value)"></td>
+      <td>Attack</td>
+      <td><input data-field="dice" type="text" placeholder="1d20" value="${(w.atk.dice||'').replace(/"/g,'&quot;')}" onchange="updateWeaponDice(${w.id},'atk',this.value)"></td>
+      <td><input data-field="base" type="number" value="${w.atk.base}" onchange="updateWeaponField(${w.id},'atk','base',this.value)"></td>
+      <td><input data-field="str" type="number" value="${w.atk.str}" onchange="updateWeaponField(${w.id},'atk','str',this.value)"></td>
+      <td><input data-field="feats" type="number" value="${w.atk.feats}" onchange="updateWeaponField(${w.id},'atk','feats',this.value)"></td>
+      <td><input data-field="wpn" type="number" value="${w.atk.wpn}" onchange="updateWeaponField(${w.id},'atk','wpn',this.value)"></td>
+      <td><b>${formatTotal(w.atk)}</b></td>
+      <td rowspan="2"><button class="wpn-del" onclick="removeWeapon(${w.id})">✕</button></td>
+    </tr>
+    <tr>
+      <td>Damage</td>
+      <td><input data-field="dice" type="text" placeholder="1d8" value="${(w.dmg.dice||'').replace(/"/g,'&quot;')}" onchange="updateWeaponDice(${w.id},'dmg',this.value)"></td>
+      <td><input data-field="base" type="number" value="${w.dmg.base}" onchange="updateWeaponField(${w.id},'dmg','base',this.value)"></td>
+      <td><input data-field="str" type="number" value="${w.dmg.str}" onchange="updateWeaponField(${w.id},'dmg','str',this.value)"></td>
+      <td><input data-field="feats" type="number" value="${w.dmg.feats}" onchange="updateWeaponField(${w.id},'dmg','feats',this.value)"></td>
+      <td><input data-field="wpn" type="number" value="${w.dmg.wpn}" onchange="updateWeaponField(${w.id},'dmg','wpn',this.value)"></td>
+      <td><b>${formatTotal(w.dmg)}</b></td>
+    </tr>
+  `).join('')
+}
+renderWeapons();
+
+// --- Feats & Maneuvers ---
+const DEFAULT_FEATS=[
+  {name:'Power Attack',desc:''},
+  {name:'Improved Bull Rush',desc:''},
+  {name:'Charge',desc:''},
+  {name:'Close Quarters',desc:''}
+];
+let feats=[];
+try{feats=JSON.parse(localStorage.getItem('bax_feats')||'null')}catch(e){feats=null}
+if(!feats){feats=DEFAULT_FEATS.map((f,i)=>({id:Date.now()+i,name:f.name,desc:f.desc}))}
+function saveFeats(){localStorage.setItem('bax_feats',JSON.stringify(feats))}
+function addFeat(){feats.push({id:Date.now(),name:'New Feat',desc:''});saveFeats();renderFeats()}
+function removeFeat(id){feats=feats.filter(f=>f.id!==id);saveFeats();renderFeats()}
+function updateFeatName(id,value){const f=feats.find(f=>f.id===id);if(!f)return;f.name=value;saveFeats()}
+function updateFeatDesc(id,value){const f=feats.find(f=>f.id===id);if(!f)return;f.desc=value;saveFeats()}
+function renderFeats(){
+  const list=document.getElementById('featsList');
+  if(!feats.length){list.innerHTML='<p style="color:var(--muted);text-align:center;padding:10px 0">No feats yet — add one above.</p>';return}
+  list.innerHTML=feats.map(f=>`
+    <div class="feat-item">
+      <div class="feat-head">
+        <input data-field="name" value="${f.name.replace(/"/g,'&quot;')}" onchange="updateFeatName(${f.id},this.value)">
+        <button class="wpn-del" onclick="removeFeat(${f.id})">✕</button>
+      </div>
+      <textarea placeholder="What it does, benefits, prerequisites..." onchange="updateFeatDesc(${f.id},this.value)">${(f.desc||'')}</textarea>
+    </div>
+  `).join('')
+}
+renderFeats();
+</script>
+</body></html>
