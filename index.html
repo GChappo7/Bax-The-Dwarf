@@ -203,27 +203,36 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </div>
 <p id="activeAttackHint" style="margin-bottom:0;color:var(--muted)">Editing Attack 1</p>
 </div>
+<div class="card"><h2>Rolls & Totals</h2>
+<p style="color:var(--muted);margin-top:0">Enter your dice results here. Totals update using the modifiers below.</p>
+<div class="grid" style="grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+<div class="round-roll-row"><label for="roundAttackRolled">D20 Roll</label><input id="roundAttackRolled" type="number" inputmode="numeric" min="1" max="20" placeholder="d20" oninput="updateRoundCalc('attackRolled',this.value)"></div>
+<div class="round-roll-row"><label for="roundDamageRolled">Damage Roll</label><input id="roundDamageRolled" type="number" inputmode="numeric" min="0" placeholder="Damage" oninput="updateRoundCalc('damageRolled',this.value)"></div>
+</div>
+<div class="grid" style="grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px">
+<div class="round-calc-total"><span>Attack Total</span><strong id="roundAttackResult">—</strong></div>
+<div class="round-calc-total"><span>Damage Total</span><strong id="roundDamageResult">—</strong></div>
+</div>
+</div>
 <div class="card"><h2>Current Weapon</h2>
 <label for="roundWeaponSelect">Weapon</label>
 <select id="roundWeaponSelect" onchange="onRoundWeaponChange(this.value)"></select>
 </div>
 <div class="card"><h2>Attack Roll</h2>
-<p style="color:var(--muted);margin-top:0">Enter the modifiers for this attack sequence, then enter the d20 result you rolled.</p>
+<p style="color:var(--muted);margin-top:0">Set the modifiers that contribute to your attack total.</p>
 <div class="round-calc-row"><span>Base attack</span><input id="roundAttackBase" type="number" inputmode="numeric" onchange="updateRoundCalc('attackBase',this.value)" aria-label="Attack base attack bonus"></div>
 <div class="round-calc-row"><span>STR bonus <small>(from ability score)</small></span><strong id="roundAttackStr">—</strong></div>
 <div class="round-calc-row"><span>Feats</span><input id="roundAttackFeats" type="number" inputmode="numeric" onchange="updateRoundCalc('attackFeats',this.value)" aria-label="Attack feats bonus"></div>
 <div class="round-calc-row"><span>Weapon bonus</span><strong id="roundAttackWeapon">—</strong></div>
-<div class="round-calc-row round-roll-row"><label for="roundAttackRolled">Your d20 roll</label><input id="roundAttackRolled" type="number" inputmode="numeric" min="1" max="20" placeholder="Roll" onchange="updateRoundCalc('attackRolled',this.value)"></div>
-<div class="round-calc-total"><span>Attack total</span><strong id="roundAttackResult">—</strong></div>
+
 </div>
 <div class="card"><h2>Damage Roll</h2>
-<p style="color:var(--muted);margin-top:0">Enter the damage modifiers for this attack sequence, then enter the damage rolled on your dice.</p>
+<p style="color:var(--muted);margin-top:0">Set the modifiers that contribute to your damage total.</p>
 <div class="round-calc-row"><span>Base</span><input id="roundDamageBase" type="number" inputmode="numeric" onchange="updateRoundCalc('damageBase',this.value)" aria-label="Damage base bonus"></div>
 <div class="round-calc-row"><span>STR bonus <small>(from ability score)</small></span><strong id="roundDamageStr">—</strong></div>
 <div class="round-calc-row"><span>Feats</span><input id="roundDamageFeats" type="number" inputmode="numeric" onchange="updateRoundCalc('damageFeats',this.value)" aria-label="Damage feats bonus"></div>
 <div class="round-calc-row"><span>Weapon bonus</span><strong id="roundDamageWeapon">—</strong></div>
-<div class="round-calc-row round-roll-row"><label for="roundDamageRolled">Your damage roll</label><input id="roundDamageRolled" type="number" inputmode="numeric" min="0" placeholder="Damage" onchange="updateRoundCalc('damageRolled',this.value)"></div>
-<div class="round-calc-total"><span>Damage total</span><strong id="roundDamageResult">—</strong></div>
+
 </div>
 <div class="card"><h2>Current Status</h2>
 <div class="row"><span>Current HP</span><input type="number" id="hpRound" style="width:90px;text-align:right" onchange="setHp(this.value)"></div>
