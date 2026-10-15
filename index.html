@@ -445,6 +445,19 @@ const modifierTypes=['Ability score','AC','Saving throw','Skill','Attack roll','
 const abilityTargets=['Strength','Dexterity','Constitution','Intelligence','Wisdom','Charisma','Comeliness'];
 let databaseItems=[],pendingModifiers=[],editingDatabaseItemId=null;
 try{databaseItems=JSON.parse(localStorage.getItem('bax_itemDatabase')||'[]')}catch(e){databaseItems=[]}
+// Restore key character items if they are missing, without replacing any existing database entries.
+let seededCharacterItems=false;
+const characterItemDefaults=[
+  {name:'Gauntlets of Ogre Power',category:'Gloves',rarity:['Magic'],description:'These magical gauntlets grant a +2 enhancement bonus to Strength while equipped.',modifiers:[{id:'seed-gauntlets-str',type:'Ability score',target:'Strength',value:2,notes:'Applies only while equipped.'}]},
+  {name:'Adamant Heavy Shield',category:'Shield',rarity:['Standard'],description:'Heavy shield made of adamantine. Reminder: DR 3/− from the character’s adamantine shield rules.',modifiers:[{id:'seed-adamant-heavy-shield-ac',type:'AC',target:'AC',value:2,bonusType:'Shield',notes:'Heavy shield bonus.'}]}
+];
+characterItemDefaults.forEach(defaultItem=>{
+  if(!databaseItems.some(item=>String(item.name||'').trim().toLowerCase()===defaultItem.name.toLowerCase())){
+    databaseItems.push({...defaultItem,id:'restored-'+defaultItem.name.toLowerCase().replace(/[^a-z0-9]+/g,'-'),createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()});
+    seededCharacterItems=true;
+  }
+});
+if(seededCharacterItems)localStorage.setItem('bax_itemDatabase',JSON.stringify(databaseItems));
 let categoryVisibility={};
 try{categoryVisibility=JSON.parse(localStorage.getItem('bax_itemCategoryVisibility')||'{}')}catch(e){categoryVisibility={}}
 equipmentCategories.forEach(c=>{if(categoryVisibility[c]===undefined)categoryVisibility[c]=!['Periapt / Phylactery','Broach / Scarab'].includes(c)});
