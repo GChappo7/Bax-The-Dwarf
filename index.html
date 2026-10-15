@@ -202,6 +202,12 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </div>
 <p id="activeAttackHint" style="margin-bottom:0;color:var(--muted)">Editing Attack 1</p>
 </div>
+<div class="card"><h2>Base Attack Bonus</h2>
+<p style="color:var(--muted);margin-top:0">Set the base attack bonus for this attack. Leave blank to use the selected weapon's Base value.</p>
+<label>Attack ${activeAttack} base attack bonus
+<input id="roundBab" type="number" inputmode="numeric" step="1" placeholder="e.g. 6 or 1" style="width:100%;margin-top:6px" onchange="updateRoundBab(this.value)">
+</label>
+</div>
 <div class="card"><h2>Current Status</h2>
 <div class="row"><span>Current HP</span><input type="number" id="hpRound" style="width:90px;text-align:right" onchange="setHp(this.value)"></div>
 <div class="row"><span>Current Armour Class</span><strong id="currentAcRound">—</strong></div><div class="row"><span>Base AC</span><strong id="baseAcRound">—</strong></div>
@@ -474,13 +480,14 @@ if(!Array.isArray(attackRounds)||attackRounds.length!==3){
   let oldMods=[];try{oldMods=JSON.parse(localStorage.getItem('bax_roundmods')||'[]')}catch(e){}
   attackRounds=[1,2,3].map((n)=>({attackMods:n===1?oldMods.filter(m=>Number(m.atk)!==0||Number(m.dmg)===0).map(m=>({id:m.id,name:m.name,value:Number(m.atk)||0})):[],damageMods:n===1?oldMods.filter(m=>Number(m.dmg)!==0).map(m=>({id:Number(m.id)+100000,name:m.name,value:Number(m.dmg)||0})):[]}));
 }
-attackRounds=attackRounds.map(c=>{if(Array.isArray(c.attackMods)||Array.isArray(c.damageMods))return {attackMods:Array.isArray(c.attackMods)?c.attackMods:[],damageMods:Array.isArray(c.damageMods)?c.damageMods:[]};const legacy=Array.isArray(c.mods)?c.mods:[];return {attackMods:legacy.filter(m=>Number(m.atk)!==0||Number(m.dmg)===0).map(m=>({id:m.id,name:m.name,value:Number(m.atk)||0})),damageMods:legacy.filter(m=>Number(m.dmg)!==0).map(m=>({id:Number(m.id)+100000,name:m.name,value:Number(m.dmg)||0}))}});
+attackRounds=attackRounds.map(c=>{if(Array.isArray(c.attackMods)||Array.isArray(c.damageMods))return {attackMods:Array.isArray(c.attackMods)?c.attackMods:[],damageMods:Array.isArray(c.damageMods)?c.damageMods:[],bab:c.bab===undefined||c.bab===null||c.bab===''?null:Number(c.bab)||0};const legacy=Array.isArray(c.mods)?c.mods:[];return {attackMods:legacy.filter(m=>Number(m.atk)!==0||Number(m.dmg)===0).map(m=>({id:m.id,name:m.name,value:Number(m.atk)||0})),damageMods:legacy.filter(m=>Number(m.dmg)!==0).map(m=>({id:Number(m.id)+100000,name:m.name,value:Number(m.dmg)||0})),bab:null}});
 let roundMods={attackMods:[],damageMods:[]};
 function saveAttackRounds(){localStorage.setItem('bax_attack_rounds',JSON.stringify(attackRounds))}
-function saveCurrentAttack(){attackRounds[activeAttack-1]={attackMods:roundMods.attackMods.map(m=>({...m})),damageMods:roundMods.damageMods.map(m=>({...m}))};saveAttackRounds();localStorage.setItem('bax_round_weapon',roundWeaponId)}
-function loadCurrentAttack(){const c=attackRounds[activeAttack-1]||{attackMods:[],damageMods:[]};roundMods={attackMods:c.attackMods.map(m=>({...m})),damageMods:c.damageMods.map(m=>({...m}))};localStorage.setItem('bax_active_attack',String(activeAttack));renderAttackChoices();renderRoundOptions()}
+function saveCurrentAttack(){attackRounds[activeAttack-1]={attackMods:roundMods.attackMods.map(m=>({...m})),damageMods:roundMods.damageMods.map(m=>({...m})),bab:attackRounds[activeAttack-1]?.bab??null};saveAttackRounds();localStorage.setItem('bax_round_weapon',roundWeaponId)}
+function loadCurrentAttack(){const c=attackRounds[activeAttack-1]||{attackMods:[],damageMods:[],bab:null};roundMods={attackMods:c.attackMods.map(m=>({...m})),damageMods:c.damageMods.map(m=>({...m}))};const bab=document.getElementById('roundBab');if(bab)bab.value=c.bab===null||c.bab===undefined?'':c.bab;localStorage.setItem('bax_active_attack',String(activeAttack));renderAttackChoices();renderRoundOptions()}
+function updateRoundBab(value){attackRounds[activeAttack-1]=attackRounds[activeAttack-1]||{attackMods:[],damageMods:[],bab:null};attackRounds[activeAttack-1].bab=value.trim()===''?null:(Number(value)||0);saveAttackRounds();updateRoundTotals()}
 function selectAttack(n){saveCurrentAttack();activeAttack=n;loadCurrentAttack()}
-function renderAttackChoices(){[1,2,3].forEach(n=>{const b=document.getElementById('attackChoice'+n);if(b){b.style.background=n===activeAttack?'var(--accent, #d6b15e)':'var(--card, #22282c)';b.style.color=n===activeAttack?'#171717':'inherit';b.style.border=n===activeAttack?'2px solid var(--accent, #d6b15e)':'1px solid var(--border, #454b50)';b.setAttribute('aria-pressed',String(n===activeAttack))}});const h=document.getElementById('activeAttackHint');if(h)h.textContent='Editing Attack '+activeAttack+' — attack and damage modifiers are separate.'}
+function renderAttackChoices(){[1,2,3].forEach(n=>{const b=document.getElementById('attackChoice'+n);if(b){b.style.background=n===activeAttack?'var(--accent, #d6b15e)':'var(--card, #22282c)';b.style.color=n===activeAttack?'#171717':'inherit';b.style.border=n===activeAttack?'2px solid var(--accent, #d6b15e)':'1px solid var(--border, #454b50)';b.setAttribute('aria-pressed',String(n===activeAttack))}});const h=document.getElementById('activeAttackHint');if(h)h.textContent='Editing Attack '+activeAttack+' — attack and damage modifiers are separate.';const label=document.querySelector('label[for="roundBab"]');}
 function addRoundMod(type){const list=type==='atk'?roundMods.attackMods:roundMods.damageMods;list.push({id:Date.now(),name:type==='atk'?'New Attack Modifier':'New Damage Modifier',value:0});saveCurrentAttack();renderRoundMods();updateRoundTotals()}
 function removeRoundMod(type,id){const key=type==='atk'?'attackMods':'damageMods';roundMods[key]=roundMods[key].filter(m=>String(m.id)!==String(id));saveCurrentAttack();renderRoundMods();updateRoundTotals()}
 function updateRoundModField(type,id,field,value){const key=type==='atk'?'attackMods':'damageMods';const m=roundMods[key].find(m=>String(m.id)===String(id));if(!m)return;m[field]=field==='name'?value:(Number(value)||0);saveCurrentAttack();if(field!=='name')updateRoundTotals()}
@@ -490,7 +497,7 @@ function renderRoundOptions(){const sel=document.getElementById('roundWeaponSele
 function onRoundWeaponChange(value){roundWeaponId=value;localStorage.setItem('bax_round_weapon',value);updateWeaponDisplay()}
 function formatRoundTotal(dice,num){if(!dice)return String(num);if(num===0)return dice;return dice+' '+(num>=0?'+ ':'- ')+Math.abs(num)}
 function updateWeaponDisplay(){const w=weapons.find(w=>String(w.id)===String(roundWeaponId));document.getElementById('roundWeaponAtk').textContent=w?formatTotal(effectiveRoll(w.atk)):'—';document.getElementById('roundWeaponDmg').textContent=w?formatTotal(effectiveRoll(w.dmg)):'—';updateRoundTotals()}
-function updateRoundTotals(){const w=weapons.find(w=>String(w.id)===String(roundWeaponId));let a=w?total(effectiveRoll(w.atk)):0,d=w?total(effectiveRoll(w.dmg)):0;const ad=w?(w.atk.dice||'').trim():'';const dd=w?(w.dmg.dice||'').trim():'';roundMods.attackMods.forEach(m=>a+=Number(m.value)||0);roundMods.damageMods.forEach(m=>d+=Number(m.value)||0);document.getElementById('roundAtkTotal').textContent=formatRoundTotal(ad,a);document.getElementById('roundDmgTotal').textContent=formatRoundTotal(dd,d)}
+function updateRoundTotals(){const w=weapons.find(w=>String(w.id)===String(roundWeaponId));const current=attackRounds[activeAttack-1]||{};let a=w?total(effectiveRoll(w.atk)):0,d=w?total(effectiveRoll(w.dmg)):0;if(w&&current.bab!==null&&current.bab!==undefined)a+=(Number(current.bab)||0)-(Number(w.atk.base)||0);const ad=w?(w.atk.dice||'').trim():'';const dd=w?(w.dmg.dice||'').trim():'';roundMods.attackMods.forEach(m=>a+=Number(m.value)||0);roundMods.damageMods.forEach(m=>d+=Number(m.value)||0);document.getElementById('roundAtkTotal').textContent=formatRoundTotal(ad,a);document.getElementById('roundDmgTotal').textContent=formatRoundTotal(dd,d)}
 renderAttackChoices();
 loadCurrentAttack();
 
