@@ -11,7 +11,7 @@
 :root{--bg:#17130f;--panel:#251d17;--panel2:#30251d;--gold:#d8ad55;--text:#f4ead7;--muted:#b8a890;--red:#b94a42;--green:#557d58}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px system-ui,-apple-system,Segoe UI,sans-serif;padding-bottom:76px}
 header{padding:20px 16px 14px;background:linear-gradient(#211912,#17130f);position:sticky;top:0;z-index:5;border-bottom:1px solid #3d3024}
-h1{margin:0;padding-right:125px;color:var(--gold);font-size:26px}.name-edit{display:block;width:100%;max-width:100%;padding:0;margin:0;background:transparent;border:0;border-radius:0;color:var(--gold);font:inherit;font-size:26px;font-weight:800;line-height:1.25;outline-offset:3px}.name-edit:focus{outline:1px solid #5b4732;border-radius:4px}.sub{color:var(--muted);margin-top:3px}
+h1{display:flex;align-items:center;gap:7px;margin:0;padding-right:125px;color:var(--gold);font-size:26px}.name-edit{display:block;flex:1;min-width:0;width:100%;max-width:100%;padding:0;margin:0;background:transparent;border:0;border-radius:0;color:var(--gold);font:inherit;font-size:26px;font-weight:800;line-height:1.25;outline:none;box-shadow:none;text-decoration:none}.name-edit[readonly]{cursor:default}.name-edit:focus{outline:none;box-shadow:none}.name-edit-toggle{flex:0 0 auto;padding:4px;background:transparent;border:0;color:var(--muted);font-size:17px;line-height:1;cursor:pointer}.name-edit-toggle:focus-visible{outline:1px solid var(--gold)}.sub{color:var(--muted);margin-top:3px}
 .deploy-badge{position:absolute;top:10px;right:12px;display:flex;align-items:center;gap:6px;padding:5px 8px;border:1px solid #426447;border-radius:999px;background:#203324;color:#bfe7c2;font-size:10px;font-weight:800;letter-spacing:.07em;white-space:nowrap}
 .deploy-badge:before{content:"";width:6px;height:6px;border-radius:50%;background:#70d889;box-shadow:0 0 6px #70d889}
 main{max-width:720px;margin:auto;padding:14px}
@@ -53,7 +53,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </style>
 </head>
 <body>
-<header><span class="deploy-badge">Deploy 02</span><h1><input id="characterName" class="name-edit" data-save="characterName" aria-label="Character name" value="⚔️ Baxtorian “Bax”"></h1><div class="sub"><span id="headerRace">Dwarf</span> • <span id="headerClass">Fighter</span> • Level <span id="headerLevel">10</span> • <span id="headerAlignment">Neutral</span></div></header>
+<header><span class="deploy-badge">Deploy 02</span><h1><input id="characterName" class="name-edit" data-save="characterName" aria-label="Character name" value="⚔️ Baxtorian “Bax”" readonly spellcheck="false" autocomplete="off"><button type="button" id="nameEditToggle" class="name-edit-toggle" onclick="toggleCharacterName()" aria-label="Edit character name" title="Edit character name">✎</button></h1><div class="sub"><span id="headerRace">Dwarf</span> • <span id="headerClass">Fighter</span> • Level <span id="headerLevel">10</span> • <span id="headerAlignment">Neutral</span></div></header>
 <main>
 <section id="home" class="tab active">
 <div class="grid">
@@ -167,6 +167,7 @@ const savedHp=localStorage.getItem('bax_hp'); let current=(savedHp===null||saved
 function hp(n){current=Math.max(0,current+n);localStorage.setItem('bax_hp',current);document.getElementById('hp').value=current;const r=document.getElementById('hpRound');if(r)r.value=current}
 function setHp(value){current=Math.max(0,Number(value)||0);localStorage.setItem('bax_hp',current);document.getElementById('hp').value=current;const r=document.getElementById('hpRound');if(r)r.value=current}
 function roll(n){let r=Math.floor(Math.random()*n)+1;document.getElementById('roll').textContent='d'+n+' → '+r}
+function toggleCharacterName(){const input=document.getElementById('characterName'),button=document.getElementById('nameEditToggle');if(input.readOnly){input.readOnly=false;button.textContent='✓';button.setAttribute('aria-label','Save character name');button.title='Save character name';input.focus();input.select()}else{input.readOnly=true;localStorage.setItem('bax_characterName',input.value);button.textContent='✎';button.setAttribute('aria-label','Edit character name');button.title='Edit character name';input.blur()}}
 function show(id){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');scrollTo(0,0);if(id==='round')renderRoundOptions()}
 document.querySelectorAll('[data-save]').forEach(el=>{let k='bax_'+el.dataset.save;let saved=localStorage.getItem(k);el.value=(saved!==null&&saved!=='')?saved:el.value;el.addEventListener('input',()=>localStorage.setItem(k,el.value))});
 document.querySelectorAll('[data-sync]').forEach(el=>{el.addEventListener('input',()=>{const k=el.dataset.sync;document.querySelectorAll('[data-sync="'+k+'"]').forEach(o=>{if(o!==el)o.value=el.value})})});
