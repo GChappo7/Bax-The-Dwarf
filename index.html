@@ -927,4 +927,29 @@ loadCurrentAttack();
   } catch(e) { console.error('Character item recovery failed:',e); }
 })();
 </script>
+
+<script>
+/* Independent fallback: keep Category Visibility controls visible even if another app initializer fails. */
+(function(){
+  const categories=['Headgear','Lens / Goggles','Armour','Shield','Robe / Vest / Shirt','Bracers','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Weapons','Ioun Stones / Jewellery','Other'];
+  function renderFallback(){
+    const box=document.getElementById('dbCategoryVisibility');
+    if(!box)return;
+    try{if(typeof renderCategoryVisibility==='function'){renderCategoryVisibility();return;}}catch(e){}
+    let saved={};try{saved=JSON.parse(localStorage.getItem('bax_itemCategoryVisibility')||'{}')||{}}catch(e){}
+    box.innerHTML=categories.map(c=>'<label class="category-toggle"><input type="checkbox" data-fallback-category="'+c.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')+'" '+(saved[c]===undefined?(!['Periapt / Phylactery','Broach / Scarab'].includes(c)):!!saved[c]?'checked':'')+'><span>'+c+'</span></label>').join('');
+  }
+  document.addEventListener('change',function(e){
+    const input=e.target;if(!input||!input.dataset||!input.dataset.fallbackCategory)return;
+    const category=input.dataset.fallbackCategory;
+    try{
+      if(typeof setCategoryVisibility==='function'){setCategoryVisibility(category,input.checked);return;}
+    }catch(err){}
+    let saved={};try{saved=JSON.parse(localStorage.getItem('bax_itemCategoryVisibility')||'{}')||{}}catch(err){}
+    saved[category]=input.checked;try{localStorage.setItem('bax_itemCategoryVisibility',JSON.stringify(saved))}catch(err){}
+    try{if(typeof renderEquippedSelectors==='function')renderEquippedSelectors()}catch(err){}
+  },true);
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',renderFallback);else renderFallback();
+})();
+</script>
 </body></html>
