@@ -66,7 +66,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <section id="home" class="tab active">
 <div class="grid">
 <div class="stat vitals-tile"><div class="vitals-hp"><div class="health-track" role="progressbar" id="healthTrack" aria-label="Health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="healthFill" class="health-fill unknown"></div></div><span class="vitals-label">CURRENT HP</span><div class="hp"><button onclick="hp(-1)" aria-label="Decrease hit points">−</button><input type="number" id="hp" value="100" min="0" step="1" inputmode="numeric" aria-label="Current hit points" onchange="setHp(this.value)"><button onclick="hp(1)" aria-label="Increase hit points">+</button></div></div><div class="vitals-footer"><div class="vitals-max-hp"><label for="maxHp">MAX HP</label><input id="maxHp" type="number" min="1" step="1" inputmode="numeric" placeholder="—" aria-label="Maximum hit points"></div><div class="vitals-ac"><label>CURRENT AC</label><strong id="currentAcHome" class="ac-current-value">—</strong></div></div></div>
-<button class="stat nav-tile dice-launch" onclick="show('dicePage')" aria-label="Open dice roller"><b>🎲</b><span>DICE</span></button><button class="stat nav-tile" onclick="show('stats')"><b>📊</b><span>SKILLS</span></button><button class="stat nav-tile" onclick="show('feats')"><b>🧩</b><span>FEATS</span></button><button class="stat nav-tile" onclick="show('armour')"><b>🛡️</b><span>ARMOUR</span></button><button class="stat nav-tile" onclick="show('inventory')"><b>🎒</b><span>INVENTORY</span></button>
+<button class="stat nav-tile" onclick="show('stats')"><b>📊</b><span>SKILLS</span></button><button class="stat nav-tile" onclick="show('feats')"><b>🧩</b><span>ABILITIES &amp; FEATS</span></button><button class="stat nav-tile" onclick="show('armour')"><b>🛡️</b><span>ARMOUR</span></button><button class="stat nav-tile" onclick="show('inventory')"><b>🎒</b><span>INVENTORY</span></button><button class="stat nav-tile dice-launch" onclick="show('dicePage')" aria-label="Open dice roller"><b>🎲</b><span>DICE</span></button><button class="stat nav-tile" onclick="show('notes')"><b>📝</b><span>NOTES</span></button>
 </div>
 <div class="stat xp-tile"><span class="xp-title">EXPERIENCE</span><div class="xp-values"><label>Current XP<input id="xpCurrent" data-save="xpCurrent" type="number" min="0" value="0" inputmode="numeric"></label><label>Previous Level XP<input id="xpPrevious" data-save="xpPrevious" type="number" min="0" value="60000" inputmode="numeric"></label><label>Next Level XP<input id="xpNext" data-save="xpNext" type="number" min="0" value="" placeholder="Enter target" inputmode="numeric"></label></div><button type="button" id="levelUpButton" class="level-up-button" hidden onclick="confirmLevelUp()">🎉 Confirm Level Up</button></div>
 <div class="card"><h2>Character Details</h2><div class="row"><span>Social Class</span><b>43</b></div><div class="row"><span>PSI Ability</span><b>—</b></div></div>
@@ -101,8 +101,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 
 <section id="feats" class="tab">
 <div class="card">
-<h2>Feats &amp; Maneuvers</h2>
-<p style="color:var(--muted);margin-top:0">Add each feat or maneuver, then write out what it does and its benefits.</p>
+<h2>Abilities &amp; Feats</h2>
+<p style="color:var(--muted);margin-top:0">Add your abilities, feats and maneuvers, then write out what each does and its benefits.</p>
 <div id="featsList"></div>
 <button onclick="addFeat()" style="margin-top:12px;width:100%">+ Add Feat</button>
 </div>
