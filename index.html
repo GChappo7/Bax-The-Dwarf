@@ -17,7 +17,7 @@ h1{margin:0;padding-right:125px;color:var(--gold);font-size:26px}.sub{color:var(
 main{max-width:720px;margin:auto;padding:14px}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:10px}.card{background:var(--panel);border:1px solid #443528;border-radius:12px;padding:13px;margin-bottom:10px}
 .card h2{font-size:15px;color:var(--gold);margin:0 0 10px;text-transform:uppercase;letter-spacing:.08em}
-.stat{text-align:center;background:var(--panel2);padding:10px;border-radius:9px}.stat b{display:block;font-size:25px}.stat span{font-size:12px;color:var(--muted)}
+.stat{text-align:center;background:var(--panel2);padding:10px;border-radius:9px}.stat b{display:block;font-size:25px}.stat span{font-size:12px;color:var(--muted)}.nav-tile{width:100%;color:var(--text);font:inherit;cursor:pointer;border:1px solid #443528}.nav-tile b{font-size:25px}
 .hp{display:flex;align-items:center;justify-content:center;gap:10px}.hp input{width:110px;text-align:center;font-size:34px;font-weight:800;color:var(--gold);background:transparent;border:1px solid transparent;border-radius:8px;padding:2px;font-family:inherit}.hp input:focus{outline:1px solid #5b4732;border-color:#5b4732}.hp button{width:44px;height:44px;font-size:22px}
 button{border:1px solid #5b4732;border-radius:9px;background:#3a2d22;color:var(--text);padding:9px 13px;font-weight:700}button:active{transform:scale(.96)}
 .actions{display:flex;gap:8px;flex-wrap:wrap}.dice button{min-width:54px}
@@ -59,6 +59,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <div class="grid">
 <div class="stat"><input type="number" id="level" data-save="level" value="10"><span>LEVEL</span></div><div class="stat"><b>Fighter</b><span>CLASS</span></div>
 <div class="stat"><b>Dwarf</b><span>RACE</span></div><div class="stat"><b>Neutral</b><span>ALIGNMENT</span></div>
+<button class="stat nav-tile" onclick="show(\'stats\')"><b>📊</b><span>SKILLS</span></button><button class="stat nav-tile" onclick="show(\'feats\')"><b>🧩</b><span>FEATS</span></button>
 </div>
 <div class="card"><h2>Hit Points</h2><div class="hp"><button onclick="hp(-1)" aria-label="Decrease hit points">−</button><input type="number" id="hp" value="100" min="0" step="1" inputmode="numeric" aria-label="Current hit points" onchange="setHp(this.value)"><button onclick="hp(1)" aria-label="Increase hit points">+</button></div><div style="text-align:center;color:var(--muted);margin-top:4px">Current HP · tap the number to edit</div></div>
 <div class="card"><h2>Quick Dice</h2><div class="dice actions">
