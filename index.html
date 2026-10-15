@@ -15,19 +15,19 @@ h1{margin:0;padding-right:125px;color:var(--gold);font-size:26px}.name-edit{disp
 .deploy-badge{position:absolute;top:10px;right:12px;display:flex;align-items:center;gap:6px;padding:5px 8px;border:1px solid #426447;border-radius:999px;background:#203324;color:#bfe7c2;font-size:10px;font-weight:800;letter-spacing:.07em;white-space:nowrap}
 .deploy-badge:before{content:"";width:6px;height:6px;border-radius:50%;background:#70d889;box-shadow:0 0 6px #70d889}
 main{max-width:720px;margin:auto;padding:14px}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:10px}.card{background:var(--panel);border:1px solid #443528;border-radius:12px;padding:13px;margin-bottom:10px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-bottom:8px}.card{background:var(--panel);border:1px solid #443528;border-radius:12px;padding:13px;margin-bottom:10px}
 .card h2{font-size:15px;color:var(--gold);margin:0 0 10px;text-transform:uppercase;letter-spacing:.08em}
-.stat{text-align:center;background:var(--panel2);padding:10px;border-radius:9px}.stat b{display:block;font-size:25px}.stat span{font-size:12px;color:var(--muted)}.nav-tile{width:100%;color:var(--text);font:inherit;cursor:pointer;border:1px solid #443528}.nav-tile b{font-size:25px}
+.stat{text-align:center;background:var(--panel2);padding:7px;border-radius:9px}.stat b{display:block;font-size:22px}.stat span{font-size:12px;color:var(--muted)}.nav-tile{width:100%;color:var(--text);font:inherit;cursor:pointer;border:1px solid #443528}.nav-tile b{font-size:22px}
 .hp{display:flex;align-items:center;justify-content:center;gap:10px}.hp input{width:110px;text-align:center;font-size:34px;font-weight:800;color:var(--gold);background:transparent;border:1px solid transparent;border-radius:8px;padding:2px;font-family:inherit}.hp input:focus{outline:1px solid #5b4732;border-color:#5b4732}.hp button{width:44px;height:44px;font-size:22px}
 button{border:1px solid #5b4732;border-radius:9px;background:#3a2d22;color:var(--text);padding:9px 13px;font-weight:700}button:active{transform:scale(.96)}
 .actions{display:flex;gap:8px;flex-wrap:wrap}.dice button{min-width:54px}
 .row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #3a2e24}.row:last-child{border:0}
 input,textarea{width:100%;background:#17130f;color:var(--text);border:1px solid #51402f;border-radius:8px;padding:9px;font:inherit}textarea{min-height:100px;resize:vertical}
-nav{position:fixed;bottom:0;left:0;right:0;background:#211912;border-top:1px solid #443528;display:flex;justify-content:center;gap:5px;padding:9px;z-index:10}nav button{flex:1;max-width:180px}
+nav{position:fixed;bottom:0;left:0;right:0;background:#211912;border-top:1px solid #443528;display:flex;justify-content:center;gap:4px;padding:7px 5px;z-index:10}nav button{flex:1;min-width:0;max-width:180px;padding:9px 3px;font-size:11px;white-space:nowrap}
 .tab{display:none}.tab.active{display:block}.roll{font-size:28px;text-align:center;padding:10px;color:var(--gold);min-height:48px}
 .badge{display:inline-block;background:#493a28;color:var(--gold);padding:4px 8px;border-radius:20px;font-size:12px;margin:3px}
 .stat input{width:100%;text-align:center;background:transparent;border:none;color:var(--text);font-size:25px;font-weight:700;padding:0;font-family:inherit;line-height:1.2;height:auto;box-sizing:border-box;margin:0}
-.stat input:focus{outline:none}.alignment-tile{display:flex;flex-direction:column;justify-content:center;gap:4px;cursor:pointer}.alignment-tile select{width:100%;min-width:0;appearance:none;-webkit-appearance:none;background:transparent;border:0;color:var(--text);font:700 25px system-ui,-apple-system,Segoe UI,sans-serif;text-align:center;text-align-last:center;padding:4px 0;outline-offset:2px}.alignment-tile select option{background:var(--panel);color:var(--text)}
+.stat input:focus{outline:none}.alignment-tile{display:flex;flex-direction:column;justify-content:center;gap:4px;cursor:pointer}.alignment-tile select{width:100%;min-width:0;appearance:none;-webkit-appearance:none;background:transparent;border:0;color:var(--text);font:700 22px system-ui,-apple-system,Segoe UI,sans-serif;text-align:center;text-align-last:center;padding:3px 0;outline-offset:2px}.alignment-tile select option{background:var(--panel);color:var(--text)}
 input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 input[type=number]{-moz-appearance:textfield;appearance:textfield}
 #weaponsTable{font-size:13px;width:100%;border-collapse:collapse}
@@ -59,7 +59,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <div class="grid">
 <div class="stat"><input type="number" id="level" data-save="level" value="10"><span>LEVEL</span></div><label class="stat alignment-tile"><select id="characterClass" data-save="characterClass" aria-label="Character class"><option>Barbarian</option><option>Bard</option><option selected>Fighter</option><option>Cleric</option><option>Druid</option><option>Monk</option><option>Paladin</option><option>Ranger</option><option>Rogue</option><option>Sorcerer</option><option>Wizard</option></select><span>CLASS</span></label>
 <label class="stat alignment-tile"><select id="race" data-save="race" aria-label="Character race"><option>Human</option><option selected>Dwarf</option><option>Elf</option><option>Gnome</option><option>Half-Elf</option><option>Half-Orc</option><option>Halfling</option></select><span>RACE</span></label><label class="stat alignment-tile"><select id="alignment" data-save="alignment" aria-label="Character alignment"><option>Lawful Good</option><option>Neutral Good</option><option>Chaotic Good</option><option>Lawful Neutral</option><option selected>Neutral</option><option>Chaotic Neutral</option><option>Lawful Evil</option><option>Neutral Evil</option><option>Chaotic Evil</option></select><span>ALIGNMENT</span></label>
-<button class="stat nav-tile" onclick="show('stats')"><b>📊</b><span>SKILLS</span></button><button class="stat nav-tile" onclick="show('feats')"><b>🧩</b><span>FEATS</span></button>
+<button class="stat nav-tile" onclick="show('stats')"><b>📊</b><span>SKILLS</span></button><button class="stat nav-tile" onclick="show('feats')"><b>🧩</b><span>FEATS</span></button><button class="stat nav-tile" onclick="show('inventory')"><b>🎒</b><span>INVENTORY</span></button>
 </div>
 <div class="card"><h2>Hit Points</h2><div class="hp"><button onclick="hp(-1)" aria-label="Decrease hit points">−</button><input type="number" id="hp" value="100" min="0" step="1" inputmode="numeric" aria-label="Current hit points" onchange="setHp(this.value)"><button onclick="hp(1)" aria-label="Increase hit points">+</button></div><div style="text-align:center;color:var(--muted);margin-top:4px">Current HP · tap the number to edit</div></div>
 <div class="card"><h2>Quick Dice</h2><div class="dice actions">
@@ -105,6 +105,24 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </div>
 </section>
 
+<section id="armour" class="tab">
+<div class="card"><h2>Armour &amp; Equipped Gear</h2><p style="color:var(--muted);margin-top:0">Record what Bax is wearing or carrying ready to use. Changes save automatically on this phone.</p>
+<div class="row"><span>Armour</span><input data-save="wornArmour" placeholder="e.g. Full plate" style="width:58%"></div>
+<div class="row"><span>Shield</span><input data-save="wornShield" placeholder="e.g. Heavy steel" style="width:58%"></div>
+<div class="row"><span>Helmet</span><input data-save="wornHelmet" placeholder="Helmet" style="width:58%"></div>
+<div class="row"><span>Gloves / Gauntlets</span><input data-save="wornGloves" placeholder="Gloves" style="width:58%"></div>
+<div class="row"><span>Boots</span><input data-save="wornBoots" placeholder="Boots" style="width:58%"></div>
+<div class="row"><span>Cloak</span><input data-save="wornCloak" placeholder="Cloak" style="width:58%"></div>
+<div class="row"><span>Other equipped gear</span><input data-save="wornOther" placeholder="Rings, amulet, belt..." style="width:58%"></div>
+</div>
+<div class="card"><h2>Armour Class Notes</h2><textarea data-save="armourNotes" placeholder="AC bonuses, armour check penalty, max Dex, special properties..."></textarea></div>
+</section>
+
+<section id="inventory" class="tab">
+<div class="card"><h2>Inventory</h2><p style="color:var(--muted);margin-top:0">Manage carried items, quantities and notes. Inventory saves automatically on this phone.</p><div id="inventoryList"></div><button onclick="addInventoryItem()" style="margin-top:12px;width:100%">+ Add Inventory Item</button></div>
+<div class="card"><h2>Carrying Notes</h2><textarea data-save="inventoryNotes" placeholder="Coin totals, weight, storage, items to sell..."></textarea></div>
+</section>
+
 <section id="round" class="tab">
 <div class="card"><h2>Current Status</h2>
 <div class="row"><span>Current HP</span><input type="number" id="hpRound" style="width:90px;text-align:right" onchange="setHp(this.value)"></div>
@@ -143,7 +161,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <div class="card"><h2>Custom Items</h2><input data-save="items" placeholder="Weapons, armour, equipment..."></div>
 </section>
 </main>
-<nav><button onclick="show('home')">⚔️ Character</button><button onclick="show('weapons')">🗡️ Weapons</button><button onclick="show('round')">🎲 Round</button><button onclick="show('notes')">📝 Notes</button></nav>
+<nav><button onclick="show('home')">⚔️ Char</button><button onclick="show('weapons')">🗡️ Weapons</button><button onclick="show('armour')">🛡️ Armour</button><button onclick="show('round')">🎲 Round</button><button onclick="show('notes')">📝 Notes</button></nav>
 <script>
 const savedHp=localStorage.getItem('bax_hp'); let current=(savedHp===null||savedHp==='')?100:Number(savedHp); if(!Number.isFinite(current))current=100;
 function hp(n){current=Math.max(0,current+n);localStorage.setItem('bax_hp',current);document.getElementById('hp').value=current;const r=document.getElementById('hpRound');if(r)r.value=current}
@@ -163,6 +181,16 @@ if(raceInput&&headerRace){const savedRace=localStorage.getItem('bax_race');if(sa
 document.getElementById('hp').textContent=current;
 const hpRoundInit=document.getElementById('hpRound');if(hpRoundInit)hpRoundInit.value=current;
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+
+// --- Inventory manager ---
+let inventoryItems=[];
+try{inventoryItems=JSON.parse(localStorage.getItem("bax_inventory")||"[]")}catch(e){inventoryItems=[]}
+function saveInventory(){localStorage.setItem("bax_inventory",JSON.stringify(inventoryItems))}
+function addInventoryItem(){inventoryItems.push({id:Date.now(),name:"New Item",qty:1,notes:""});saveInventory();renderInventory()}
+function removeInventoryItem(id){inventoryItems=inventoryItems.filter(item=>item.id!==id);saveInventory();renderInventory()}
+function updateInventoryItem(id,field,value){const item=inventoryItems.find(item=>item.id===id);if(!item)return;item[field]=field==="qty"?(Number(value)||0):value;saveInventory()}
+function renderInventory(){const list=document.getElementById("inventoryList");if(!list)return;if(!inventoryItems.length){list.innerHTML='<p style="color:var(--muted);text-align:center;padding:10px 0">Your inventory is empty — add an item above.</p>';return}list.innerHTML=inventoryItems.map(item=>`<div class="feat-item"><div class="feat-head"><input aria-label="Item name" value="${String(item.name||"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;")}" onchange="updateInventoryItem(${item.id},\'name\',this.value)" placeholder="Item name"><input aria-label="Quantity" type="number" min="0" value="${Number(item.qty)||0}" style="max-width:72px" onchange="updateInventoryItem(${item.id},\'qty\',this.value)"><button class="wpn-del" onclick="removeInventoryItem(${item.id})" aria-label="Remove item">✕</button></div><textarea aria-label="Item notes" placeholder="Weight, value, description..." onchange="updateInventoryItem(${item.id},\'notes\',this.value)">${String(item.notes||"").replace(/&/g,"&amp;").replace(/</g,"&lt;")}</textarea></div>`).join("")}
+renderInventory();
 
 // --- Weapon attack calculator ---
 let weapons=[];
