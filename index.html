@@ -11,7 +11,9 @@
 :root{--bg:#17130f;--panel:#251d17;--panel2:#30251d;--gold:#d8ad55;--text:#f4ead7;--muted:#b8a890;--red:#b94a42;--green:#557d58}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px system-ui,-apple-system,Segoe UI,sans-serif;padding-bottom:76px}
 header{padding:20px 16px 14px;background:linear-gradient(#211912,#17130f);position:sticky;top:0;z-index:5;border-bottom:1px solid #3d3024}
-h1{margin:0;color:var(--gold);font-size:26px}.sub{color:var(--muted);margin-top:3px}
+h1{margin:0;padding-right:125px;color:var(--gold);font-size:26px}.sub{color:var(--muted);margin-top:3px}
+.deploy-badge{position:absolute;top:10px;right:12px;display:flex;align-items:center;gap:6px;padding:5px 8px;border:1px solid #426447;border-radius:999px;background:#203324;color:#bfe7c2;font-size:10px;font-weight:800;letter-spacing:.07em;white-space:nowrap}
+.deploy-badge:before{content:"";width:6px;height:6px;border-radius:50%;background:#70d889;box-shadow:0 0 6px #70d889}
 main{max-width:720px;margin:auto;padding:14px}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:10px}.card{background:var(--panel);border:1px solid #443528;border-radius:12px;padding:13px;margin-bottom:10px}
 .card h2{font-size:15px;color:var(--gold);margin:0 0 10px;text-transform:uppercase;letter-spacing:.08em}
@@ -51,7 +53,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </style>
 </head>
 <body>
-<header><h1>⚔️ Baxtorian “Bax”</h1><div class="sub">Dwarf • Fighter • Level <span id="headerLevel">10</span> • Neutral</div></header>
+<header><span class="deploy-badge">LOCAL DEPLOY</span><h1>⚔️ Baxtorian “Bax”</h1><div class="sub">Dwarf • Fighter • Level <span id="headerLevel">10</span> • Neutral</div></header>
 <main>
 <section id="home" class="tab active">
 <div class="grid">
