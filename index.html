@@ -132,6 +132,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <div class="ability-score-box"><label for="ability_int">Intelligence</label><input id="ability_int" data-save="int" type="number" inputmode="numeric" aria-label="Intelligence score" placeholder="—"><div class="ability-modifier-row"><span>Modifier</span><strong id="modifier_int">—</strong></div></div>
 <div class="ability-score-box"><label for="ability_wis">Wisdom</label><input id="ability_wis" data-save="wis" type="number" inputmode="numeric" aria-label="Wisdom score" placeholder="—"><div class="ability-modifier-row"><span>Modifier</span><strong id="modifier_wis">—</strong></div></div>
 <div class="ability-score-box"><label for="ability_cha">Charisma</label><input id="ability_cha" data-save="cha" type="number" inputmode="numeric" aria-label="Charisma score" placeholder="—"><div class="ability-modifier-row"><span>Modifier</span><strong id="modifier_cha">—</strong></div></div>
+ <div class="ability-score-box"><label for="ability_com">Com.</label><input id="ability_com" data-save="com" type="number" inputmode="numeric" aria-label="Comeliness score" placeholder="—"><div class="ability-modifier-row"><span>Modifier</span><strong id="modifier_com">—</strong></div></div>
 </div></div>
 </section>
 
@@ -298,7 +299,7 @@ function toggleCharacterName(){const input=document.getElementById('characterNam
 function show(id){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');const back=document.getElementById('headerBack');if(back)back.classList.toggle('visible',id!=='home');scrollTo(0,0);if(id==='round')loadCurrentAttack()}
 document.querySelectorAll('[data-save]').forEach(el=>{let k='bax_'+el.dataset.save;let saved=localStorage.getItem(k);el.value=(saved!==null&&saved!=='')?saved:el.value;el.addEventListener('input',()=>localStorage.setItem(k,el.value))});
 document.querySelectorAll('[data-sync]').forEach(el=>{el.addEventListener('input',()=>{const k=el.dataset.sync;document.querySelectorAll('[data-sync="'+k+'"]').forEach(o=>{if(o!==el)o.value=el.value})})});
-function renderAbilityScoreModifiers(){[['str','ability_str'],['dex','ability_dex'],['con','ability_con'],['int','ability_int'],['wis','ability_wis'],['cha','ability_cha']].forEach(([key,id])=>{const input=document.getElementById(id),out=document.getElementById('modifier_'+key);if(!input||!out)return;const raw=input.value.trim();if(raw===''){out.textContent='—';return}const mod=Math.floor((Number(raw)-10)/2);out.textContent=(mod>0?'+':'')+mod})}
+function renderAbilityScoreModifiers(){[['str','ability_str'],['dex','ability_dex'],['con','ability_con'],['int','ability_int'],['wis','ability_wis'],['cha','ability_cha'],['com','ability_com']].forEach(([key,id])=>{const input=document.getElementById(id),out=document.getElementById('modifier_'+key);if(!input||!out)return;const raw=input.value.trim();if(raw===''){out.textContent='—';return}const mod=Math.floor((Number(raw)-10)/2);out.textContent=(mod>0?'+':'')+mod})}
 document.querySelectorAll('#stats [data-save]').forEach(el=>el.addEventListener('input',renderAbilityScoreModifiers));
 renderAbilityScoreModifiers();
 // --- Armour Class calculator ---
@@ -370,7 +371,7 @@ if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 // --- Reusable equipment item database ---
 const equipmentCategories=['Headgear','Lens / Goggles','Armour','Shield','Robe / Vest / Shirt','Bracers','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Weapons','Ioun Stones / Jewellery','Other'];
 const modifierTypes=['Ability score','AC','Saving throw','Skill','Attack roll','Damage roll','Damage reduction','Resistance','Movement speed','Granted ability','Penalty','Other'];
-const abilityTargets=['Strength','Dexterity','Constitution','Intelligence','Wisdom','Charisma'];
+const abilityTargets=['Strength','Dexterity','Constitution','Intelligence','Wisdom','Charisma','Comeliness'];
 let databaseItems=[],pendingModifiers=[],editingDatabaseItemId=null;
 try{databaseItems=JSON.parse(localStorage.getItem('bax_itemDatabase')||'[]')}catch(e){databaseItems=[]}
 let categoryVisibility={};
