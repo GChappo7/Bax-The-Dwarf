@@ -42,6 +42,12 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 #weaponsTable input[data-field]:not([data-field="name"]):not([data-field="dice"]){width:42px}
 .wpn-del{padding:6px 9px;background:#4a2b26;border-color:#6b3a32;flex-shrink:0}
 .feat-item{background:var(--panel2);border:1px solid #443528;border-radius:9px;padding:11px;margin-bottom:10px}
+.feat-badges{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.feat-badge{font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:4px 7px;border-radius:5px;background:#3b3022;color:var(--gold);border:1px solid #5b4730}
+.feat-section{margin:9px 0 0;padding-top:8px;border-top:1px solid #3a2e24}
+.feat-section strong,.feat-source strong{display:block;color:var(--gold);font-size:11px;letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px}
+.feat-section p{margin:0;line-height:1.45;white-space:normal;overflow-wrap:anywhere}
+.feat-source{margin-top:10px;color:var(--muted);font-size:12px;line-height:1.4}
 .feat-item .feat-head{display:flex;gap:8px;align-items:center;margin-bottom:8px}
 .feat-item input[data-field="name"]{flex:1;font-weight:700;color:var(--gold);padding:8px 10px}
 .feat-item textarea{min-height:70px}
@@ -270,10 +276,10 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 
 
 <div class="card"><h2>Round Modifiers</h2>
-<p style="color:var(--muted);margin-top:0">Add effects that apply to this attack sequence. Haste gives +1 to attack rolls; Bard Song starts at +1 to attack and damage. Adjust bonuses to match the bard's current bonus.</p>
+<p style="color:var(--muted);margin-top:0">Add effects that apply to this attack sequence. Haste gives +1 to attack rolls; Bard Song starts at +2 to attack and damage. Adjust bonuses to match the bard's current bonus.</p>
 <div class="grid" style="grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">
 <button type="button" onclick="addRoundPreset('haste')">+ Haste (+1 attack)</button>
-<button type="button" onclick="addRoundPreset('bard')">+ Bard Song (+1 attack, +1 damage)</button>
+<button type="button" onclick="addRoundPreset('bard')">+ Bard Song (+2 attack, +2 damage)</button>
 </div>
 <h3 style="margin-bottom:8px">Attack Roll Modifiers</h3>
 <div style="overflow-x:auto"><table class="modtable"><thead><tr><th>Modifier</th><th>Bonus</th><th></th></tr></thead><tbody id="attackModsBody"></tbody></table></div>
@@ -524,18 +530,44 @@ function addFeat(){feats.push({id:Date.now(),name:'New Feat',desc:''});saveFeats
 function removeFeat(id){feats=feats.filter(f=>f.id!==id);saveFeats();renderFeats()}
 function updateFeatName(id,value){const f=feats.find(f=>f.id===id);if(!f)return;f.name=value;saveFeats()}
 function updateFeatDesc(id,value){const f=feats.find(f=>f.id===id);if(!f)return;f.desc=value;saveFeats()}
+function featEscape(value){return String(value??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+function featSections(description){
+  let raw=String(description||'').trim(),source='',prerequisites='',fighterBonus=false;
+  const sourceMatch=raw.match(/(?:^|\n)Source:\s*([^\n]+)/i);
+  if(sourceMatch){source=sourceMatch[1].trim();raw=raw.replace(sourceMatch[0],'').trim()}
+  const bonusMatch=raw.match(/(?:^|\n)Fighter bonus feat:\s*(Yes|No)\.?/i);
+  if(bonusMatch){fighterBonus=bonusMatch[1].toLowerCase()==='yes';raw=raw.replace(bonusMatch[0],'').trim()}
+  const preMatch=raw.match(/^Prerequisites?:\s*([^\n.]+(?:\.)?)/i);
+  if(preMatch){prerequisites=preMatch[1].trim();raw=raw.slice(preMatch[0].length).trim()}
+  raw=raw.replace(/^\n+|\n+$/g,'');
+  let effect=raw.split(/\n\s*\n/).map(p=>p.trim()).filter(Boolean).join('\n\n');
+  if(!prerequisites&&/^No special prerequisite$/i.test(effect)){prerequisites='None';effect=''}
+  return {prerequisites,effect,source,fighterBonus};
+}
+function toggleFeatEdit(id){const panel=document.getElementById('feat-edit-'+id);if(panel)panel.hidden=!panel.hidden}
 function renderFeats(){
   const list=document.getElementById('featsList');
   if(!feats.length){list.innerHTML='<p style="color:var(--muted);text-align:center;padding:10px 0">No feats yet — add one above.</p>';return}
-  list.innerHTML=feats.map(f=>`
+  list.innerHTML=feats.map(f=>{
+    const d=featSections(f.desc),safeId=Number(f.id);
+    const hasDetail=!!(d.prerequisites||d.effect||d.source);
+    return `
     <div class="feat-item">
       <div class="feat-head">
-        <input data-field="name" value="${f.name.replace(/"/g,'&quot;')}" onchange="updateFeatName(${f.id},this.value)">
-        <button class="wpn-del" onclick="removeFeat(${f.id})">✕</button>
+        <input data-field="name" aria-label="Feat or ability name" value="${featEscape(f.name)}" onchange="updateFeatName(${safeId},this.value)">
+        <button type="button" onclick="toggleFeatEdit(${safeId})">Edit</button>
+        <button type="button" class="wpn-del" aria-label="Remove ${featEscape(f.name)}" onclick="removeFeat(${safeId})">✕</button>
       </div>
-      <textarea placeholder="What it does, benefits, prerequisites..." onchange="updateFeatDesc(${f.id},this.value)">${(f.desc||'')}</textarea>
-    </div>
-  `).join('')
+      <div class="feat-badges"><span class="feat-badge">Feat / Ability</span>${d.fighterBonus?'<span class="feat-badge">Fighter bonus feat</span>':''}</div>
+      ${d.prerequisites?`<div class="feat-section"><strong>Prerequisites</strong><p>${featEscape(d.prerequisites)}</p></div>`:''}
+      ${d.effect?`<div class="feat-section"><strong>Effect</strong><p>${featEscape(d.effect).replace(/\n/g,'<br>')}</p></div>`:(!hasDetail?'<div class="feat-section"><strong>Effect</strong><p>No details added yet.</p></div>':'')}
+      ${d.source?`<div class="feat-source"><strong>Source:</strong> ${featEscape(d.source)}</div>`:''}
+      <div id="feat-edit-${safeId}" hidden style="margin-top:10px">
+        <label style="display:block;color:var(--muted);font-size:12px;margin-bottom:5px">Full description (you can include Prerequisites:, Effect, and Source: sections)</label>
+        <textarea placeholder="What it does, benefits, prerequisites..." onchange="updateFeatDesc(${safeId},this.value)">${featEscape(f.desc||'')}</textarea>
+      </div>
+    </div>`
+  }).join('')
 }
 renderFeats();
 
@@ -721,7 +753,7 @@ function updateRoundCriticalConfirmed(checked){const c=currentAttackConfig();c.c
 function selectAttack(n){saveCurrentAttack();activeAttack=n;loadCurrentAttack()}
 function renderAttackChoices(){[1,2,3].forEach(n=>{const b=document.getElementById('attackChoice'+n);if(b){b.style.background=n===activeAttack?'var(--accent, #d6b15e)':'var(--card, #22282c)';b.style.color=n===activeAttack?'#171717':'inherit';b.style.border=n===activeAttack?'2px solid var(--accent, #d6b15e)':'1px solid var(--border, #454b50)';b.setAttribute('aria-pressed',String(n===activeAttack))}});const h=document.getElementById('activeAttackHint');if(h)h.textContent='Editing Attack '+activeAttack+' — attack and damage modifiers are separate.';}
 function addRoundMod(type){const list=type==='atk'?roundMods.attackMods:roundMods.damageMods;list.push({id:Date.now()+Math.random(),name:type==='atk'?'New Attack Modifier':'New Damage Modifier',value:0});saveCurrentAttack();renderRoundMods();renderRoundCalc()}
-function addRoundPreset(preset){if(preset==='haste'){roundMods.attackMods.push({id:Date.now()+Math.random(),name:'Haste',value:1})}else if(preset==='bard'){roundMods.attackMods.push({id:Date.now()+Math.random(),name:'Bard Song',value:1});roundMods.damageMods.push({id:Date.now()+Math.random(),name:'Bard Song',value:1})}saveCurrentAttack();renderRoundMods();renderRoundCalc()}
+function addRoundPreset(preset){if(preset==='haste'){roundMods.attackMods.push({id:Date.now()+Math.random(),name:'Haste',value:1})}else if(preset==='bard'){roundMods.attackMods.push({id:Date.now()+Math.random(),name:'Bard Song',value:2});roundMods.damageMods.push({id:Date.now()+Math.random(),name:'Bard Song',value:2})}saveCurrentAttack();renderRoundMods();renderRoundCalc()}
 function removeRoundMod(type,id){const key=type==='atk'?'attackMods':'damageMods';roundMods[key]=roundMods[key].filter(m=>String(m.id)!==String(id));saveCurrentAttack();renderRoundMods();renderRoundCalc()}
 function updateRoundModField(type,id,field,value){const key=type==='atk'?'attackMods':'damageMods';const m=roundMods[key].find(m=>String(m.id)===String(id));if(!m)return;m[field]=field==='name'?value:(Number(value)||0);saveCurrentAttack();if(field!=='name')renderRoundCalc()}
 function renderModRows(type,bodyId){const list=type==='atk'?roundMods.attackMods:roundMods.damageMods;const body=document.getElementById(bodyId);if(!body)return;if(!list.length){body.innerHTML='<tr><td colspan="3" style="color:var(--muted);padding:14px;text-align:center;white-space:normal">No modifiers added.</td></tr>';return}body.innerHTML=list.map(m=>`<tr><td><input value="${String(m.name||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}" onchange="updateRoundModField('${type}',${Number(m.id)},'name',this.value)"></td><td><input type="number" value="${Number(m.value)||0}" onchange="updateRoundModField('${type}',${Number(m.id)},'value',this.value)"></td><td><button class="wpn-del" onclick="removeRoundMod('${type}',${Number(m.id)})">✕</button></td></tr>`).join('')}
