@@ -146,7 +146,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <section id="armour" class="tab">
 <div class="card ac-card"><h2>Armour Class</h2><p style="color:var(--muted);margin-top:0">Current AC is calculated automatically from your Dexterity, equipped items and their AC modifiers.</p>
 <div class="ac-current-panel"><span>CURRENT AC</span><strong id="currentAcSummary">—</strong><small id="baseAcSummary">Base AC —</small></div>
-<div class="ac-bonus-sections"><div class="ac-bonus-section"><h3>Armour bonuses</h3><div id="acArmourDetails" class="ac-bonus-details"></div></div><div class="ac-bonus-section"><h3>Shield bonuses</h3><div id="acShieldDetails" class="ac-bonus-details"></div></div><div class="ac-bonus-section"><h3>Other bonuses / penalties</h3><div id="acOtherDetails" class="ac-bonus-details"></div></div></div>
+<div class="ac-bonus-sections"><div class="ac-bonus-section"><h3>AC bonuses</h3><div id="acAllDetails" class="ac-bonus-details"></div></div></div>
 <details class="ac-advanced"><summary>Advanced AC settings</summary><label class="ac-field">Base AC override (optional)<input id="acBaseOverride" data-save="acBaseOverride" type="number" inputmode="numeric" placeholder="Auto: 10 + Dex modifier"></label><p style="color:var(--muted);font-size:12px;margin:4px 0 0">Leave blank to use 10 + your Dexterity modifier.</p></details>
 <div class="ac-breakdown" id="acBreakdown">Base AC + equipped item bonuses</div>
 </div>
@@ -260,7 +260,7 @@ function getEquippedAcBonuses(){
   const selected=[];
   equipmentCategories.forEach(category=>getEquippedIds(category).forEach(id=>{const item=databaseItems.find(x=>String(x.id)===String(id));if(item)selected.push({category,item})}));
   selected.forEach(({category,item})=>(item.modifiers||[]).filter(m=>m.type==='AC'&&m.value!==''&&Number.isFinite(Number(m.value))).forEach(m=>{
-    const entry={item:item.name,target:m.target||'AC',value:Number(m.value),bonusType:m.bonusType||'',notes:m.notes||''};
+    const entry={item:item.name,source:category,target:m.target||'AC',value:Number(m.value),bonusType:m.bonusType||'',notes:m.notes||''};
     if(category==='Armour'||category==='Robe / Vest / Shirt')groups.armour.push(entry);
     else if(category==='Shield')groups.shield.push(entry);
     else groups.other.push(entry);
@@ -270,7 +270,7 @@ function getEquippedAcBonuses(){
 function renderAcBonusDetails(id,entries,emptyText){
   const box=document.getElementById(id);if(!box)return;
   if(!entries.length){box.innerHTML='<p class="ac-empty">'+emptyText+'</p>';return}
-  box.innerHTML=entries.map(entry=>'<div class="ac-bonus-row"><div><strong>'+escapeHtml(entry.item)+'</strong><small>'+escapeHtml(entry.target)+(entry.bonusType?' · '+escapeHtml(entry.bonusType):'')+'</small>'+(entry.notes?'<small class="ac-note">'+escapeHtml(entry.notes)+'</small>':'')+'</div><b class="'+(entry.value<0?'negative':'')+'">'+(entry.value>0?'+':'')+entry.value+'</b></div>').join('');
+  box.innerHTML=entries.map(entry=>'<div class="ac-bonus-row"><div><strong>'+escapeHtml(entry.item)+'</strong><small>'+escapeHtml(entry.source||'Equipped item')+' · '+escapeHtml(entry.target)+(entry.bonusType?' · '+escapeHtml(entry.bonusType):'')+'</small>'+(entry.notes?'<small class="ac-note">'+escapeHtml(entry.notes)+'</small>':'')+'</div><b class="'+(entry.value<0?'negative':'')+'">'+(entry.value>0?'+':'')+entry.value+'</b></div>').join('');
 }
 function updateArmourClass(){
   const dexInput=document.querySelector('[data-save="dex"]');
@@ -285,9 +285,7 @@ function updateArmourClass(){
   ['baseAcHome','baseAcStats','baseAcRound'].forEach(id=>set(id,base));
   set('baseAcSummary','Base AC '+base);
   ['currentAcHome','currentAcStats','currentAcRound','currentAcSummary'].forEach(id=>set(id,total));
-  renderAcBonusDetails('acArmourDetails',groups.armour,'No equipped armour AC modifiers.');
-  renderAcBonusDetails('acShieldDetails',groups.shield,'No equipped shield AC modifiers.');
-  renderAcBonusDetails('acOtherDetails',groups.other,'No other equipped AC modifiers.');
+  renderAcBonusDetails('acAllDetails',[...groups.armour,...groups.shield,...groups.other],'No AC modifiers on equipped items.');
   const breakdown=document.getElementById('acBreakdown');
   if(breakdown)breakdown.textContent='Base '+base+' '+(armour>=0?'+ ':'− ')+Math.abs(armour)+' armour '+(shield>=0?'+ ':'− ')+Math.abs(shield)+' shield '+(other>=0?'+ ':'− ')+Math.abs(other)+' other = '+total+' AC';
   localStorage.setItem('bax_ac',String(total));
