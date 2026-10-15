@@ -50,6 +50,26 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .modtable input{background:#17130f;color:var(--text);border:1px solid #51402f;border-radius:6px;padding:4px;font:inherit;text-align:center}
 .modtable input[data-field="name"]{width:110px;text-align:left}
 .modtable input[data-field="atk"],.modtable input[data-field="dmg"]{width:60px}
+
+/* Revamp: clearer mobile hierarchy and thumb-friendly navigation */
+body{padding-bottom:calc(88px + env(safe-area-inset-bottom))}
+header{padding-top:calc(18px + env(safe-area-inset-top))}
+main{padding:14px 14px 24px}
+.card{border-radius:14px;padding:15px;box-shadow:0 3px 12px rgba(0,0,0,.12)}
+.card h2{letter-spacing:.07em}
+button{min-height:42px;cursor:pointer;transition:background .15s,border-color .15s,transform .12s}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+nav{gap:4px;padding:7px 7px calc(7px + env(safe-area-inset-bottom));justify-content:space-between;overflow-x:auto;overscroll-behavior-x:contain}
+nav button{display:flex;flex:1 0 0;min-width:0;max-width:none;min-height:52px;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 2px;border-color:transparent;background:transparent;color:var(--muted);font-size:10px;line-height:1.1;white-space:nowrap;border-radius:10px}
+nav button.active{background:#3a2d22;border-color:#6d542f;color:var(--gold)}
+.hp button{flex-shrink:0}
+.stat{min-width:0}
+input,textarea,select{max-width:100%}
+@media(min-width:560px){
+  main{padding:18px 18px 28px}
+  .card{padding:18px}
+  nav button{font-size:12px;min-height:54px}
+}
 </style>
 </head>
 <body>
@@ -143,7 +163,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <div class="card"><h2>Data &amp; Backup</h2><p style="color:var(--muted);margin-top:0">Export Bax's saved character data before making major changes, or restore it from a previous backup.</p><div class="actions"><button type="button" onclick="exportBackup()">⬇ Export Backup</button><button type="button" onclick="document.getElementById('backupFile').click()">⬆ Import Backup</button></div><input id="backupFile" type="file" accept="application/json,.json" style="display:none" onchange="importBackupFile(this)"><p style="color:var(--muted);font-size:12px;margin-bottom:0">Backups include this app's saved Bax data on this browser, not data from other devices.</p></div>
 </section>
 </main>
-<nav><button onclick="show('home')">⚔️ Character</button><button onclick="show('stats')">📊 Stats</button><button onclick="show('weapons')">🗡️ Weapons</button><button onclick="show('feats')">🧩 Feats</button><button onclick="show('round')">🎲 Round</button><button onclick="show('notes')">📝 Notes</button></nav>
+<nav aria-label="Main navigation"><button data-nav="home" aria-current="page" onclick="show('home')">⚔️<span>Hero</span></button><button data-nav="stats" onclick="show('stats')">📊<span>Stats</span></button><button data-nav="weapons" onclick="show('weapons')">🗡️<span>Arms</span></button><button data-nav="feats" onclick="show('feats')">🧩<span>Feats</span></button><button data-nav="round" onclick="show('round')">🎲<span>Combat</span></button><button data-nav="notes" onclick="show('notes')">📝<span>Notes</span></button></nav>
 <script>
 let current=Number(localStorage.getItem('bax_hp')); if(!Number.isFinite(current))current=100;
 function hp(n){current=Math.max(0,current+n);localStorage.setItem('bax_hp',current);document.getElementById('hp').textContent=current;const r=document.getElementById('hpRound');if(r)r.value=current}
@@ -185,7 +205,7 @@ async function importBackupFile(input){
     input.value='';
   }
 }
-function show(id){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');scrollTo(0,0);if(id==='round')renderRoundOptions()}
+function show(id){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('nav [data-nav]').forEach(x=>{const active=x.dataset.nav===id;x.classList.toggle('active',active);if(active)x.setAttribute('aria-current','page');else x.removeAttribute('aria-current')});scrollTo(0,0);if(id==='round')renderRoundOptions()}
 document.querySelectorAll('[data-save]').forEach(el=>{let k='bax_'+el.dataset.save;let saved=localStorage.getItem(k);el.value=(saved!==null&&saved!=='')?saved:el.value;el.addEventListener('input',()=>localStorage.setItem(k,el.value))});
 document.querySelectorAll('[data-sync]').forEach(el=>{el.addEventListener('input',()=>{const k=el.dataset.sync;document.querySelectorAll('[data-sync="'+k+'"]').forEach(o=>{if(o!==el)o.value=el.value})})});
 const levelInput=document.getElementById('level'),headerLevel=document.getElementById('headerLevel');
