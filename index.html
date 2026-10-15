@@ -827,6 +827,34 @@ loadCurrentAttack();
 
 </script>
 <script>
+/* Independent click wiring for Attack 1/2/3. */
+(function(){
+  function wireAttackButtons(){
+    [1,2,3].forEach(function(n){
+      var b=document.getElementById('attackChoice'+n);
+      if(!b||b.dataset.attackWired==='yes')return;
+      b.dataset.attackWired='yes';
+      b.removeAttribute('onclick');
+      b.addEventListener('click',function(ev){
+        ev.preventDefault();
+        try { if(typeof selectAttack==='function') selectAttack(n); } catch(err) { console.error('Attack selection refresh failed:',err); }
+        try { activeAttack=n; localStorage.setItem('bax_active_attack',String(n)); } catch(err) {}
+        [1,2,3].forEach(function(k){
+          var btn=document.getElementById('attackChoice'+k);
+          if(!btn)return;
+          btn.style.background=k===n?'var(--accent, #d6b15e)':'var(--card, #22282c)';
+          btn.style.color=k===n?'#171717':'inherit';
+          btn.style.border=k===n?'2px solid var(--accent, #d6b15e)':'1px solid var(--border, #454b50)';
+          btn.setAttribute('aria-pressed',String(k===n));
+        });
+        var hint=document.getElementById('activeAttackHint');
+        if(hint)hint.textContent='Editing Attack '+n+' — attack and damage modifiers are separate.';
+      });
+    });
+  }
+  wireAttackButtons();
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',wireAttackButtons);
+})();
 /* Recovery safety net: seed the two essential character items independently of the main app script. */
 (function(){
   try {
