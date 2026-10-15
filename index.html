@@ -448,66 +448,31 @@ renderFeats();
 let activeAttack=Number(localStorage.getItem('bax_active_attack')||1);
 if(![1,2,3].includes(activeAttack))activeAttack=1;
 let roundWeaponId=localStorage.getItem('bax_round_weapon')||'';
-let roundMods=[];
-try{roundMods=JSON.parse(localStorage.getItem('bax_roundmods')||'[]')}catch(e){roundMods=[]}
 let attackRounds=[];
 try{attackRounds=JSON.parse(localStorage.getItem('bax_attack_rounds')||'[]')}catch(e){attackRounds=[]}
 if(!Array.isArray(attackRounds)||attackRounds.length!==3){
-  attackRounds=[1,2,3].map((n)=>({weaponId:n===1?roundWeaponId:'',mods:n===1?roundMods.map(m=>({...m})):[]}));
-  localStorage.setItem('bax_attack_rounds',JSON.stringify(attackRounds));
+  let oldMods=[];try{oldMods=JSON.parse(localStorage.getItem('bax_roundmods')||'[]')}catch(e){}
+  attackRounds=[1,2,3].map((n)=>({attackMods:n===1?oldMods.filter(m=>Number(m.atk)!==0||Number(m.dmg)===0).map(m=>({id:m.id,name:m.name,value:Number(m.atk)||0})):[],damageMods:n===1?oldMods.filter(m=>Number(m.dmg)!==0).map(m=>({id:Number(m.id)+100000,name:m.name,value:Number(m.dmg)||0})):[]}));
 }
+attackRounds=attackRounds.map(c=>({attackMods:Array.isArray(c.attackMods)?c.attackMods:[],damageMods:Array.isArray(c.damageMods)?c.damageMods:[]}));
+let roundMods={attackMods:[],damageMods:[]};
 function saveAttackRounds(){localStorage.setItem('bax_attack_rounds',JSON.stringify(attackRounds))}
-function saveCurrentAttack(){attackRounds[activeAttack-1]={weaponId:roundWeaponId,mods:roundMods.map(m=>({...m}))};saveAttackRounds();localStorage.setItem('bax_round_weapon',roundWeaponId);localStorage.setItem('bax_roundmods',JSON.stringify(roundMods))}
-function loadCurrentAttack(){const cfg=attackRounds[activeAttack-1]||{weaponId:'',mods:[]};roundWeaponId=cfg.weaponId||'';roundMods=Array.isArray(cfg.mods)?cfg.mods.map(m=>({...m})):[];localStorage.setItem('bax_active_attack',String(activeAttack));renderAttackChoices();renderRoundOptions()}
+function saveCurrentAttack(){attackRounds[activeAttack-1]={attackMods:roundMods.attackMods.map(m=>({...m})),damageMods:roundMods.damageMods.map(m=>({...m}))};saveAttackRounds();localStorage.setItem('bax_round_weapon',roundWeaponId)}
+function loadCurrentAttack(){const c=attackRounds[activeAttack-1]||{attackMods:[],damageMods:[]};roundMods={attackMods:c.attackMods.map(m=>({...m})),damageMods:c.damageMods.map(m=>({...m}))};localStorage.setItem('bax_active_attack',String(activeAttack));renderAttackChoices();renderRoundOptions()}
 function selectAttack(n){saveCurrentAttack();activeAttack=n;loadCurrentAttack()}
-function renderAttackChoices(){[1,2,3].forEach(n=>{const b=document.getElementById('attackChoice'+n);if(b){b.style.background=n===activeAttack?'var(--accent, #d6b15e)':'var(--card, #22282c)';b.style.color=n===activeAttack?'#171717':'inherit';b.style.border=n===activeAttack?'2px solid var(--accent, #d6b15e)':'1px solid var(--border, #454b50)';b.setAttribute('aria-pressed',String(n===activeAttack))}});const hint=document.getElementById('activeAttackHint');if(hint)hint.textContent='Editing Attack '+activeAttack+' — weapon and modifiers are saved separately.'}
-function saveRoundMods(){saveCurrentAttack()}
-function addRoundMod(){roundMods.push({id:Date.now(),name:'New Modifier',atk:0,dmg:0});saveRoundMods();renderRoundMods();updateRoundTotals()}
-function removeRoundMod(id){roundMods=roundMods.filter(m=>m.id!==id);saveRoundMods();renderRoundMods();updateRoundTotals()}
-function updateRoundModField(id,field,value){const m=roundMods.find(m=>m.id===id);if(!m)return;m[field]=field==='name'?value:(Number(value)||0);saveRoundMods();if(field!=='name')updateRoundTotals()}
-function renderRoundMods(){
-  const body=document.getElementById('roundModsBody');
-  if(!roundMods.length){body.innerHTML='<tr><td colspan="4" style="color:var(--muted);padding:14px;text-align:center;white-space:normal">No modifiers yet — add one above.</td></tr>';return}
-  body.innerHTML=roundMods.map(m=>`
-    <tr>
-      <td><input data-field="name" value="${String(m.name||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}" onchange="updateRoundModField(${m.id},'name',this.value)"></td>
-      <td><input data-field="atk" type="number" value="${Number(m.atk)||0}" onchange="updateRoundModField(${m.id},'atk',this.value)"></td>
-      <td><input data-field="dmg" type="number" value="${Number(m.dmg)||0}" onchange="updateRoundModField(${m.id},'dmg',this.value)"></td>
-      <td><button class="wpn-del" onclick="removeRoundMod(${m.id})">✕</button></td>
-    </tr>
-  `).join('')
-}
-function renderRoundOptions(){
-  const sel=document.getElementById('roundWeaponSelect');
-  const prev=roundWeaponId;
-  sel.innerHTML='<option value="">— Select weapon —</option>'+weapons.map(w=>`<option value="${w.id}">${String(w.name||'Unnamed weapon').replace(/&/g,'&amp;').replace(/</g,'&lt;')}</option>`).join('');
-  if(weapons.some(w=>String(w.id)===String(prev))){sel.value=prev}else{roundWeaponId='';sel.value=''}
-  renderRoundMods();
-  updateWeaponDisplay();
-}
-function onRoundWeaponChange(value){roundWeaponId=value;saveCurrentAttack();updateWeaponDisplay()}
-function formatRoundTotal(dice,num){
-  if(!dice)return String(num);
-  if(num===0)return dice;
-  return dice+' '+(num>=0?'+ ':'- ')+Math.abs(num);
-}
-function updateWeaponDisplay(){
-  const w=weapons.find(w=>String(w.id)===String(roundWeaponId));
-  document.getElementById('roundWeaponAtk').textContent=w?formatTotal(w.atk):'—';
-  document.getElementById('roundWeaponDmg').textContent=w?formatTotal(w.dmg):'—';
-  updateRoundTotals();
-}
-function updateRoundTotals(){
-  const w=weapons.find(w=>String(w.id)===String(roundWeaponId));
-  let atkNum=w?total(w.atk):0;
-  let dmgNum=w?total(w.dmg):0;
-  let atkDice=w?(w.atk.dice||'').trim():'';
-  let dmgDice=w?(w.dmg.dice||'').trim():'';
-  roundMods.forEach(m=>{atkNum+=Number(m.atk)||0;dmgNum+=Number(m.dmg)||0});
-  document.getElementById('roundAtkTotal').textContent=formatRoundTotal(atkDice,atkNum);
-  document.getElementById('roundDmgTotal').textContent=formatRoundTotal(dmgDice,dmgNum);
-}
+function renderAttackChoices(){[1,2,3].forEach(n=>{const b=document.getElementById('attackChoice'+n);if(b){b.style.background=n===activeAttack?'var(--accent, #d6b15e)':'var(--card, #22282c)';b.style.color=n===activeAttack?'#171717':'inherit';b.style.border=n===activeAttack?'2px solid var(--accent, #d6b15e)':'1px solid var(--border, #454b50)';b.setAttribute('aria-pressed',String(n===activeAttack))}});const h=document.getElementById('activeAttackHint');if(h)h.textContent='Editing Attack '+activeAttack+' — attack and damage modifiers are separate.'}
+function addRoundMod(type){const list=type==='atk'?roundMods.attackMods:roundMods.damageMods;list.push({id:Date.now(),name:type==='atk'?'New Attack Modifier':'New Damage Modifier',value:0});saveCurrentAttack();renderRoundMods();updateRoundTotals()}
+function removeRoundMod(type,id){const key=type==='atk'?'attackMods':'damageMods';roundMods[key]=roundMods[key].filter(m=>String(m.id)!==String(id));saveCurrentAttack();renderRoundMods();updateRoundTotals()}
+function updateRoundModField(type,id,field,value){const key=type==='atk'?'attackMods':'damageMods';const m=roundMods[key].find(m=>String(m.id)===String(id));if(!m)return;m[field]=field==='name'?value:(Number(value)||0);saveCurrentAttack();if(field!=='name')updateRoundTotals()}
+function renderModRows(type,bodyId){const list=type==='atk'?roundMods.attackMods:roundMods.damageMods;const body=document.getElementById(bodyId);if(!list.length){body.innerHTML='<tr><td colspan="3" style="color:var(--muted);padding:14px;text-align:center;white-space:normal">No modifiers added.</td></tr>';return}body.innerHTML=list.map(m=>`<tr><td><input value="${String(m.name||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}" onchange="updateRoundModField('${type}',${Number(m.id)},'name',this.value)"></td><td><input type="number" value="${Number(m.value)||0}" onchange="updateRoundModField('${type}',${Number(m.id)},'value',this.value)"></td><td><button class="wpn-del" onclick="removeRoundMod('${type}',${Number(m.id)})">✕</button></td></tr>`).join('')}
+function renderRoundMods(){renderModRows('atk','attackModsBody');renderModRows('dmg','damageModsBody')}
+function renderRoundOptions(){const sel=document.getElementById('roundWeaponSelect');const prev=roundWeaponId;sel.innerHTML='<option value="">— Select weapon —</option>'+weapons.map(w=>`<option value="${w.id}">${String(w.name||'Unnamed weapon').replace(/&/g,'&amp;').replace(/</g,'&lt;')}</option>`).join('');if(weapons.some(w=>String(w.id)===String(prev))){sel.value=prev}else{roundWeaponId='';sel.value=''}renderRoundMods();updateWeaponDisplay()}
+function onRoundWeaponChange(value){roundWeaponId=value;localStorage.setItem('bax_round_weapon',value);updateWeaponDisplay()}
+function formatRoundTotal(dice,num){if(!dice)return String(num);if(num===0)return dice;return dice+' '+(num>=0?'+ ':'- ')+Math.abs(num)}
+function updateWeaponDisplay(){const w=weapons.find(w=>String(w.id)===String(roundWeaponId));document.getElementById('roundWeaponAtk').textContent=w?formatTotal(w.atk):'—';document.getElementById('roundWeaponDmg').textContent=w?formatTotal(w.dmg):'—';updateRoundTotals()}
+function updateRoundTotals(){const w=weapons.find(w=>String(w.id)===String(roundWeaponId));let a=w?total(w.atk):0,d=w?total(w.dmg):0;const ad=w?(w.atk.dice||'').trim():'';const dd=w?(w.dmg.dice||'').trim():'';roundMods.attackMods.forEach(m=>a+=Number(m.value)||0);roundMods.damageMods.forEach(m=>d+=Number(m.value)||0);document.getElementById('roundAtkTotal').textContent=formatRoundTotal(ad,a);document.getElementById('roundDmgTotal').textContent=formatRoundTotal(dd,d)}
 renderAttackChoices();
-renderRoundMods();
+loadCurrentAttack();
+
 </script>
 </body></html>
