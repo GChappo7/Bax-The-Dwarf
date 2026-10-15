@@ -454,7 +454,7 @@ if(!Array.isArray(attackRounds)||attackRounds.length!==3){
   let oldMods=[];try{oldMods=JSON.parse(localStorage.getItem('bax_roundmods')||'[]')}catch(e){}
   attackRounds=[1,2,3].map((n)=>({attackMods:n===1?oldMods.filter(m=>Number(m.atk)!==0||Number(m.dmg)===0).map(m=>({id:m.id,name:m.name,value:Number(m.atk)||0})):[],damageMods:n===1?oldMods.filter(m=>Number(m.dmg)!==0).map(m=>({id:Number(m.id)+100000,name:m.name,value:Number(m.dmg)||0})):[]}));
 }
-attackRounds=attackRounds.map(c=>({attackMods:Array.isArray(c.attackMods)?c.attackMods:[],damageMods:Array.isArray(c.damageMods)?c.damageMods:[]}));
+attackRounds=attackRounds.map(c=>{if(Array.isArray(c.attackMods)||Array.isArray(c.damageMods))return {attackMods:Array.isArray(c.attackMods)?c.attackMods:[],damageMods:Array.isArray(c.damageMods)?c.damageMods:[]};const legacy=Array.isArray(c.mods)?c.mods:[];return {attackMods:legacy.filter(m=>Number(m.atk)!==0||Number(m.dmg)===0).map(m=>({id:m.id,name:m.name,value:Number(m.atk)||0})),damageMods:legacy.filter(m=>Number(m.dmg)!==0).map(m=>({id:Number(m.id)+100000,name:m.name,value:Number(m.dmg)||0}))}});
 let roundMods={attackMods:[],damageMods:[]};
 function saveAttackRounds(){localStorage.setItem('bax_attack_rounds',JSON.stringify(attackRounds))}
 function saveCurrentAttack(){attackRounds[activeAttack-1]={attackMods:roundMods.attackMods.map(m=>({...m})),damageMods:roundMods.damageMods.map(m=>({...m}))};saveAttackRounds();localStorage.setItem('bax_round_weapon',roundWeaponId)}
