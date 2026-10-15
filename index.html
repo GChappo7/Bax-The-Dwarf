@@ -533,6 +533,7 @@ function updateFeatDesc(id,value){const f=feats.find(f=>f.id===id);if(!f)return;
 function featEscape(value){return String(value??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 function featSections(description){
   let raw=String(description||'').trim(),source='',prerequisites='',fighterBonus=false;
+  raw=raw.replace(/\\n/g,'\n');
   const sourceMatch=raw.match(/(?:^|\n)Source:\s*([^\n]+)/i);
   if(sourceMatch){source=sourceMatch[1].trim();raw=raw.replace(sourceMatch[0],'').trim()}
   const bonusMatch=raw.match(/(?:^|\n)Fighter bonus feat:\s*(Yes|No)\.?/i);
@@ -694,7 +695,7 @@ const legacyFeatDetails=[
 function legacyFeatKey(name){return String(name||'').toLowerCase().replace(/[^a-z0-9]/g,'')}
 function enrichLegacyFeatData(){
  legacyFeatDetails.forEach(d=>{
-  const full='Prerequisites: '+d.prereq+'.\\n\\n'+d.summary+'\\n\\nFighter bonus feat: '+(d.fighter?'Yes':'No')+'.';
+  const full='Prerequisites: '+d.prereq+'.\n\n'+d.summary+'\n\nFighter bonus feat: '+(d.fighter?'Yes':'No')+'.';
   const feat=feats.find(f=>legacyFeatKey(f.name)===legacyFeatKey(d.name)||d.aliases.some(a=>legacyFeatKey(f.name)===legacyFeatKey(a)));
   if(feat){if(!String(feat.desc||'').trim())feat.desc=full;if(d.aliases.includes(feat.name))feat.name=d.name}
   const key=legacyFeatKey(d.name);
