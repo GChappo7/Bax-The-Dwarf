@@ -27,7 +27,7 @@ nav{position:fixed;bottom:0;left:0;right:0;background:#211912;border-top:1px sol
 .tab{display:none}.tab.active{display:block}.roll{font-size:28px;text-align:center;padding:10px;color:var(--gold);min-height:48px}
 .badge{display:inline-block;background:#493a28;color:var(--gold);padding:4px 8px;border-radius:20px;font-size:12px;margin:3px}
 .stat input{width:100%;text-align:center;background:transparent;border:none;color:var(--text);font-size:25px;font-weight:700;padding:0;font-family:inherit;line-height:1.2;height:auto;box-sizing:border-box;margin:0}
-.stat input:focus{outline:none}
+.stat input:focus{outline:none}.alignment-tile{display:flex;flex-direction:column;justify-content:center;gap:4px;cursor:pointer}.alignment-tile select{width:100%;min-width:0;background:transparent;border:0;color:var(--text);font:700 15px system-ui,-apple-system,Segoe UI,sans-serif;text-align:center;text-align-last:center;padding:4px 0;outline-offset:2px}.alignment-tile select option{background:var(--panel);color:var(--text)}
 input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 input[type=number]{-moz-appearance:textfield;appearance:textfield}
 #weaponsTable{font-size:13px;width:100%;border-collapse:collapse}
@@ -53,12 +53,12 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </style>
 </head>
 <body>
-<header><span class="deploy-badge">Deploy 02</span><h1>⚔️ Baxtorian “Bax”</h1><div class="sub">Dwarf • Fighter • Level <span id="headerLevel">10</span> • Neutral</div></header>
+<header><span class="deploy-badge">Deploy 02</span><h1>⚔️ Baxtorian “Bax”</h1><div class="sub">Dwarf • Fighter • Level <span id="headerLevel">10</span> • <span id="headerAlignment">Neutral</span></div></header>
 <main>
 <section id="home" class="tab active">
 <div class="grid">
 <div class="stat"><input type="number" id="level" data-save="level" value="10"><span>LEVEL</span></div><div class="stat"><b>Fighter</b><span>CLASS</span></div>
-<div class="stat"><b>Dwarf</b><span>RACE</span></div><div class="stat"><b>Neutral</b><span>ALIGNMENT</span></div>
+<div class="stat"><b>Dwarf</b><span>RACE</span></div><label class="stat alignment-tile"><select id="alignment" data-save="alignment" aria-label="Character alignment"><option>Lawful Good</option><option>Neutral Good</option><option>Chaotic Good</option><option>Lawful Neutral</option><option selected>Neutral</option><option>Chaotic Neutral</option><option>Lawful Evil</option><option>Neutral Evil</option><option>Chaotic Evil</option></select><span>ALIGNMENT</span></label>
 <button class="stat nav-tile" onclick="show('stats')"><b>📊</b><span>SKILLS</span></button><button class="stat nav-tile" onclick="show('feats')"><b>🧩</b><span>FEATS</span></button>
 </div>
 <div class="card"><h2>Hit Points</h2><div class="hp"><button onclick="hp(-1)" aria-label="Decrease hit points">−</button><input type="number" id="hp" value="100" min="0" step="1" inputmode="numeric" aria-label="Current hit points" onchange="setHp(this.value)"><button onclick="hp(1)" aria-label="Increase hit points">+</button></div><div style="text-align:center;color:var(--muted);margin-top:4px">Current HP · tap the number to edit</div></div>
@@ -154,6 +154,8 @@ document.querySelectorAll('[data-save]').forEach(el=>{let k='bax_'+el.dataset.sa
 document.querySelectorAll('[data-sync]').forEach(el=>{el.addEventListener('input',()=>{const k=el.dataset.sync;document.querySelectorAll('[data-sync="'+k+'"]').forEach(o=>{if(o!==el)o.value=el.value})})});
 const levelInput=document.getElementById('level'),headerLevel=document.getElementById('headerLevel');
 if(levelInput&&headerLevel){headerLevel.textContent=levelInput.value;levelInput.addEventListener('input',()=>{headerLevel.textContent=levelInput.value})}
+const alignmentInput=document.getElementById('alignment'),headerAlignment=document.getElementById('headerAlignment');
+if(alignmentInput&&headerAlignment){const savedAlignment=localStorage.getItem('bax_alignment');if(savedAlignment&&Array.from(alignmentInput.options).some(o=>o.value===savedAlignment))alignmentInput.value=savedAlignment;headerAlignment.textContent=alignmentInput.value;alignmentInput.addEventListener('change',()=>{headerAlignment.textContent=alignmentInput.value})}
 document.getElementById('hp').textContent=current;
 const hpRoundInit=document.getElementById('hpRound');if(hpRoundInit)hpRoundInit.value=current;
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
