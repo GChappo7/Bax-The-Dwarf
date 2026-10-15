@@ -448,7 +448,7 @@ try{databaseItems=JSON.parse(localStorage.getItem('bax_itemDatabase')||'[]')}cat
 // Restore key character items if they are missing, without replacing any existing database entries.
 let seededCharacterItems=false;
 const characterItemDefaults=[
-  {name:'Magical Full Plate (+2)',category:'Armour',rarity:['Magic'],description:'Full plate armour: +8 armour bonus and +2 enhancement bonus, for +10 total armour AC.',modifiers:[{id:'seed-fullplate-armour',type:'AC',target:'AC',value:8,bonusType:'Armour',notes:'Base full plate armour bonus.'},{id:'seed-fullplate-enhancement',type:'AC',target:'AC',value:2,bonusType:'Enhancement',notes:'Magical enhancement bonus to the armour.'}]},
+  {name:'Magical Full Plate (+2)',category:'Armour',rarity:['Magic'],description:'Full plate armour: +8 armour bonus and +2 enhancement bonus, for +10 total armour AC.',modifiers:[{id:'seed-fullplate-total-ac',type:'AC',target:'AC',value:10,bonusType:'Armour + enhancement',notes:'Combined total: +8 base full plate armour bonus and +2 magical enhancement bonus.'}]},
   {name:'Resistance Cloak +1',category:'Cloak',rarity:['Magic'],description:'Standard D&D 3.5e cloak of resistance: +1 resistance bonus on saving throws (not AC).',modifiers:[{id:'seed-resistance-cloak-save',type:'Saving throw',target:'All saving throws',value:1,bonusType:'Resistance',notes:'Does not increase AC under standard D&D 3.5e rules.'}]},
   {name:'Ring of Protection +1',category:'Rings',rarity:['Magic'],description:'Grants a +1 deflection bonus to AC.',modifiers:[{id:'seed-ring-protection-ac',type:'AC',target:'AC',value:1,bonusType:'Deflection',notes:'Deflection bonus to AC.'}]},
   {name:'Ring of Water Walking',category:'Rings',rarity:['Magic'],description:'Allows the wearer to walk on water.',modifiers:[{id:'seed-ring-water-walking',type:'Granted ability',target:'Other ability',value:0,notes:'Walk on water while worn.'}]},
@@ -467,6 +467,15 @@ characterItemDefaults.forEach(defaultItem=>{
     seededCharacterItems=true;
   }
 });
+// Normalize an already-seeded full plate entry so its AC bonus displays as +10, not just the +2 enhancement.
+const fullPlateItem=databaseItems.find(item=>String(item.name||'').trim().toLowerCase()==='magical full plate (+2)');
+if(fullPlateItem){
+  fullPlateItem.category='Armour';
+  fullPlateItem.description='Full plate armour: +8 armour bonus and +2 magical enhancement bonus, for +10 total armour AC.';
+  fullPlateItem.modifiers=[{id:'seed-fullplate-total-ac',type:'AC',target:'AC',value:10,bonusType:'Armour + enhancement',notes:'Combined total: +8 base full plate armour bonus and +2 magical enhancement bonus.'}];
+  fullPlateItem.updatedAt=new Date().toISOString();
+  seededCharacterItems=true;
+}
 if(seededCharacterItems)localStorage.setItem('bax_itemDatabase',JSON.stringify(databaseItems));
 let categoryVisibility={};
 try{categoryVisibility=JSON.parse(localStorage.getItem('bax_itemCategoryVisibility')||'{}')}catch(e){categoryVisibility={}}
@@ -892,7 +901,7 @@ loadCurrentAttack();
     let items=raw?JSON.parse(raw):[];
     if(!Array.isArray(items)) return;
     const defaults=[
-  {name:'Magical Full Plate (+2)',category:'Armour',rarity:['Magic'],description:'Full plate armour: +8 armour bonus and +2 enhancement bonus, for +10 total armour AC.',modifiers:[{id:'restored-fullplate-armour',type:'AC',target:'AC',value:8,bonusType:'Armour',notes:'Base full plate armour bonus.'},{id:'restored-fullplate-enhancement',type:'AC',target:'AC',value:2,bonusType:'Enhancement',notes:'Magical enhancement bonus to the armour.'}]},
+  {name:'Magical Full Plate (+2)',category:'Armour',rarity:['Magic'],description:'Full plate armour: +8 armour bonus and +2 enhancement bonus, for +10 total armour AC.',modifiers:[{id:'restored-fullplate-total-ac',type:'AC',target:'AC',value:10,bonusType:'Armour + enhancement',notes:'Combined total: +8 base full plate armour bonus and +2 magical enhancement bonus.'}]},
   {name:'Resistance Cloak +1',category:'Cloak',rarity:['Magic'],description:'Standard D&D 3.5e cloak of resistance: +1 resistance bonus on saving throws (not AC).',modifiers:[{id:'restored-resistance-cloak-save',type:'Saving throw',target:'All saving throws',value:1,bonusType:'Resistance',notes:'Does not increase AC under standard D&D 3.5e rules.'}]},
   {name:'Ring of Protection +1',category:'Rings',rarity:['Magic'],description:'Grants a +1 deflection bonus to AC.',modifiers:[{id:'restored-ring-protection-ac',type:'AC',target:'AC',value:1,bonusType:'Deflection',notes:'Deflection bonus to AC.'}]},
   {name:'Ring of Water Walking',category:'Rings',rarity:['Magic'],description:'Allows the wearer to walk on water.',modifiers:[{id:'restored-ring-water-walking',type:'Granted ability',target:'Other ability',value:0,notes:'Walk on water while worn.'}]},
