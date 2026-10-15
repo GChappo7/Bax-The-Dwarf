@@ -59,7 +59,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <div class="grid">
 <div class="stat"><input type="number" id="level" data-save="level" value="10"><span>LEVEL</span></div><div class="stat"><b>Fighter</b><span>CLASS</span></div>
 <div class="stat"><b>Dwarf</b><span>RACE</span></div><div class="stat"><b>Neutral</b><span>ALIGNMENT</span></div>
-<button class="stat nav-tile" onclick="show(\'stats\')"><b>📊</b><span>SKILLS</span></button><button class="stat nav-tile" onclick="show(\'feats\')"><b>🧩</b><span>FEATS</span></button>
+<button class="stat nav-tile" onclick="show('stats')"><b>📊</b><span>SKILLS</span></button><button class="stat nav-tile" onclick="show('feats')"><b>🧩</b><span>FEATS</span></button>
 </div>
 <div class="card"><h2>Hit Points</h2><div class="hp"><button onclick="hp(-1)" aria-label="Decrease hit points">−</button><input type="number" id="hp" value="100" min="0" step="1" inputmode="numeric" aria-label="Current hit points" onchange="setHp(this.value)"><button onclick="hp(1)" aria-label="Increase hit points">+</button></div><div style="text-align:center;color:var(--muted);margin-top:4px">Current HP · tap the number to edit</div></div>
 <div class="card"><h2>Quick Dice</h2><div class="dice actions">
@@ -143,7 +143,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <div class="card"><h2>Custom Items</h2><input data-save="items" placeholder="Weapons, armour, equipment..."></div>
 </section>
 </main>
-<nav><button onclick="show('home')">⚔️ Character</button><button onclick="show('stats')">📊 Stats</button><button onclick="show('weapons')">🗡️ Weapons</button><button onclick="show('feats')">🧩 Feats</button><button onclick="show('round')">🎲 Round</button><button onclick="show('notes')">📝 Notes</button></nav>
+<nav><button onclick="show('home')">⚔️ Character</button><button onclick="show('weapons')">🗡️ Weapons</button><button onclick="show('round')">🎲 Round</button><button onclick="show('notes')">📝 Notes</button></nav>
 <script>
 let current=Number(localStorage.getItem('bax_hp')); if(!Number.isFinite(current))current=100;
 function hp(n){current=Math.max(0,current+n);localStorage.setItem('bax_hp',current);document.getElementById('hp').value=current;const r=document.getElementById('hpRound');if(r)r.value=current}
