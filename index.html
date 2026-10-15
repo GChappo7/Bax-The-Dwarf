@@ -145,7 +145,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </main>
 <nav><button onclick="show('home')">⚔️ Character</button><button onclick="show('weapons')">🗡️ Weapons</button><button onclick="show('round')">🎲 Round</button><button onclick="show('notes')">📝 Notes</button></nav>
 <script>
-let current=Number(localStorage.getItem('bax_hp')); if(!Number.isFinite(current))current=100;
+const savedHp=localStorage.getItem('bax_hp'); let current=(savedHp===null||savedHp==='')?100:Number(savedHp); if(!Number.isFinite(current))current=100;
 function hp(n){current=Math.max(0,current+n);localStorage.setItem('bax_hp',current);document.getElementById('hp').value=current;const r=document.getElementById('hpRound');if(r)r.value=current}
 function setHp(value){current=Math.max(0,Number(value)||0);localStorage.setItem('bax_hp',current);document.getElementById('hp').value=current;const r=document.getElementById('hpRound');if(r)r.value=current}
 function roll(n){let r=Math.floor(Math.random()*n)+1;document.getElementById('roll').textContent='d'+n+' → '+r}
