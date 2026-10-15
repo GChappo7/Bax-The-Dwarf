@@ -826,4 +826,28 @@ renderAttackChoices();
 loadCurrentAttack();
 
 </script>
+<script>
+/* Recovery safety net: seed the two essential character items independently of the main app script. */
+(function(){
+  try {
+    const storageKey='bax_itemDatabase';
+    const raw=localStorage.getItem(storageKey);
+    let items=raw?JSON.parse(raw):[];
+    if(!Array.isArray(items)) return;
+    const defaults=[
+      {name:'Gauntlets of Ogre Power',category:'Gloves',rarity:['Magic'],description:'These magical gauntlets grant a +2 enhancement bonus to Strength while equipped.',modifiers:[{id:'restored-gauntlets-str',type:'Ability score',target:'Strength',value:2,notes:'Applies only while equipped.'}]},
+      {name:'Adamant Heavy Shield',category:'Shield',rarity:['Standard'],description:'Heavy shield made of adamantine. Reminder: DR 3/− from the character’s adamantine shield rules.',modifiers:[{id:'restored-adamant-shield-ac',type:'AC',target:'AC',value:2,bonusType:'Shield',notes:'Heavy shield bonus.'}]}
+    ];
+    let changed=false;
+    defaults.forEach(d=>{
+      if(!items.some(i=>String(i&&i.name||'').trim().toLowerCase()===d.name.toLowerCase())){
+        items.push({...d,id:'restored-'+d.name.toLowerCase().replace(/[^a-z0-9]+/g,'-'),createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()});
+        changed=true;
+      }
+    });
+    if(changed) localStorage.setItem(storageKey,JSON.stringify(items));
+    try { databaseItems=items; if(typeof renderDatabaseItems==='function') renderDatabaseItems(); } catch(e) {}
+  } catch(e) { console.error('Character item recovery failed:',e); }
+})();
+</script>
 </body></html>
