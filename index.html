@@ -70,6 +70,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .ability-modifier-row strong{font-size:20px;color:var(--gold)}
 @media(min-width:520px){.ability-score-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .skills-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.round-calc-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border,#454b50)}.round-calc-row span,.round-calc-row label{font-weight:650}.round-calc-row small{display:block;color:var(--muted);font-size:11px;font-weight:400}.round-calc-row input{width:100px;max-width:38%;text-align:right}.round-roll-row{margin-top:4px;padding:12px 0}.round-roll-row input{font-size:18px;font-weight:800}.round-calc-total{display:flex;justify-content:space-between;align-items:center;padding:14px 0 2px;font-size:16px}.round-calc-total strong{font-size:24px;color:var(--gold)}
 .skill-box{min-width:0;aspect-ratio:1/0.82;display:flex;flex-direction:column;justify-content:space-between;gap:8px;padding:10px;background:var(--panel2);border:1px solid #51402f;border-radius:10px}
 .skill-box>label{font-size:13px;font-weight:800;color:var(--gold);overflow-wrap:anywhere}
 .skill-modifier{display:flex;align-items:center;justify-content:space-between;gap:6px;border-top:1px solid #443528;padding-top:7px}
@@ -202,31 +203,34 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </div>
 <p id="activeAttackHint" style="margin-bottom:0;color:var(--muted)">Editing Attack 1</p>
 </div>
-<div class="card"><h2>Base Attack Bonus</h2>
-<p style="color:var(--muted);margin-top:0">Set the base attack bonus for this attack. Leave blank to use the selected weapon's Base value.</p>
-<label>Base attack bonus for selected attack
-<input id="roundBab" type="number" inputmode="numeric" step="1" placeholder="e.g. 6 or 1" style="width:100%;margin-top:6px" onchange="updateRoundBab(this.value)">
-</label>
+<div class="card"><h2>Current Weapon</h2>
+<label for="roundWeaponSelect">Weapon</label>
+<select id="roundWeaponSelect" onchange="onRoundWeaponChange(this.value)"></select>
+</div>
+<div class="card"><h2>Attack Roll</h2>
+<p style="color:var(--muted);margin-top:0">Enter the modifiers for this attack sequence, then enter the d20 result you rolled.</p>
+<div class="round-calc-row"><span>Base attack</span><input id="roundAttackBase" type="number" inputmode="numeric" onchange="updateRoundCalc('attackBase',this.value)" aria-label="Attack base attack bonus"></div>
+<div class="round-calc-row"><span>STR bonus <small>(from ability score)</small></span><strong id="roundAttackStr">—</strong></div>
+<div class="round-calc-row"><span>Feats</span><input id="roundAttackFeats" type="number" inputmode="numeric" onchange="updateRoundCalc('attackFeats',this.value)" aria-label="Attack feats bonus"></div>
+<div class="round-calc-row"><span>Weapon bonus</span><strong id="roundAttackWeapon">—</strong></div>
+<div class="round-calc-row round-roll-row"><label for="roundAttackRolled">Your d20 roll</label><input id="roundAttackRolled" type="number" inputmode="numeric" min="1" max="20" placeholder="Roll" onchange="updateRoundCalc('attackRolled',this.value)"></div>
+<div class="round-calc-total"><span>Attack total</span><strong id="roundAttackResult">—</strong></div>
+</div>
+<div class="card"><h2>Damage Roll</h2>
+<p style="color:var(--muted);margin-top:0">Enter the damage modifiers for this attack sequence, then enter the damage rolled on your dice.</p>
+<div class="round-calc-row"><span>Base</span><input id="roundDamageBase" type="number" inputmode="numeric" onchange="updateRoundCalc('damageBase',this.value)" aria-label="Damage base bonus"></div>
+<div class="round-calc-row"><span>STR bonus <small>(from ability score)</small></span><strong id="roundDamageStr">—</strong></div>
+<div class="round-calc-row"><span>Feats</span><input id="roundDamageFeats" type="number" inputmode="numeric" onchange="updateRoundCalc('damageFeats',this.value)" aria-label="Damage feats bonus"></div>
+<div class="round-calc-row"><span>Weapon bonus</span><strong id="roundDamageWeapon">—</strong></div>
+<div class="round-calc-row round-roll-row"><label for="roundDamageRolled">Your damage roll</label><input id="roundDamageRolled" type="number" inputmode="numeric" min="0" placeholder="Damage" onchange="updateRoundCalc('damageRolled',this.value)"></div>
+<div class="round-calc-total"><span>Damage total</span><strong id="roundDamageResult">—</strong></div>
 </div>
 <div class="card"><h2>Current Status</h2>
 <div class="row"><span>Current HP</span><input type="number" id="hpRound" style="width:90px;text-align:right" onchange="setHp(this.value)"></div>
 <div class="row"><span>Current Armour Class</span><strong id="currentAcRound">—</strong></div><div class="row"><span>Base AC</span><strong id="baseAcRound">—</strong></div>
 </div>
 
-<div class="card"><h2>Current Weapon</h2>
-<select id="roundWeaponSelect" onchange="onRoundWeaponChange(this.value)"></select>
-<div class="grid" style="margin-top:10px">
-<div class="stat"><b id="roundWeaponAtk">—</b><span>WEAPON ATTACK ROLL</span></div>
-<div class="stat"><b id="roundWeaponDmg">—</b><span>WEAPON DAMAGE ROLL</span></div>
-</div>
-</div>
 
-<div class="card"><h2>Round Totals</h2>
-<div class="grid">
-<div class="stat"><b id="roundAtkTotal">—</b><span>ATTACK ROLL TOTAL MODIFIER</span></div>
-<div class="stat"><b id="roundDmgTotal">—</b><span>DAMAGE ROLL MODIFIER</span></div>
-</div>
-</div>
 
 <div class="card"><h2>Round Modifiers</h2>
 <p style="color:var(--muted);margin-top:0">Add temporary modifiers for this round (buffs, debuffs, situational effects). These stack on top of the weapon's own numbers.</p>
@@ -407,7 +411,7 @@ function formatTotal(o){
 function addWeapon(){weapons.push({id:Date.now(),name:'New Weapon',atk:blankRoll(),dmg:blankRoll()});saveWeapons();renderWeapons();if(typeof roundWeaponId!=='undefined')renderRoundOptions()}
 function removeWeapon(id){weapons=weapons.filter(w=>w.id!==id);saveWeapons();if(typeof roundWeaponId!=='undefined'&&String(roundWeaponId)===String(id)){roundWeaponId='';localStorage.removeItem('bax_round_weapon')}renderWeapons();if(typeof roundWeaponId!=='undefined')renderRoundOptions()}
 function updateWeaponName(id,value){const w=weapons.find(w=>w.id===id);if(!w)return;w.name=value;saveWeapons();if(typeof roundWeaponId!=='undefined')renderRoundOptions()}
-function updateWeaponField(id,rollType,field,value){const w=weapons.find(w=>w.id===id);if(!w)return;w[rollType][field]=Number(value)||0;saveWeapons();renderWeapons()}
+function updateWeaponField(id,rollType,field,value){const w=weapons.find(w=>w.id===id);if(!w)return;w[rollType][field]=Number(value)||0;saveWeapons();renderWeapons();if(typeof renderRoundCalc==='function')renderRoundCalc()}
 function effectiveStrengthModifier(roll){const input=document.getElementById('ability_str');if(input&&input.value.trim()!=='')return Math.floor((Number(input.value)-10)/2);return Number(roll.str)||0}
 function effectiveRoll(roll){return {...roll,str:effectiveStrengthModifier(roll)}}
 function total(o){return(o.base||0)+(o.str||0)+(o.feats||0)+(o.wpn||0)}
@@ -438,7 +442,7 @@ function renderWeapons(){
   `).join('')
 }
 renderWeapons();
-document.getElementById('ability_str').addEventListener('input',()=>{renderWeapons();updateWeaponDisplay()});
+document.getElementById('ability_str').addEventListener('input',()=>{renderWeapons();if(typeof renderRoundCalc==='function')renderRoundCalc()});
 
 // --- Feats & Maneuvers ---
 const DEFAULT_FEATS=[
@@ -480,12 +484,15 @@ if(!Array.isArray(attackRounds)||attackRounds.length!==3){
   let oldMods=[];try{oldMods=JSON.parse(localStorage.getItem('bax_roundmods')||'[]')}catch(e){}
   attackRounds=[1,2,3].map((n)=>({attackMods:n===1?oldMods.filter(m=>Number(m.atk)!==0||Number(m.dmg)===0).map(m=>({id:m.id,name:m.name,value:Number(m.atk)||0})):[],damageMods:n===1?oldMods.filter(m=>Number(m.dmg)!==0).map(m=>({id:Number(m.id)+100000,name:m.name,value:Number(m.dmg)||0})):[]}));
 }
-attackRounds=attackRounds.map(c=>{if(Array.isArray(c.attackMods)||Array.isArray(c.damageMods))return {attackMods:Array.isArray(c.attackMods)?c.attackMods:[],damageMods:Array.isArray(c.damageMods)?c.damageMods:[],bab:c.bab===undefined||c.bab===null||c.bab===''?null:Number(c.bab)||0};const legacy=Array.isArray(c.mods)?c.mods:[];return {attackMods:legacy.filter(m=>Number(m.atk)!==0||Number(m.dmg)===0).map(m=>({id:m.id,name:m.name,value:Number(m.atk)||0})),damageMods:legacy.filter(m=>Number(m.dmg)!==0).map(m=>({id:Number(m.id)+100000,name:m.name,value:Number(m.dmg)||0})),bab:null}});
+attackRounds=attackRounds.map(c=>{const legacy=Array.isArray(c.mods)?c.mods:[];return {...c,attackMods:Array.isArray(c.attackMods)?c.attackMods:legacy.filter(m=>Number(m.atk)!==0||Number(m.dmg)===0).map(m=>({id:m.id,name:m.name,value:Number(m.atk)||0})),damageMods:Array.isArray(c.damageMods)?c.damageMods:legacy.filter(m=>Number(m.dmg)!==0).map(m=>({id:Number(m.id)+100000,name:m.name,value:Number(m.dmg)||0})),attackBase:c.attackBase??(c.bab??null),attackFeats:c.attackFeats??0,damageBase:c.damageBase??null,damageFeats:c.damageFeats??0,attackRolled:c.attackRolled??null,damageRolled:c.damageRolled??null}});
 let roundMods={attackMods:[],damageMods:[]};
 function saveAttackRounds(){localStorage.setItem('bax_attack_rounds',JSON.stringify(attackRounds))}
-function saveCurrentAttack(){attackRounds[activeAttack-1]={attackMods:roundMods.attackMods.map(m=>({...m})),damageMods:roundMods.damageMods.map(m=>({...m})),bab:attackRounds[activeAttack-1]?.bab??null};saveAttackRounds();localStorage.setItem('bax_round_weapon',roundWeaponId)}
-function loadCurrentAttack(){const c=attackRounds[activeAttack-1]||{attackMods:[],damageMods:[],bab:null};roundMods={attackMods:c.attackMods.map(m=>({...m})),damageMods:c.damageMods.map(m=>({...m}))};const bab=document.getElementById('roundBab');if(bab)bab.value=c.bab===null||c.bab===undefined?'':c.bab;localStorage.setItem('bax_active_attack',String(activeAttack));renderAttackChoices();renderRoundOptions()}
-function updateRoundBab(value){attackRounds[activeAttack-1]=attackRounds[activeAttack-1]||{attackMods:[],damageMods:[],bab:null};attackRounds[activeAttack-1].bab=value.trim()===''?null:(Number(value)||0);saveAttackRounds();updateRoundTotals()}
+function currentAttackConfig(){return attackRounds[activeAttack-1]||(attackRounds[activeAttack-1]={attackMods:[],damageMods:[],attackBase:null,attackFeats:0,damageBase:null,damageFeats:0,attackRolled:null,damageRolled:null})}
+function saveCurrentAttack(){const c=currentAttackConfig();c.attackMods=roundMods.attackMods.map(m=>({...m}));c.damageMods=roundMods.damageMods.map(m=>({...m}));saveAttackRounds();localStorage.setItem('bax_round_weapon',roundWeaponId)}
+function loadCurrentAttack(){const c=currentAttackConfig();roundMods={attackMods:c.attackMods.map(m=>({...m})),damageMods:c.damageMods.map(m=>({...m}))};[['roundAttackBase','attackBase'],['roundAttackFeats','attackFeats'],['roundDamageBase','damageBase'],['roundDamageFeats','damageFeats'],['roundAttackRolled','attackRolled'],['roundDamageRolled','damageRolled']].forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.value=c[key]===null||c[key]===undefined?'':c[key]});localStorage.setItem('bax_active_attack',String(activeAttack));renderAttackChoices();renderRoundOptions();renderRoundCalc()}
+function updateRoundCalc(key,value){const c=currentAttackConfig();c[key]=value.trim()===''?null:(Number(value)||0);saveAttackRounds();renderRoundCalc()}
+function abilityStrength(){const el=document.getElementById('ability_str');return el&&el.value.trim()!==''?Math.floor((Number(el.value)-10)/2):0}
+function renderRoundCalc(){const c=currentAttackConfig();const w=weapons.find(w=>String(w.id)===String(roundWeaponId));const str=abilityStrength();const atkWeapon=w?Number(w.atk.wpn)||0:0;const dmgWeapon=w?Number(w.dmg.wpn)||0:0;const fields=[['roundAttackStr',str],['roundDamageStr',str],['roundAttackWeapon',atkWeapon],['roundDamageWeapon',dmgWeapon]];fields.forEach(([id,val])=>{const el=document.getElementById(id);if(el)el.textContent=(val>0?'+':'')+val});const attackTotal=(Number(c.attackBase)||0)+str+(Number(c.attackFeats)||0)+atkWeapon+(Number(c.attackRolled)||0);const damageTotal=(Number(c.damageBase)||0)+str+(Number(c.damageFeats)||0)+dmgWeapon+(Number(c.damageRolled)||0);const ar=document.getElementById('roundAttackResult'),dr=document.getElementById('roundDamageResult');if(ar)ar.textContent=c.attackRolled===null||c.attackRolled===undefined?'Enter your d20 roll':String(attackTotal);if(dr)dr.textContent=c.damageRolled===null||c.damageRolled===undefined?'Enter your damage roll':String(damageTotal)}
 function selectAttack(n){saveCurrentAttack();activeAttack=n;loadCurrentAttack()}
 function renderAttackChoices(){[1,2,3].forEach(n=>{const b=document.getElementById('attackChoice'+n);if(b){b.style.background=n===activeAttack?'var(--accent, #d6b15e)':'var(--card, #22282c)';b.style.color=n===activeAttack?'#171717':'inherit';b.style.border=n===activeAttack?'2px solid var(--accent, #d6b15e)':'1px solid var(--border, #454b50)';b.setAttribute('aria-pressed',String(n===activeAttack))}});const h=document.getElementById('activeAttackHint');if(h)h.textContent='Editing Attack '+activeAttack+' — attack and damage modifiers are separate.';}
 function addRoundMod(type){const list=type==='atk'?roundMods.attackMods:roundMods.damageMods;list.push({id:Date.now(),name:type==='atk'?'New Attack Modifier':'New Damage Modifier',value:0});saveCurrentAttack();renderRoundMods();updateRoundTotals()}
@@ -493,11 +500,8 @@ function removeRoundMod(type,id){const key=type==='atk'?'attackMods':'damageMods
 function updateRoundModField(type,id,field,value){const key=type==='atk'?'attackMods':'damageMods';const m=roundMods[key].find(m=>String(m.id)===String(id));if(!m)return;m[field]=field==='name'?value:(Number(value)||0);saveCurrentAttack();if(field!=='name')updateRoundTotals()}
 function renderModRows(type,bodyId){const list=type==='atk'?roundMods.attackMods:roundMods.damageMods;const body=document.getElementById(bodyId);if(!list.length){body.innerHTML='<tr><td colspan="3" style="color:var(--muted);padding:14px;text-align:center;white-space:normal">No modifiers added.</td></tr>';return}body.innerHTML=list.map(m=>`<tr><td><input value="${String(m.name||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}" onchange="updateRoundModField('${type}',${Number(m.id)},'name',this.value)"></td><td><input type="number" value="${Number(m.value)||0}" onchange="updateRoundModField('${type}',${Number(m.id)},'value',this.value)"></td><td><button class="wpn-del" onclick="removeRoundMod('${type}',${Number(m.id)})">✕</button></td></tr>`).join('')}
 function renderRoundMods(){renderModRows('atk','attackModsBody');renderModRows('dmg','damageModsBody')}
-function renderRoundOptions(){const sel=document.getElementById('roundWeaponSelect');if(!sel)return;const prev=roundWeaponId;const options=weapons.map(w=>`<option value="${w.id}">${String(w.name||'Unnamed weapon').replace(/&/g,'&amp;').replace(/</g,'&lt;')}</option>`).join('');sel.innerHTML=(weapons.length?'<option value="">— Select weapon —</option>':'<option value="">No weapons yet — add one in Weapons</option>')+options;if(weapons.some(w=>String(w.id)===String(prev))){sel.value=prev}else{roundWeaponId='';sel.value='';localStorage.removeItem('bax_round_weapon')}renderRoundMods();updateWeaponDisplay()}
-function onRoundWeaponChange(value){roundWeaponId=value;localStorage.setItem('bax_round_weapon',value);updateWeaponDisplay()}
-function formatRoundTotal(dice,num){if(!dice)return String(num);if(num===0)return dice;return dice+' '+(num>=0?'+ ':'- ')+Math.abs(num)}
-function updateWeaponDisplay(){const w=weapons.find(w=>String(w.id)===String(roundWeaponId));document.getElementById('roundWeaponAtk').textContent=w?formatTotal(effectiveRoll(w.atk)):'—';document.getElementById('roundWeaponDmg').textContent=w?formatTotal(effectiveRoll(w.dmg)):'—';updateRoundTotals()}
-function updateRoundTotals(){const w=weapons.find(w=>String(w.id)===String(roundWeaponId));const current=attackRounds[activeAttack-1]||{};let a=w?total(effectiveRoll(w.atk)):0,d=w?total(effectiveRoll(w.dmg)):0;if(w&&current.bab!==null&&current.bab!==undefined)a+=(Number(current.bab)||0)-(Number(w.atk.base)||0);const ad=w?(w.atk.dice||'').trim():'';const dd=w?(w.dmg.dice||'').trim():'';roundMods.attackMods.forEach(m=>a+=Number(m.value)||0);roundMods.damageMods.forEach(m=>d+=Number(m.value)||0);document.getElementById('roundAtkTotal').textContent=formatRoundTotal(ad,a);document.getElementById('roundDmgTotal').textContent=formatRoundTotal(dd,d)}
+function renderRoundOptions(){const sel=document.getElementById('roundWeaponSelect');if(!sel)return;const prev=roundWeaponId;const options=weapons.map(w=>`<option value="${w.id}">${String(w.name||'Unnamed weapon').replace(/&/g,'&amp;').replace(/</g,'&lt;')}</option>`).join('');sel.innerHTML=(weapons.length?'<option value="">— Select weapon —</option>':'<option value="">No weapons yet — add one in Weapons</option>')+options;if(weapons.some(w=>String(w.id)===String(prev))){sel.value=prev}else{roundWeaponId='';sel.value='';localStorage.removeItem('bax_round_weapon')}renderRoundMods();renderRoundCalc()}
+function onRoundWeaponChange(value){roundWeaponId=value;localStorage.setItem('bax_round_weapon',value);renderRoundCalc()}
 renderAttackChoices();
 loadCurrentAttack();
 
