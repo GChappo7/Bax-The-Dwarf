@@ -164,7 +164,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <div class="item-form">
 <label>Item name<input id="dbItemName" placeholder="e.g. Gauntlets of Ogre Power"></label>
 <label>Equipment category<select id="dbItemCategory">
-<option>Headgear</option><option>Lens / Goggles</option><option>Armour</option><option>Shield</option><option>Robe / Vest / Shirt</option><option>Bracers</option><option>Cloak</option><option>Rings</option><option>Gloves</option><option>Amulet / Medallion</option><option>Necklace</option><option>Periapt / Phylactery</option><option>Broach / Scarab</option><option>Belt</option><option>Boots</option><option>Ioun Stones / Jewellery</option><option>Other</option>
+<option>Headgear</option><option>Lens / Goggles</option><option>Armour</option><option>Shield</option><option>Robe / Vest / Shirt</option><option>Bracers</option><option>Cloak</option><option>Rings</option><option>Gloves</option><option>Amulet / Medallion</option><option>Necklace</option><option>Periapt / Phylactery</option><option>Broach / Scarab</option><option>Belt</option><option>Boots</option><option>Weapons</option><option>Ioun Stones / Jewellery</option><option>Other</option>
 </select></label>
 <div class="modifier-wide"><strong style="display:block;margin-bottom:8px">Rarity / quality (select all that apply)</strong><div class="rarity-options"><label class="category-toggle"><input type="checkbox" name="dbItemRarity" value="Standard" checked><span>Standard</span></label><label class="category-toggle"><input type="checkbox" name="dbItemRarity" value="Masterwork" ><span>Masterwork</span></label><label class="category-toggle"><input type="checkbox" name="dbItemRarity" value="Magic" ><span>Magic</span></label><label class="category-toggle"><input type="checkbox" name="dbItemRarity" value="Artifact" ><span>Artifact</span></label></div><p style="color:var(--muted);font-size:12px;margin:6px 0 0">You can combine qualities, e.g. Masterwork + Magic.</p></div>
 <label>Description / general notes<textarea id="dbItemDescription" rows="2" placeholder="Optional description or special rules"></textarea></label>
@@ -315,7 +315,7 @@ document.addEventListener('touchend',e=>{const now=Date.now();if(now-lastTouchEn
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 
 // --- Reusable equipment item database ---
-const equipmentCategories=['Headgear','Lens / Goggles','Armour','Shield','Robe / Vest / Shirt','Bracers','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Ioun Stones / Jewellery','Other'];
+const equipmentCategories=['Headgear','Lens / Goggles','Armour','Shield','Robe / Vest / Shirt','Bracers','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Weapons','Ioun Stones / Jewellery','Other'];
 const modifierTypes=['Ability score','AC','Saving throw','Skill','Attack roll','Damage roll','Damage reduction','Resistance','Movement speed','Granted ability','Penalty','Other'];
 const abilityTargets=['Strength','Dexterity','Constitution','Intelligence','Wisdom','Charisma'];
 let databaseItems=[],pendingModifiers=[],editingDatabaseItemId=null;
