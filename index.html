@@ -827,33 +827,52 @@ loadCurrentAttack();
 
 </script>
 <script>
-/* Independent click wiring for Attack 1/2/3. */
+/* Capture-phase attack selector: ensure taps always change the active attack and load its fields. */
 (function(){
-  function wireAttackButtons(){
-    [1,2,3].forEach(function(n){
-      var b=document.getElementById('attackChoice'+n);
-      if(!b||b.dataset.attackWired==='yes')return;
-      b.dataset.attackWired='yes';
-      b.removeAttribute('onclick');
-      b.addEventListener('click',function(ev){
-        ev.preventDefault();
-        try { if(typeof selectAttack==='function') selectAttack(n); } catch(err) { console.error('Attack selection refresh failed:',err); }
-        try { activeAttack=n; localStorage.setItem('bax_active_attack',String(n)); } catch(err) {}
-        [1,2,3].forEach(function(k){
-          var btn=document.getElementById('attackChoice'+k);
-          if(!btn)return;
-          btn.style.background=k===n?'var(--accent, #d6b15e)':'var(--card, #22282c)';
-          btn.style.color=k===n?'#171717':'inherit';
-          btn.style.border=k===n?'2px solid var(--accent, #d6b15e)':'1px solid var(--border, #454b50)';
-          btn.setAttribute('aria-pressed',String(k===n));
-        });
-        var hint=document.getElementById('activeAttackHint');
-        if(hint)hint.textContent='Editing Attack '+n+' — attack and damage modifiers are separate.';
+  document.addEventListener('click',function(ev){
+    var target=ev.target;
+    var button=target&&target.closest?target.closest('#attackChoice1, #attackChoice2, #attackChoice3'):null;
+    if(!button)return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    var n=Number(button.id.replace('attackChoice',''));
+    if(![1,2,3].includes(n))return;
+    try {
+      if(typeof saveCurrentAttack==='function')saveCurrentAttack();
+    } catch(err) { console.error('Saving previous attack failed',err); }
+    try {
+      activeAttack=n;
+      localStorage.setItem('bax_active_attack',String(n));
+      var c=attackRounds[n-1];
+      if(!c||typeof c!=='object')c=attackRounds[n-1]={attackMods:[],damageMods:[]};
+      c.attackMods=Array.isArray(c.attackMods)?c.attackMods:[];
+      c.damageMods=Array.isArray(c.damageMods)?c.damageMods:[];
+      roundMods={attackMods:c.attackMods.map(function(m){return Object.assign({},m)}),damageMods:c.damageMods.map(function(m){return Object.assign({},m)})};
+      [['roundAttackBase','attackBase'],['roundAttackFeats','attackFeats'],['roundDamageBase','damageBase'],['roundDamageFeats','damageFeats'],['roundDamageOther','damageOther'],['roundAttackRolled','attackRolled'],['roundDamageRolled','damageRolled']].forEach(function(pair){
+        var el=document.getElementById(pair[0]);
+        if(el)el.value=c[pair[1]]==null?'':c[pair[1]];
       });
-    });
-  }
-  wireAttackButtons();
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',wireAttackButtons);
+      var critical=document.getElementById('roundCriticalConfirmed');
+      if(critical)critical.checked=!!c.criticalConfirmed;
+      [1,2,3].forEach(function(k){
+        var b=document.getElementById('attackChoice'+k);
+        if(!b)return;
+        b.style.background=k===n?'var(--accent, #d6b15e)':'var(--card, #22282c)';
+        b.style.color=k===n?'#171717':'inherit';
+        b.style.border=k===n?'2px solid var(--accent, #d6b15e)':'1px solid var(--border, #454b50)';
+        b.setAttribute('aria-pressed',String(k===n));
+      });
+      var hint=document.getElementById('activeAttackHint');
+      if(hint)hint.textContent='Editing Attack '+n+' — attack and damage modifiers are separate.';
+      try{if(typeof renderRoundOptions==='function')renderRoundOptions()}catch(err){console.error('Weapon options refresh failed',err)}
+      try{if(typeof renderRoundMods==='function')renderRoundMods()}catch(err){console.error('Modifier refresh failed',err)}
+      try{if(typeof renderRoundCalc==='function')renderRoundCalc()}catch(err){console.error('Attack totals refresh failed',err)}
+    } catch(err) {
+      console.error('Attack switch failed',err);
+      var hint=document.getElementById('activeAttackHint');
+      if(hint)hint.textContent='Attack '+n+' selected, but some fields could not refresh. Please reload the app.';
+    }
+  },true);
 })();
 /* Recovery safety net: seed the two essential character items independently of the main app script. */
 (function(){
