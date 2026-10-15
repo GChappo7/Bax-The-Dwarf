@@ -937,7 +937,7 @@ loadCurrentAttack();
     if(!box)return;
     try{if(typeof renderCategoryVisibility==='function'){renderCategoryVisibility();return;}}catch(e){}
     let saved={};try{saved=JSON.parse(localStorage.getItem('bax_itemCategoryVisibility')||'{}')||{}}catch(e){}
-    box.innerHTML=categories.map(c=>'<label class="category-toggle"><input type="checkbox" data-fallback-category="'+c.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')+'" '+(saved[c]===undefined?(!['Periapt / Phylactery','Broach / Scarab'].includes(c)):!!saved[c]?'checked':'')+'><span>'+c+'</span></label>').join('');
+    box.innerHTML=categories.map(c=>'<label class="category-toggle"><input type="checkbox" data-fallback-category="'+c.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')+'" '+((saved[c]===undefined?!['Periapt / Phylactery','Broach / Scarab'].includes(c):!!saved[c])?'checked':'')+'><span>'+c+'</span></label>').join('');
   }
   document.addEventListener('change',function(e){
     const input=e.target;if(!input||!input.dataset||!input.dataset.fallbackCategory)return;
