@@ -279,7 +279,7 @@ document.addEventListener('touchend',e=>{const now=Date.now();if(now-lastTouchEn
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 
 // --- Reusable equipment item database ---
-const equipmentCategories=['Headgear','Lens / Goggles','Armour','Shield','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Ioun Stones / Jewellery','Other'];
+const equipmentCategories=['Headgear','Lens / Goggles','Armour','Shield','Robe / Vest / Shirt','Bracers','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Ioun Stones / Jewellery','Other'];
 const modifierTypes=['Ability score','AC','Saving throw','Skill','Attack roll','Damage roll','Damage reduction','Resistance','Movement speed','Granted ability','Penalty','Other'];
 const abilityTargets=['Strength','Dexterity','Constitution','Intelligence','Wisdom','Charisma'];
 let databaseItems=[],pendingModifiers=[];
