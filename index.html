@@ -179,7 +179,7 @@ const classInput=document.getElementById('characterClass'),headerClass=document.
 if(classInput&&headerClass){const savedClass=localStorage.getItem('bax_characterClass');if(savedClass&&Array.from(classInput.options).some(o=>o.value===savedClass))classInput.value=savedClass;headerClass.textContent=classInput.value;classInput.addEventListener('change',()=>{headerClass.textContent=classInput.value})}
 const raceInput=document.getElementById('race'),headerRace=document.getElementById('headerRace');
 if(raceInput&&headerRace){const savedRace=localStorage.getItem('bax_race');if(savedRace&&Array.from(raceInput.options).some(o=>o.value===savedRace))raceInput.value=savedRace;headerRace.textContent=raceInput.value;raceInput.addEventListener('change',()=>{headerRace.textContent=raceInput.value})}
-document.getElementById('hp').textContent=current;
+document.getElementById('hp').value=current;const hpTileInit=document.getElementById('currentHpTile');if(hpTileInit)hpTileInit.textContent=current;
 const hpRoundInit=document.getElementById('hpRound');if(hpRoundInit)hpRoundInit.value=current;
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 
