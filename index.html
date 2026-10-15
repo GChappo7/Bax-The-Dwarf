@@ -204,7 +204,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </div>
 <div class="card"><h2>Base Attack Bonus</h2>
 <p style="color:var(--muted);margin-top:0">Set the base attack bonus for this attack. Leave blank to use the selected weapon's Base value.</p>
-<label>Attack ${activeAttack} base attack bonus
+<label>Base attack bonus for selected attack
 <input id="roundBab" type="number" inputmode="numeric" step="1" placeholder="e.g. 6 or 1" style="width:100%;margin-top:6px" onchange="updateRoundBab(this.value)">
 </label>
 </div>
@@ -487,7 +487,7 @@ function saveCurrentAttack(){attackRounds[activeAttack-1]={attackMods:roundMods.
 function loadCurrentAttack(){const c=attackRounds[activeAttack-1]||{attackMods:[],damageMods:[],bab:null};roundMods={attackMods:c.attackMods.map(m=>({...m})),damageMods:c.damageMods.map(m=>({...m}))};const bab=document.getElementById('roundBab');if(bab)bab.value=c.bab===null||c.bab===undefined?'':c.bab;localStorage.setItem('bax_active_attack',String(activeAttack));renderAttackChoices();renderRoundOptions()}
 function updateRoundBab(value){attackRounds[activeAttack-1]=attackRounds[activeAttack-1]||{attackMods:[],damageMods:[],bab:null};attackRounds[activeAttack-1].bab=value.trim()===''?null:(Number(value)||0);saveAttackRounds();updateRoundTotals()}
 function selectAttack(n){saveCurrentAttack();activeAttack=n;loadCurrentAttack()}
-function renderAttackChoices(){[1,2,3].forEach(n=>{const b=document.getElementById('attackChoice'+n);if(b){b.style.background=n===activeAttack?'var(--accent, #d6b15e)':'var(--card, #22282c)';b.style.color=n===activeAttack?'#171717':'inherit';b.style.border=n===activeAttack?'2px solid var(--accent, #d6b15e)':'1px solid var(--border, #454b50)';b.setAttribute('aria-pressed',String(n===activeAttack))}});const h=document.getElementById('activeAttackHint');if(h)h.textContent='Editing Attack '+activeAttack+' — attack and damage modifiers are separate.';const label=document.querySelector('label[for="roundBab"]');}
+function renderAttackChoices(){[1,2,3].forEach(n=>{const b=document.getElementById('attackChoice'+n);if(b){b.style.background=n===activeAttack?'var(--accent, #d6b15e)':'var(--card, #22282c)';b.style.color=n===activeAttack?'#171717':'inherit';b.style.border=n===activeAttack?'2px solid var(--accent, #d6b15e)':'1px solid var(--border, #454b50)';b.setAttribute('aria-pressed',String(n===activeAttack))}});const h=document.getElementById('activeAttackHint');if(h)h.textContent='Editing Attack '+activeAttack+' — attack and damage modifiers are separate.';}
 function addRoundMod(type){const list=type==='atk'?roundMods.attackMods:roundMods.damageMods;list.push({id:Date.now(),name:type==='atk'?'New Attack Modifier':'New Damage Modifier',value:0});saveCurrentAttack();renderRoundMods();updateRoundTotals()}
 function removeRoundMod(type,id){const key=type==='atk'?'attackMods':'damageMods';roundMods[key]=roundMods[key].filter(m=>String(m.id)!==String(id));saveCurrentAttack();renderRoundMods();updateRoundTotals()}
 function updateRoundModField(type,id,field,value){const key=type==='atk'?'attackMods':'damageMods';const m=roundMods[key].find(m=>String(m.id)===String(id));if(!m)return;m[field]=field==='name'?value:(Number(value)||0);saveCurrentAttack();if(field!=='name')updateRoundTotals()}
