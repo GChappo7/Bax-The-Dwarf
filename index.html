@@ -50,6 +50,13 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .modtable input{background:#17130f;color:var(--text);border:1px solid #51402f;border-radius:6px;padding:4px;font:inherit;text-align:center}
 .modtable input[data-field="name"]{width:110px;text-align:left}
 .modtable input[data-field="atk"],.modtable input[data-field="dmg"]{width:60px}
+
+/* Keep the HP controls and the two supporting values in separate, non-overlapping rows. */
+.vitals-tile{padding:16px;text-align:center;gap:12px}
+.vitals-footer{display:flex;align-items:flex-end;justify-content:space-between;width:100%;gap:12px;margin-top:2px}
+.vitals-max-hp,.vitals-ac{position:static;flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:76px;text-align:center;border:0;padding:0;background:transparent}
+.vitals-max-hp label,.vitals-ac span{font-size:10px;color:var(--muted);letter-spacing:.05em}
+.vitals-max-hp input,.vitals-ac input{display:block;width:66px;max-width:100%;padding:0;background:transparent;border:1px solid #51402f;border-radius:6px;color:var(--gold);font:800 24px system-ui,-apple-system,Segoe UI,sans-serif;text-align:center}
 </style>
 </head>
 <body>
@@ -57,7 +64,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <main>
 <section id="home" class="tab active">
 <div class="grid">
-<div class="stat vitals-tile"><div class="vitals-hp"><div class="health-track" role="progressbar" id="healthTrack" aria-label="Health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="healthFill" class="health-fill unknown"></div></div><span class="vitals-label">CURRENT HP</span><div class="hp"><button onclick="hp(-1)" aria-label="Decrease hit points">−</button><input type="number" id="hp" value="100" min="0" step="1" inputmode="numeric" aria-label="Current hit points" onchange="setHp(this.value)"><button onclick="hp(1)" aria-label="Increase hit points">+</button></div></div><div class="vitals-max-hp"><label for="maxHp">MAX HP</label><input id="maxHp" type="number" min="1" step="1" inputmode="numeric" placeholder="—" aria-label="Maximum hit points"></div><div class="vitals-ac"><input id="armourClassTile" data-save="ac" data-sync="ac" type="number" inputmode="numeric" aria-label="Armour class" placeholder="—"><span>ARMOUR CLASS</span></div></div>
+<div class="stat vitals-tile"><div class="vitals-hp"><div class="health-track" role="progressbar" id="healthTrack" aria-label="Health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="healthFill" class="health-fill unknown"></div></div><span class="vitals-label">CURRENT HP</span><div class="hp"><button onclick="hp(-1)" aria-label="Decrease hit points">−</button><input type="number" id="hp" value="100" min="0" step="1" inputmode="numeric" aria-label="Current hit points" onchange="setHp(this.value)"><button onclick="hp(1)" aria-label="Increase hit points">+</button></div></div><div class="vitals-footer"><div class="vitals-max-hp"><label for="maxHp">MAX HP</label><input id="maxHp" type="number" min="1" step="1" inputmode="numeric" placeholder="—" aria-label="Maximum hit points"></div><div class="vitals-ac"><input id="armourClassTile" data-save="ac" data-sync="ac" type="number" inputmode="numeric" aria-label="Armour class" placeholder="—"><span>ARMOUR CLASS</span></div></div></div>
 <button class="stat nav-tile" onclick="show('stats')"><b>📊</b><span>SKILLS</span></button><button class="stat nav-tile" onclick="show('feats')"><b>🧩</b><span>FEATS</span></button><button class="stat nav-tile" onclick="show('armour')"><b>🛡️</b><span>ARMOUR</span></button><button class="stat nav-tile" onclick="show('inventory')"><b>🎒</b><span>INVENTORY</span></button>
 </div>
 <div class="card"><h2>Quick Dice</h2><div class="dice actions">
