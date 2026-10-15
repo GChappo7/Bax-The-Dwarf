@@ -74,6 +74,25 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 #dbCategoryVisibility .category-toggle{gap:6px;padding:5px 0;font-size:12px}
 #dbCategoryVisibility .category-toggle input{width:15px;height:15px}
 @media(max-width:340px){#equippedCategorySelectors{grid-template-columns:1fr}}
+
+/* Equipment-driven Armour Class display */
+.ac-current-panel{display:flex;flex-direction:column;align-items:center;gap:5px;padding:20px 12px;margin:12px 0 16px;background:var(--panel2);border:1px solid var(--gold);border-radius:12px;text-align:center}
+.ac-current-panel span{font-size:12px;letter-spacing:.1em;color:var(--muted);font-weight:800}
+.ac-current-panel strong{font-size:52px;line-height:1.05;color:var(--gold);font-weight:900}
+.ac-current-panel small{font-size:12px;color:var(--muted)}
+.ac-bonus-sections{display:grid;grid-template-columns:1fr;gap:10px}
+.ac-bonus-section{padding:10px;background:var(--panel2);border:1px solid #443528;border-radius:9px;min-width:0}
+.ac-bonus-section h3{font-size:13px;color:var(--gold);margin:0 0 5px}
+.ac-bonus-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #3a2e24;font-size:13px}
+.ac-bonus-row:last-child{border-bottom:0}
+.ac-bonus-row>div{min-width:0;display:flex;flex-direction:column;gap:2px;overflow-wrap:anywhere}
+.ac-bonus-row small{font-size:11px;color:var(--muted)}
+.ac-bonus-row b{color:var(--gold);font-size:15px;flex:0 0 auto}
+.ac-bonus-row b.negative{color:#f08a78}
+.ac-empty{font-size:12px;color:var(--muted);margin:5px 0}
+.ac-advanced{margin-top:14px;border-top:1px solid #443528;padding-top:10px}
+.ac-advanced summary{font-size:12px;color:var(--muted);cursor:pointer}
+@media(min-width:520px){.ac-bonus-sections{grid-template-columns:1fr 1fr}.ac-bonus-section:last-child{grid-column:1/-1}}
 </style>
 </head>
 <body>
@@ -125,11 +144,11 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </section>
 
 <section id="armour" class="tab">
-<div class="card"><h2>Armour Class</h2><p style="color:var(--muted);margin-top:0">Your current AC updates from the bonuses below. Base AC is your unarmoured AC; by default it is 10 + your Dexterity modifier. If your rules use a different base, enter an override.</p>
-<div class="ac-summary"><div><span>BASE AC</span><strong id="baseAcSummary">—</strong><small>Without gear bonuses</small></div><div><span>CURRENT AC</span><strong id="currentAcSummary">—</strong><small>With bonuses applied</small></div></div>
-<label class="ac-field">Base AC override (optional)<input id="acBaseOverride" data-save="acBaseOverride" type="number" inputmode="numeric" placeholder="Auto: 10 + Dex modifier"></label>
-<div class="ac-modifier-grid"><label>Armour bonus<input id="acArmourBonus" data-save="acArmourBonus" type="number" inputmode="numeric" value="0"></label><label>Shield bonus<input id="acShieldBonus" data-save="acShieldBonus" type="number" inputmode="numeric" value="0"></label><label>Other bonuses / penalties<input id="acOtherBonus" data-save="acOtherBonus" type="number" inputmode="numeric" value="0"></label></div>
-<div class="ac-breakdown" id="acBreakdown">Base AC + armour + shield + other bonuses</div>
+<div class="card ac-card"><h2>Armour Class</h2><p style="color:var(--muted);margin-top:0">Current AC is calculated automatically from your Dexterity, equipped items and their AC modifiers.</p>
+<div class="ac-current-panel"><span>CURRENT AC</span><strong id="currentAcSummary">—</strong><small id="baseAcSummary">Base AC —</small></div>
+<div class="ac-bonus-sections"><div class="ac-bonus-section"><h3>Armour bonuses</h3><div id="acArmourDetails" class="ac-bonus-details"></div></div><div class="ac-bonus-section"><h3>Shield bonuses</h3><div id="acShieldDetails" class="ac-bonus-details"></div></div><div class="ac-bonus-section"><h3>Other bonuses / penalties</h3><div id="acOtherDetails" class="ac-bonus-details"></div></div></div>
+<details class="ac-advanced"><summary>Advanced AC settings</summary><label class="ac-field">Base AC override (optional)<input id="acBaseOverride" data-save="acBaseOverride" type="number" inputmode="numeric" placeholder="Auto: 10 + Dex modifier"></label><p style="color:var(--muted);font-size:12px;margin:4px 0 0">Leave blank to use 10 + your Dexterity modifier.</p></details>
+<div class="ac-breakdown" id="acBreakdown">Base AC + equipped item bonuses</div>
 </div>
 <div class="card"><h2>Armour &amp; Equipped Gear</h2><p style="color:var(--muted);margin-top:0">Choose equipped items from your Item Database. Only categories enabled in Category Visibility appear here. Add multiple rings if needed.</p><div id="equippedCategorySelectors"></div><p id="equippedEmptyHint" style="color:var(--muted);font-size:13px;display:none">No visible equipment categories. Enable categories in Item Database to show their dropdowns.</p></div>
 <div class="card"><h2>Armour Properties &amp; Notes</h2><textarea data-save="armourNotes" placeholder="Armour check penalty, max Dex, speed, special properties, magical effects..."></textarea></div>
@@ -236,24 +255,43 @@ if(localStorage.getItem('bax_acBaseOverride')===null && legacyAc!==null && legac
   if(override){override.value=legacyAc;localStorage.setItem('bax_acBaseOverride',legacyAc)}
 }
 function abilityModifier(score){return Math.floor((Number(score)-10)/2)}
+function getEquippedAcBonuses(){
+  const groups={armour:[],shield:[],other:[]};
+  const selected=[];
+  equipmentCategories.forEach(category=>getEquippedIds(category).forEach(id=>{const item=databaseItems.find(x=>String(x.id)===String(id));if(item)selected.push({category,item})}));
+  selected.forEach(({category,item})=>(item.modifiers||[]).filter(m=>m.type==='AC'&&m.value!==''&&Number.isFinite(Number(m.value))).forEach(m=>{
+    const entry={item:item.name,target:m.target||'AC',value:Number(m.value),bonusType:m.bonusType||'',notes:m.notes||''};
+    if(category==='Armour'||category==='Robe / Vest / Shirt')groups.armour.push(entry);
+    else if(category==='Shield')groups.shield.push(entry);
+    else groups.other.push(entry);
+  }));
+  return groups;
+}
+function renderAcBonusDetails(id,entries,emptyText){
+  const box=document.getElementById(id);if(!box)return;
+  if(!entries.length){box.innerHTML='<p class="ac-empty">'+emptyText+'</p>';return}
+  box.innerHTML=entries.map(entry=>'<div class="ac-bonus-row"><div><strong>'+escapeHtml(entry.item)+'</strong><small>'+escapeHtml(entry.target)+(entry.bonusType?' · '+escapeHtml(entry.bonusType):'')+'</small>'+(entry.notes?'<small class="ac-note">'+escapeHtml(entry.notes)+'</small>':'')+'</div><b class="'+(entry.value<0?'negative':'')+'">'+(entry.value>0?'+':'')+entry.value+'</b></div>').join('');
+}
 function updateArmourClass(){
   const dexInput=document.querySelector('[data-save="dex"]');
   const overrideInput=document.getElementById('acBaseOverride');
   const override=overrideInput&&overrideInput.value!==''?Number(overrideInput.value):null;
   const dex=dexInput&&dexInput.value!==''?Number(dexInput.value):null;
   const base=override!==null&&Number.isFinite(override)?override:(dex!==null&&Number.isFinite(dex)?10+abilityModifier(dex):10);
-  const armour=Number(document.getElementById('acArmourBonus')?.value)||0;
-  const shield=Number(document.getElementById('acShieldBonus')?.value)||0;
-  const other=Number(document.getElementById('acOtherBonus')?.value)||0;
-  const total=base+armour+shield+other;
+  const groups=typeof getEquippedAcBonuses==='function'?getEquippedAcBonuses():{armour:[],shield:[],other:[]};
+  const sum=entries=>entries.reduce((total,entry)=>total+entry.value,0);
+  const armour=sum(groups.armour),shield=sum(groups.shield),other=sum(groups.other),total=base+armour+shield+other;
   const set=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=String(value)};
   ['baseAcHome','baseAcStats','baseAcRound','baseAcSummary'].forEach(id=>set(id,base));
   ['currentAcHome','currentAcStats','currentAcRound','currentAcSummary'].forEach(id=>set(id,total));
+  renderAcBonusDetails('acArmourDetails',groups.armour,'No equipped armour AC modifiers.');
+  renderAcBonusDetails('acShieldDetails',groups.shield,'No equipped shield AC modifiers.');
+  renderAcBonusDetails('acOtherDetails',groups.other,'No other equipped AC modifiers.');
   const breakdown=document.getElementById('acBreakdown');
   if(breakdown)breakdown.textContent='Base '+base+' '+(armour>=0?'+ ':'− ')+Math.abs(armour)+' armour '+(shield>=0?'+ ':'− ')+Math.abs(shield)+' shield '+(other>=0?'+ ':'− ')+Math.abs(other)+' other = '+total+' AC';
   localStorage.setItem('bax_ac',String(total));
 }
-document.querySelectorAll('#acBaseOverride,#acArmourBonus,#acShieldBonus,#acOtherBonus,[data-save="dex"]').forEach(el=>el.addEventListener('input',updateArmourClass));
+document.querySelectorAll('#acBaseOverride,[data-save="dex"]').forEach(el=>el.addEventListener('input',updateArmourClass));
 updateArmourClass();
 const levelInput=document.getElementById('level'),headerLevel=document.getElementById('headerLevel');
 if(levelInput&&headerLevel){headerLevel.textContent=levelInput.value;levelInput.addEventListener('input',()=>{headerLevel.textContent=levelInput.value})}
@@ -303,9 +341,9 @@ let equippedItems={};
 try{equippedItems=JSON.parse(localStorage.getItem('bax_equippedItems')||'{}')}catch(e){equippedItems={}}
 function saveEquippedItems(){localStorage.setItem('bax_equippedItems',JSON.stringify(equippedItems))}
 function getEquippedIds(category){const value=equippedItems[category];if(Array.isArray(value))return value.map(String);return value?[String(value)]:[]}
-function updateEquippedItem(category,index,value){const ids=getEquippedIds(category);while(ids.length<=index)ids.push('');ids[index]=value;equippedItems[category]=multipleEquipmentCategories.includes(category)?ids:(value||'');saveEquippedItems()}
-function addEquippedSlot(category){const ids=getEquippedIds(category);ids.push('');equippedItems[category]=ids;saveEquippedItems();renderEquippedSelectors()}
-function removeEquippedSlot(category,index){const ids=getEquippedIds(category);ids.splice(index,1);equippedItems[category]=ids;saveEquippedItems();renderEquippedSelectors()}
+function updateEquippedItem(category,index,value){const ids=getEquippedIds(category);while(ids.length<=index)ids.push('');ids[index]=value;equippedItems[category]=multipleEquipmentCategories.includes(category)?ids:(value||'');saveEquippedItems();updateArmourClass()}
+function addEquippedSlot(category){const ids=getEquippedIds(category);ids.push('');equippedItems[category]=ids;saveEquippedItems();renderEquippedSelectors();updateArmourClass()}
+function removeEquippedSlot(category,index){const ids=getEquippedIds(category);ids.splice(index,1);equippedItems[category]=ids;saveEquippedItems();renderEquippedSelectors();updateArmourClass()}
 function renderEquippedSelectors(){const box=document.getElementById('equippedCategorySelectors');if(!box)return;const hint=document.getElementById('equippedEmptyHint');const visible=equipmentCategories.filter(c=>categoryVisibility[c]);if(hint)hint.style.display=visible.length?'none':'block';box.innerHTML=visible.map(category=>{const items=databaseItems.filter(item=>item.category===category);const ids=getEquippedIds(category);const slots=multipleEquipmentCategories.includes(category)?(ids.length?ids:['']):[ids[0]||''];let html='<div class="equipped-category"><label>'+escapeHtml(category);slots.forEach((selected,index)=>{html+='<select aria-label="'+escapeHtml(category)+' item '+(index+1)+'" onchange="updateEquippedItem(\''+escapeHtml(category)+'\','+index+',this.value)"><option value="">— No item selected —</option>'+items.map(item=>'<option value="'+escapeHtml(item.id)+'" '+(String(item.id)===String(selected)?'selected':'')+'>'+escapeHtml(item.name)+'</option>').join('')+'</select>';if(multipleEquipmentCategories.includes(category)&&slots.length>1)html+='<div class="equipped-extra"><button type="button" onclick="removeEquippedSlot(\''+escapeHtml(category)+'\','+index+')">Remove slot</button></div>'});if(multipleEquipmentCategories.includes(category))html+='<div class="equipped-extra"><button type="button" onclick="addEquippedSlot(\''+escapeHtml(category)+'\')">+ Add another ring</button></div>';if(!items.length)html+='<p style="font-size:12px;color:var(--muted);margin:6px 0 0">No '+escapeHtml(category)+' items in the database yet.</p>';return html+'</label></div>'}).join('')}
 addPendingModifier();renderDatabaseItems();renderCategoryVisibility();renderEquippedSelectors();
 
