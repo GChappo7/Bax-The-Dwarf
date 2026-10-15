@@ -18,7 +18,7 @@ main{max-width:720px;margin:auto;padding:14px}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:10px}.card{background:var(--panel);border:1px solid #443528;border-radius:12px;padding:13px;margin-bottom:10px}
 .card h2{font-size:15px;color:var(--gold);margin:0 0 10px;text-transform:uppercase;letter-spacing:.08em}
 .stat{text-align:center;background:var(--panel2);padding:10px;border-radius:9px}.stat b{display:block;font-size:25px}.stat span{font-size:12px;color:var(--muted)}
-.hp{display:flex;align-items:center;justify-content:center;gap:10px}.hp strong{font-size:34px}.hp button{width:44px;height:44px;font-size:22px}
+.hp{display:flex;align-items:center;justify-content:center;gap:10px}.hp input{width:110px;text-align:center;font-size:34px;font-weight:800;color:var(--gold);background:transparent;border:1px solid transparent;border-radius:8px;padding:2px;font-family:inherit}.hp input:focus{outline:1px solid #5b4732;border-color:#5b4732}.hp button{width:44px;height:44px;font-size:22px}
 button{border:1px solid #5b4732;border-radius:9px;background:#3a2d22;color:var(--text);padding:9px 13px;font-weight:700}button:active{transform:scale(.96)}
 .actions{display:flex;gap:8px;flex-wrap:wrap}.dice button{min-width:54px}
 .row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #3a2e24}.row:last-child{border:0}
@@ -60,7 +60,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <div class="stat"><input type="number" id="level" data-save="level" value="10"><span>LEVEL</span></div><div class="stat"><b>Fighter</b><span>CLASS</span></div>
 <div class="stat"><b>Dwarf</b><span>RACE</span></div><div class="stat"><b>Neutral</b><span>ALIGNMENT</span></div>
 </div>
-<div class="card"><h2>Hit Points</h2><div class="hp"><button onclick="hp(-1)">−</button><strong id="hp">100</strong><button onclick="hp(1)">+</button></div><div style="text-align:center;color:var(--muted);margin-top:4px">Current HP</div></div>
+<div class="card"><h2>Hit Points</h2><div class="hp"><button onclick="hp(-1)" aria-label="Decrease hit points">−</button><input type="number" id="hp" value="100" min="0" step="1" inputmode="numeric" aria-label="Current hit points" onchange="setHp(this.value)"><button onclick="hp(1)" aria-label="Increase hit points">+</button></div><div style="text-align:center;color:var(--muted);margin-top:4px">Current HP · tap the number to edit</div></div>
 <div class="card"><h2>Quick Dice</h2><div class="dice actions">
 <button onclick="roll(4)">d4</button><button onclick="roll(6)">d6</button><button onclick="roll(8)">d8</button><button onclick="roll(10)">d10</button><button onclick="roll(12)">d12</button><button onclick="roll(20)">d20</button>
 </div><div id="roll" class="roll">Roll a die</div></div>
@@ -145,8 +145,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <nav><button onclick="show('home')">⚔️ Character</button><button onclick="show('stats')">📊 Stats</button><button onclick="show('weapons')">🗡️ Weapons</button><button onclick="show('feats')">🧩 Feats</button><button onclick="show('round')">🎲 Round</button><button onclick="show('notes')">📝 Notes</button></nav>
 <script>
 let current=Number(localStorage.getItem('bax_hp')); if(!Number.isFinite(current))current=100;
-function hp(n){current=Math.max(0,current+n);localStorage.setItem('bax_hp',current);document.getElementById('hp').textContent=current;const r=document.getElementById('hpRound');if(r)r.value=current}
-function setHp(value){current=Math.max(0,Number(value)||0);localStorage.setItem('bax_hp',current);document.getElementById('hp').textContent=current;const r=document.getElementById('hpRound');if(r)r.value=current}
+function hp(n){current=Math.max(0,current+n);localStorage.setItem('bax_hp',current);document.getElementById('hp').value=current;const r=document.getElementById('hpRound');if(r)r.value=current}
+function setHp(value){current=Math.max(0,Number(value)||0);localStorage.setItem('bax_hp',current);document.getElementById('hp').value=current;const r=document.getElementById('hpRound');if(r)r.value=current}
 function roll(n){let r=Math.floor(Math.random()*n)+1;document.getElementById('roll').textContent='d'+n+' → '+r}
 function show(id){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');scrollTo(0,0);if(id==='round')renderRoundOptions()}
 document.querySelectorAll('[data-save]').forEach(el=>{let k='bax_'+el.dataset.save;let saved=localStorage.getItem(k);el.value=(saved!==null&&saved!=='')?saved:el.value;el.addEventListener('input',()=>localStorage.setItem(k,el.value))});
