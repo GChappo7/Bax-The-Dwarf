@@ -361,7 +361,7 @@ function effectiveAbilityScore(key,baseScore){
 }
 function renderAbilityScoreModifiers(){
   [['str','ability_str'],['dex','ability_dex'],['con','ability_con'],['int','ability_int'],['wis','ability_wis'],['cha','ability_cha'],['com','ability_com']].forEach(([key,id])=>{
-    const input=document.getElementById(id),out=document.getElementById('modifier_'+key);
+    const input=document.getElementById(id),out=key==='str'?document.getElementById('effective_str'):document.getElementById('modifier_'+key);
     if(!input||!out)return;
     const raw=input.value.trim();
     if(raw===''){out.textContent='—';if(key==='str'){const effective=document.getElementById('effective_str');if(effective)effective.textContent='— / —'}return}
