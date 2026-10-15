@@ -405,7 +405,7 @@ function updateArmourClass(){
   const base=override!==null&&Number.isFinite(override)?override:(dex!==null&&Number.isFinite(dex)?10+abilityModifier(dex):10);
   const groups=typeof getEquippedAcBonuses==='function'?getEquippedAcBonuses():{armour:[],shield:[],other:[]};
   const sum=entries=>entries.reduce((total,entry)=>total+entry.value,0);
-  const armour=sum(groups.armour),shield=sum(groups.shield),other=sum(groups.other),powerAc=typeof activePowerEffects==='function'?activePowerEffects('AC'):0,hasteAc=typeof bootsHasteActive!=='undefined'&&bootsHasteActive?1:0,total=base+armour+shield+other+powerAc+hasteAc;
+  const armour=sum(groups.armour),shield=sum(groups.shield),other=sum(groups.other),powerAc=typeof activePowerEffects==='function'?activePowerEffects('AC'):0,hasteAc=localStorage.getItem('bax_boots_haste_active')==='true'?1:0,total=base+armour+shield+other+powerAc+hasteAc;
   const set=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=String(value)};
   ['baseAcHome','baseAcStats','baseAcRound'].forEach(id=>set(id,base));
   set('baseAcSummary','Base AC '+base);
