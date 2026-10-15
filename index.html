@@ -11,7 +11,7 @@
 :root{--bg:#17130f;--panel:#251d17;--panel2:#30251d;--gold:#d8ad55;--text:#f4ead7;--muted:#b8a890;--red:#b94a42;--green:#557d58}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px system-ui,-apple-system,Segoe UI,sans-serif;padding-bottom:76px}
 header{padding:20px 16px 14px;background:linear-gradient(#211912,#17130f);position:sticky;top:0;z-index:5;border-bottom:1px solid #3d3024}
-h1{margin:0;padding-right:125px;color:var(--gold);font-size:26px}.sub{color:var(--muted);margin-top:3px}
+h1{margin:0;padding-right:125px;color:var(--gold);font-size:26px}.name-edit{display:block;width:100%;max-width:100%;padding:0;margin:0;background:transparent;border:0;border-radius:0;color:var(--gold);font:inherit;font-size:26px;font-weight:800;line-height:1.25;outline-offset:3px}.name-edit:focus{outline:1px solid #5b4732;border-radius:4px}.sub{color:var(--muted);margin-top:3px}
 .deploy-badge{position:absolute;top:10px;right:12px;display:flex;align-items:center;gap:6px;padding:5px 8px;border:1px solid #426447;border-radius:999px;background:#203324;color:#bfe7c2;font-size:10px;font-weight:800;letter-spacing:.07em;white-space:nowrap}
 .deploy-badge:before{content:"";width:6px;height:6px;border-radius:50%;background:#70d889;box-shadow:0 0 6px #70d889}
 main{max-width:720px;margin:auto;padding:14px}
@@ -53,7 +53,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </style>
 </head>
 <body>
-<header><span class="deploy-badge">Deploy 02</span><h1>⚔️ Baxtorian “Bax”</h1><div class="sub"><span id="headerRace">Dwarf</span> • <span id="headerClass">Fighter</span> • Level <span id="headerLevel">10</span> • <span id="headerAlignment">Neutral</span></div></header>
+<header><span class="deploy-badge">Deploy 02</span><h1><input id="characterName" class="name-edit" data-save="characterName" aria-label="Character name" value="⚔️ Baxtorian “Bax”"></h1><div class="sub"><span id="headerRace">Dwarf</span> • <span id="headerClass">Fighter</span> • Level <span id="headerLevel">10</span> • <span id="headerAlignment">Neutral</span></div></header>
 <main>
 <section id="home" class="tab active">
 <div class="grid">
