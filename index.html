@@ -543,6 +543,18 @@ var powerDatabase=[];
 try{powerDatabase=JSON.parse(localStorage.getItem('bax_powerDatabase')||'[]')}catch(e){powerDatabase=[]}
 var characterPowers=[];
 try{characterPowers=JSON.parse(localStorage.getItem('bax_characterPowers')||'[]')}catch(e){characterPowers=[]}
+// One-time migration: carry existing character feats into the new reusable database and character list.
+if(localStorage.getItem('bax_powerMigrationDone')!=='1'){
+ if(!powerDatabase.length&&Array.isArray(feats)&&feats.length){
+  powerDatabase=feats.map((f,i)=>({id:'legacy-feat-'+i+'-'+Date.now(),name:f.name||'Unnamed Feat',type:'Feat',source:'Migrated from existing Abilities & Feats list',description:f.desc||'',action:'Passive',maxUses:0,reset:'manual',effects:[]}));
+  localStorage.setItem('bax_powerDatabase',JSON.stringify(powerDatabase));
+ }
+ if(!characterPowers.length&&Array.isArray(feats)&&feats.length){
+  characterPowers=feats.map((f,i)=>{const p=powerDatabase.find(entry=>entry.name===(f.name||'Unnamed Feat'));return p?{id:'legacy-character-feat-'+i+'-'+Date.now(),databaseId:p.id,name:p.name,type:p.type,source:p.source,description:p.description,action:p.action,maxUses:0,usesRemaining:0,reset:'manual',effects:[],enabled:false}:null}).filter(Boolean);
+  localStorage.setItem('bax_characterPowers',JSON.stringify(characterPowers));
+ }
+ localStorage.setItem('bax_powerMigrationDone','1');
+}
 let editingPowerId=null;
 let pendingPowerEffects=[];
 const powerEffectTypes=['Attack roll','Damage roll','AC','Initiative','Saving throw','Strength score','Dexterity score','Constitution score','Intelligence score','Wisdom score','Charisma score','Comeliness score','Other'];
