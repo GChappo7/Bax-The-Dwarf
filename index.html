@@ -53,12 +53,12 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </style>
 </head>
 <body>
-<header><span class="deploy-badge">Deploy 02</span><h1>⚔️ Baxtorian “Bax”</h1><div class="sub">Dwarf • Fighter • Level <span id="headerLevel">10</span> • <span id="headerAlignment">Neutral</span></div></header>
+<header><span class="deploy-badge">Deploy 02</span><h1>⚔️ Baxtorian “Bax”</h1><div class="sub"><span id="headerRace">Dwarf</span> • <span id="headerClass">Fighter</span> • Level <span id="headerLevel">10</span> • <span id="headerAlignment">Neutral</span></div></header>
 <main>
 <section id="home" class="tab active">
 <div class="grid">
-<div class="stat"><input type="number" id="level" data-save="level" value="10"><span>LEVEL</span></div><div class="stat"><b>Fighter</b><span>CLASS</span></div>
-<div class="stat"><b>Dwarf</b><span>RACE</span></div><label class="stat alignment-tile"><select id="alignment" data-save="alignment" aria-label="Character alignment"><option>Lawful Good</option><option>Neutral Good</option><option>Chaotic Good</option><option>Lawful Neutral</option><option selected>Neutral</option><option>Chaotic Neutral</option><option>Lawful Evil</option><option>Neutral Evil</option><option>Chaotic Evil</option></select><span>ALIGNMENT</span></label>
+<div class="stat"><input type="number" id="level" data-save="level" value="10"><span>LEVEL</span></div><label class="stat alignment-tile"><select id="characterClass" data-save="characterClass" aria-label="Character class"><option>Barbarian</option><option>Bard</option><option selected>Fighter</option><option>Cleric</option><option>Druid</option><option>Monk</option><option>Paladin</option><option>Ranger</option><option>Rogue</option><option>Sorcerer</option><option>Wizard</option></select><span>CLASS</span></label>
+<label class="stat alignment-tile"><select id="race" data-save="race" aria-label="Character race"><option>Human</option><option selected>Dwarf</option><option>Elf</option><option>Gnome</option><option>Half-Elf</option><option>Half-Orc</option><option>Halfling</option></select><span>RACE</span></label><label class="stat alignment-tile"><select id="alignment" data-save="alignment" aria-label="Character alignment"><option>Lawful Good</option><option>Neutral Good</option><option>Chaotic Good</option><option>Lawful Neutral</option><option selected>Neutral</option><option>Chaotic Neutral</option><option>Lawful Evil</option><option>Neutral Evil</option><option>Chaotic Evil</option></select><span>ALIGNMENT</span></label>
 <button class="stat nav-tile" onclick="show('stats')"><b>📊</b><span>SKILLS</span></button><button class="stat nav-tile" onclick="show('feats')"><b>🧩</b><span>FEATS</span></button>
 </div>
 <div class="card"><h2>Hit Points</h2><div class="hp"><button onclick="hp(-1)" aria-label="Decrease hit points">−</button><input type="number" id="hp" value="100" min="0" step="1" inputmode="numeric" aria-label="Current hit points" onchange="setHp(this.value)"><button onclick="hp(1)" aria-label="Increase hit points">+</button></div><div style="text-align:center;color:var(--muted);margin-top:4px">Current HP · tap the number to edit</div></div>
