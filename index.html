@@ -170,7 +170,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </section>
 
 <section id="inventory" class="tab">
-<div class="card"><h2>Inventory</h2><p style="color:var(--muted);margin-top:0">Manage carried items, quantities and notes. Inventory saves automatically on this phone.</p><div id="inventoryList"></div><button onclick="addInventoryItem()" style="margin-top:12px;width:100%">+ Add Inventory Item</button></div>
+<div class="card"><h2>Inventory</h2><p style="color:var(--muted);margin-top:0">Add items from your Item Database and adjust carried quantities with − and +. Inventory saves automatically on this phone.</p><div class="item-form" style="margin-bottom:12px"><label>Choose item from database<select id="inventoryDatabaseSelect"><option value="">— Select an item —</option></select></label><button type="button" onclick="addDatabaseItemToInventory()" style="width:100%">+ Add to Inventory</button></div><div id="inventoryList"></div><button onclick="addInventoryItem()" style="margin-top:12px;width:100%">+ Add Custom Inventory Item</button></div>
 <div class="card"><h2>Carrying Notes</h2><textarea data-save="inventoryNotes" placeholder="Coin totals, weight, storage, items to sell..."></textarea></div>
 </section>
 
@@ -405,10 +405,34 @@ addPendingModifier();renderDatabaseItems();renderCategoryVisibility();renderEqui
 let inventoryItems=[];
 try{inventoryItems=JSON.parse(localStorage.getItem("bax_inventory")||"[]")}catch(e){inventoryItems=[]}
 function saveInventory(){localStorage.setItem("bax_inventory",JSON.stringify(inventoryItems))}
-function addInventoryItem(){inventoryItems.push({id:Date.now(),name:"New Item",qty:1,notes:""});saveInventory();renderInventory()}
-function removeInventoryItem(id){inventoryItems=inventoryItems.filter(item=>item.id!==id);saveInventory();renderInventory()}
-function updateInventoryItem(id,field,value){const item=inventoryItems.find(item=>item.id===id);if(!item)return;item[field]=field==="qty"?(Number(value)||0):value;saveInventory()}
-function renderInventory(){const list=document.getElementById("inventoryList");if(!list)return;if(!inventoryItems.length){list.innerHTML='<p style="color:var(--muted);text-align:center;padding:10px 0">Your inventory is empty — add an item above.</p>';return}list.innerHTML=inventoryItems.map(item=>`<div class="feat-item"><div class="feat-head"><input aria-label="Item name" value="${String(item.name||"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;")}" onchange="updateInventoryItem(${item.id},\'name\',this.value)" placeholder="Item name"><input aria-label="Quantity" type="number" min="0" value="${Number(item.qty)||0}" style="max-width:72px" onchange="updateInventoryItem(${item.id},\'qty\',this.value)"><button class="wpn-del" onclick="removeInventoryItem(${item.id})" aria-label="Remove item">✕</button></div><textarea aria-label="Item notes" placeholder="Weight, value, description..." onchange="updateInventoryItem(${item.id},\'notes\',this.value)">${String(item.notes||"").replace(/&/g,"&amp;").replace(/</g,"&lt;")}</textarea></div>`).join("")}
+function addInventoryItem(){inventoryItems.push({id:Date.now()+Math.random(),name:"New Item",qty:1,notes:""});saveInventory();renderInventory()}
+function addDatabaseItemToInventory(){
+ const select=document.getElementById("inventoryDatabaseSelect");
+ const dbItem=databaseItems.find(item=>String(item.id)===String(select?.value||""));
+ if(!dbItem){alert("Please choose an item from your Item Database first.");return}
+ const existing=inventoryItems.find(item=>String(item.databaseItemId)===String(dbItem.id));
+ if(existing){existing.qty=(Number(existing.qty)||0)+1}
+ else{inventoryItems.push({id:Date.now()+Math.random(),databaseItemId:dbItem.id,name:dbItem.name,qty:1,notes:dbItem.description||""})}
+ saveInventory();renderInventory();
+}
+function changeInventoryQuantity(id,delta){
+ const item=inventoryItems.find(item=>String(item.id)===String(id));if(!item)return;
+ item.qty=Math.max(0,(Number(item.qty)||0)+delta);
+ if(item.qty===0)inventoryItems=inventoryItems.filter(entry=>String(entry.id)!==String(id));
+ saveInventory();renderInventory();
+}
+function removeInventoryItem(id){inventoryItems=inventoryItems.filter(item=>String(item.id)!==String(id));saveInventory();renderInventory()}
+function updateInventoryItem(id,field,value){const item=inventoryItems.find(item=>String(item.id)===String(id));if(!item)return;item[field]=field==="qty"?(Number(value)||0):value;saveInventory()}
+function renderInventory(){
+ const list=document.getElementById("inventoryList"),select=document.getElementById("inventoryDatabaseSelect");if(!list)return;
+ if(select){const current=select.value;select.innerHTML='<option value="">— Select an item —</option>'+databaseItems.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(item=>'<option value="'+escapeHtml(item.id)+'">'+escapeHtml(item.name)+' ('+escapeHtml(item.category)+')</option>').join('');if(databaseItems.some(item=>String(item.id)===String(current)))select.value=current}
+ if(!inventoryItems.length){list.innerHTML='<p style="color:var(--muted);text-align:center;padding:10px 0">Your inventory is empty — add an item above.</p>';return}
+ list.innerHTML=inventoryItems.map(item=>{
+  const dbItem=(item.databaseItemId!==undefined&&item.databaseItemId!==null)?databaseItems.find(db=>String(db.id)===String(item.databaseItemId)):null;
+  const name=dbItem?.name||item.name||"Unnamed Item";
+  return '<div class="feat-item"><div class="feat-head"><strong style="flex:1;min-width:0;overflow-wrap:anywhere">'+escapeHtml(name)+'</strong><div style="display:flex;align-items:center;gap:8px;flex-shrink:0"><button type="button" aria-label="Remove one '+escapeHtml(name)+'" onclick="changeInventoryQuantity(\''+item.id+'\',-1)" style="min-width:42px;min-height:42px;font-size:20px">−</button><strong style="min-width:22px;text-align:center">'+(Number(item.qty)||0)+'</strong><button type="button" aria-label="Add one '+escapeHtml(name)+'" onclick="changeInventoryQuantity(\''+item.id+'\',1)" style="min-width:42px;min-height:42px;font-size:20px">+</button><button class="wpn-del" onclick="removeInventoryItem(\''+item.id+'\')" aria-label="Remove item completely">✕</button></div></div>'+(item.notes?'<p style="color:var(--muted);font-size:13px;margin:6px 0 0;white-space:pre-wrap">'+escapeHtml(item.notes)+'</p>':'')+'</div>';
+ }).join("");
+}
 renderInventory();
 
 // --- Weapon attack calculator ---
