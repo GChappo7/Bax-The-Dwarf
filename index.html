@@ -271,7 +271,7 @@ function toggleCharacterName(){const input=document.getElementById('characterNam
 function show(id){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');const back=document.getElementById('headerBack');if(back)back.classList.toggle('visible',id!=='home');scrollTo(0,0);if(id==='round')loadCurrentAttack()}
 document.querySelectorAll('[data-save]').forEach(el=>{let k='bax_'+el.dataset.save;let saved=localStorage.getItem(k);el.value=(saved!==null&&saved!=='')?saved:el.value;el.addEventListener('input',()=>localStorage.setItem(k,el.value))});
 document.querySelectorAll('[data-sync]').forEach(el=>{el.addEventListener('input',()=>{const k=el.dataset.sync;document.querySelectorAll('[data-sync="'+k+'"]').forEach(o=>{if(o!==el)o.value=el.value})})});
-function renderAbilityScoreModifiers(){[['str','ability_str'],['dex','ability_dex'],['con','ability_con'],['int','ability_int'],['wis','ability_wis'],['cha','ability_cha']].forEach(([key,id])=>{const input=document.getElementById(id),out=document.getElementById('modifier_'+key);if(!input||!out)return;const raw=input.value.trim();if(raw===''){out.textContent='—';return}const mod=Math.floor((Number(raw)-10)/2);out.textContent=(mod>0?'+':'')+mod});if(typeof renderWeapons==='function')renderWeapons();if(typeof updateRoundTotals==='function')updateRoundTotals()}
+function renderAbilityScoreModifiers(){[['str','ability_str'],['dex','ability_dex'],['con','ability_con'],['int','ability_int'],['wis','ability_wis'],['cha','ability_cha']].forEach(([key,id])=>{const input=document.getElementById(id),out=document.getElementById('modifier_'+key);if(!input||!out)return;const raw=input.value.trim();if(raw===''){out.textContent='—';return}const mod=Math.floor((Number(raw)-10)/2);out.textContent=(mod>0?'+':'')+mod})}
 document.querySelectorAll('#stats [data-save]').forEach(el=>el.addEventListener('input',renderAbilityScoreModifiers));
 renderAbilityScoreModifiers();
 // --- Armour Class calculator ---
@@ -432,6 +432,7 @@ function renderWeapons(){
   `).join('')
 }
 renderWeapons();
+document.getElementById('ability_str').addEventListener('input',()=>{renderWeapons();updateWeaponDisplay()});
 
 // --- Feats & Maneuvers ---
 const DEFAULT_FEATS=[
