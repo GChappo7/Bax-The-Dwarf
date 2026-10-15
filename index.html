@@ -178,6 +178,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   </div>
  </div>
  <div class="card"><h2>My Powers, Feats &amp; Abilities</h2><p style="color:var(--muted);margin-top:0">Add saved entries to Bax's list, enable effects, track uses and reset them when appropriate.</p><label style="display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:13px">Choose from database<select id="characterPowerSelect"><option value="">— Select an entry —</option></select></label><button type="button" onclick="addCharacterPower()" style="width:100%;margin:10px 0 12px">+ Add to Character</button><div id="characterPowersList"></div></div>
+ <div class="card"><h2>Fighter Feat Catalogue</h2><p style="color:var(--muted);font-size:13px">Import a deduplicated D&amp;D 3.5e fighter-oriented catalogue. Descriptions are concise summaries; situational and weapon-specific rules remain manual so they do not incorrectly alter every attack.</p><button type="button" onclick="importFighterFeatCatalog()">Import Fighter Feat Catalogue</button><p id="fighterFeatImportStatus" style="color:var(--muted);font-size:12px"></p></div>
  <div class="card"><h2>Saved Database Entries</h2><div id="powerDatabaseList"></div></div>
 </section>
 
@@ -537,6 +538,100 @@ function renderFeats(){
   `).join('')
 }
 renderFeats();
+
+
+const fighterFeatCatalog = [
+["Acrobatic","No special prerequisite","Improves Jump and Tumble checks by +2 each.","Player's Handbook",false,[]],
+["Agile","No special prerequisite","Improves Balance and Escape Artist checks by +2 each.","Player's Handbook",false,[]],
+["Alertness","No special prerequisite","Improves Listen and Spot checks by +2 each.","Player's Handbook",false,[]],
+["Animal Affinity","No special prerequisite","Improves Handle Animal and Ride checks by +2 each.","Player's Handbook",false,[]],
+["Armor Proficiency (Light)","No special prerequisite","Grants proficiency with light armour.","Player's Handbook",false,[]],
+["Armor Proficiency (Medium)","Light Armor Proficiency","Grants proficiency with medium armour.","Player's Handbook",true,[]],
+["Armor Proficiency (Heavy)","Medium Armor Proficiency","Grants proficiency with heavy armour.","Player's Handbook",true,[]],
+["Athletic","No special prerequisite","Improves Climb and Swim checks by +2 each.","Player's Handbook",false,[]],
+["Blind-Fight","No special prerequisite","Improves fighting against concealment and reduces drawbacks of being unable to see an opponent.","Player's Handbook",true,[]],
+["Cleave","Strength 13; Power Attack","After dropping an opponent, allows one additional melee attack against another nearby foe, subject to the feat's limits.","Player's Handbook",true,[]],
+["Combat Expertise","Intelligence 13","Trade a chosen amount of melee attack bonus for an equal dodge bonus to AC, up to the base attack bonus limit and +5 maximum.","Player's Handbook",true,[]],
+["Combat Reflexes","No special prerequisite","Allows additional attacks of opportunity based on Dexterity and permits attacks of opportunity while flat-footed.","Player's Handbook",true,[]],
+["Deceitful","No special prerequisite","Improves Disguise and Forgery checks by +2 each.","Player's Handbook",false,[]],
+["Deflect Arrows","Dexterity 13; Improved Unarmed Strike","Once per round, can deflect one eligible incoming ranged weapon attack when a hand is free.","Player's Handbook",true,[]],
+["Deft Hands","No special prerequisite","Improves Sleight of Hand and Use Rope checks by +2 each.","Player's Handbook",false,[]],
+["Diligent","No special prerequisite","Improves Appraise and Decipher Script checks by +2 each.","Player's Handbook",false,[]],
+["Dodge","Dexterity 13","Choose one opponent each round; gain a +1 dodge bonus to AC against that opponent.","Player's Handbook",true,[]],
+["Endurance","No special prerequisite","Improves checks and saves to resist fatigue and physical hardship.","Player's Handbook",true,[]],
+["Diehard","Endurance","Can remain conscious and continue limited activity while between -1 and -9 hit points.","Player's Handbook",true,[]],
+["Exotic Weapon Proficiency","Base attack bonus +1; additional Strength prerequisite for bastard sword or dwarven waraxe when used one-handed","Choose one exotic weapon and use it without the normal nonproficiency penalty.","Player's Handbook",true,[]],
+["Far Shot","Point Blank Shot","Increases ranged weapon range increments: normally 1.5 times for projectile weapons and twice for thrown weapons.","Player's Handbook",true,[]],
+["Great Fortitude","No special prerequisite","Grants a +2 bonus on Fortitude saves.","Player's Handbook",true,[]],
+["Improved Bull Rush","Strength 13; Power Attack","Grants a +4 bonus on bull rush checks and avoids the attack of opportunity normally caused by the attempt.","Player's Handbook",true,[]],
+["Improved Critical","Base attack bonus +8; proficiency with chosen weapon","Doubles the threat range of one chosen weapon; does not stack with other threat-range expansion effects.","Player's Handbook",true,[]],
+["Improved Disarm","Intelligence 13; Combat Expertise","Grants a +4 bonus on disarm checks and avoids the attack of opportunity for attempting to disarm.","Player's Handbook",true,[]],
+["Improved Feint","Intelligence 13; Combat Expertise","Allows a combat feint as a move action rather than a standard action.","Player's Handbook",true,[]],
+["Improved Grapple","Dexterity 13; Improved Unarmed Strike","Grants a +4 bonus on grapple checks and avoids the attack of opportunity when initiating a grapple.","Player's Handbook",true,[]],
+["Improved Initiative","No special prerequisite","Grants a +4 bonus on initiative checks.","Player's Handbook",true,[{type:"Initiative",value:4,notes:"Always applies; initiative is not currently calculated elsewhere in the app."}]],
+["Improved Overrun","Strength 13; Power Attack","Grants a +4 bonus on overrun checks and prevents the target from choosing to avoid the attempt.","Player's Handbook",true,[]],
+["Improved Precise Shot","Dexterity 19; Point Blank Shot; Precise Shot; base attack bonus +11","Allows ranged attacks to ignore less than total cover or concealment and avoids the penalty for firing into melee.","Player's Handbook",true,[]],
+["Improved Shield Bash","Shield proficiency","Retains the shield's shield bonus to AC when making a shield bash.","Player's Handbook",true,[]],
+["Improved Sunder","Strength 13; Power Attack","Grants a +4 bonus on attacks to sunder held or carried objects and avoids the attack of opportunity for the attempt.","Player's Handbook",true,[]],
+["Improved Trip","Intelligence 13; Combat Expertise","Grants a +4 bonus on trip attempts, avoids the usual attack of opportunity for an unarmed trip, and permits an immediate melee attack after a successful trip.","Player's Handbook",true,[]],
+["Improved Two-Weapon Fighting","Dexterity 17; Two-Weapon Fighting; base attack bonus +6","Grants a second off-hand attack in a full attack, at an additional -5 penalty.","Player's Handbook",true,[]],
+["Improved Unarmed Strike","No special prerequisite","Makes unarmed strikes count as armed and allows lethal or nonlethal damage at the attacker's choice.","Player's Handbook",true,[]],
+["Iron Will","No special prerequisite","Grants a +2 bonus on Will saves.","Player's Handbook",true,[]],
+["Lightning Reflexes","No special prerequisite","Grants a +2 bonus on Reflex saves.","Player's Handbook",true,[]],
+["Manyshot","Dexterity 17; Point Blank Shot; Rapid Shot; base attack bonus +6","Fires multiple arrows as one standard-action ranged attack; arrows share an attack roll and have specific damage rules.","Player's Handbook",true,[]],
+["Mobility","Dexterity 13; Dodge","Grants a +4 dodge bonus to AC against attacks of opportunity caused by movement through threatened areas.","Player's Handbook",true,[]],
+["Mounted Archery","Ride 1 rank; Mounted Combat","Reduces ranged-attack penalties while mounted.","Player's Handbook",true,[]],
+["Mounted Combat","Ride 1 rank","Once per round, a Ride check can negate a hit against the character's mount.","Player's Handbook",true,[]],
+["Point Blank Shot","No special prerequisite","Grants +1 on ranged attack and damage rolls against targets within 30 feet.","Player's Handbook",true,[]],
+["Power Attack","Strength 13","Trade melee attack bonus for damage for the round; two-handed attacks gain twice the damage bonus, subject to weapon restrictions.","Player's Handbook",true,[]],
+["Precise Shot","Point Blank Shot","Removes the standard -4 penalty for making ranged attacks into melee.","Player's Handbook",true,[]],
+["Quick Draw","Base attack bonus +1","Draws a weapon as a free action and improves the action economy for drawing thrown weapons.","Player's Handbook",true,[]],
+["Rapid Reload","Weapon proficiency with the selected crossbow","Reduces the action needed to reload the selected crossbow type.","Player's Handbook",true,[]],
+["Rapid Shot","Dexterity 13; Point Blank Shot","Makes one additional ranged attack during a full attack, with a -2 penalty on all attacks that round.","Player's Handbook",true,[]],
+["Run","No special prerequisite","Improves running speed and jumping distance when running.","Player's Handbook",false,[]],
+["Shield Proficiency","No special prerequisite","Allows use of shields without the normal nonproficiency penalties.","Player's Handbook",true,[]],
+["Shot on the Run","Dexterity 13; Dodge; Mobility; Point Blank Shot; base attack bonus +4","Combines movement with a ranged attack during a standard action.","Player's Handbook",true,[]],
+["Spring Attack","Dexterity 13; Dodge; Mobility; base attack bonus +4","Allows movement before and after a single melee attack without provoking from the target under the feat's conditions.","Player's Handbook",true,[]],
+["Stunning Fist","Dexterity 13; Wisdom 13; Improved Unarmed Strike; base attack bonus +8","A limited number of unarmed attacks can force a Fortitude save or stun the target, subject to restrictions.","Player's Handbook",true,[]],
+["Toughness","No special prerequisite","Increases maximum hit points by 3.","Player's Handbook",true,[]],
+["Tower Shield Proficiency","Shield Proficiency","Allows use of tower shields without the normal nonproficiency penalties.","Player's Handbook",true,[]],
+["Track","No special prerequisite","Allows tracking creatures using Survival checks.","Player's Handbook",false,[]],
+["Two-Weapon Fighting","Dexterity 15","Reduces penalties for fighting with a weapon in each hand.","Player's Handbook",true,[]],
+["Weapon Finesse","Base attack bonus +1","Allows Dexterity instead of Strength on attack rolls with eligible light weapons and other listed weapons; it does not change damage.","Player's Handbook",true,[]],
+["Weapon Focus","Proficiency with chosen weapon; base attack bonus +1","Grants +1 on attack rolls with one chosen weapon; each selection applies to a different weapon.","Player's Handbook",true,[]],
+["Weapon Specialization","Fighter level 4; Weapon Focus with chosen weapon; proficiency with that weapon","Grants +2 damage with one chosen weapon; requires fighter levels and a weapon-specific selection.","Player's Handbook",true,[]],
+["Whirlwind Attack","Dexterity 13; Intelligence 13; Combat Expertise; Dodge; Mobility; Spring Attack; base attack bonus +4","Replaces normal attacks in a full attack with one melee attack at full base attack bonus against each opponent within reach.","Player's Handbook",true,[]],
+["Combat Casting","No special prerequisite","Grants +4 on Concentration checks made to cast defensively or while grappled or pinned.","Player's Handbook",false,[]],
+["Improved Toughness","Base Fortitude save +2","Adds hit points equal to the character's current Hit Dice; recalculate when level changes.","Complete Warrior",true,[]],
+["Combat Brute","Power Attack; Improved Bull Rush; Improved Sunder; base attack bonus +6","Provides tactical options for follow-up attacks after charging, bull rushing or sundering; apply the relevant option manually.","Complete Warrior",true,[]],
+["Shock Trooper","Power Attack; Improved Bull Rush; base attack bonus +6","Provides charge-related tactical options, including shifting Power Attack's attack penalty to AC; apply situational effects manually.","Complete Warrior",true,[]],
+["Leap Attack","Power Attack; 8 ranks in Jump","Improves Power Attack damage after a qualifying jump as part of a charge; apply the appropriate multiplier manually.","Complete Adventurer",true,[]],
+["Combat Focus","Wisdom 13; base attack bonus +1","Opens a feat chain granting benefits after qualifying attacks; check the selected follow-up feat for its effect.","Player's Handbook II",true,[]],
+["Combat Vigor","Combat Focus; base attack bonus +9","Grants a recovery benefit while Combat Focus is active; track its conditional effect manually.","Player's Handbook II",true,[]],
+["Combat Stability","Combat Focus; base attack bonus + stability prerequisite","Improves resistance to bull rush and trip attempts while Combat Focus is active; apply conditionally.","Player's Handbook II",true,[]],
+["Combat Awareness","Combat Focus; base attack bonus +12","Adds tactical awareness benefits while Combat Focus is active; apply its conditions manually.","Player's Handbook II",true,[]],
+["Stand Still","Combat Reflexes","Can stop an opponent's movement with a successful attack of opportunity and opposed check.","Expanded Psionics Handbook",true,[]],
+["Knock-Down","Strength 15; Improved Trip; base attack bonus +2","Can make a trip attempt after dealing sufficient melee damage, subject to the feat's rules.","Sword and Fist",true,[]],
+["Weapon Specialization (expanded-source note)","Fighter level 4; Weapon Focus with chosen weapon; proficiency with that weapon","Alternate-source reference for the standard weapon-specific +2 damage feat. Use the standard Weapon Specialization entry to avoid duplicates.","Complete Warrior",true,[]]
+];
+function normalizeFeatName(name){return String(name||'').toLowerCase().split('').filter(ch=>(ch>='a'&&ch<='z')||(ch>='0'&&ch<='9')||ch===' ').join('').trim().replaceAll('  ',' ')}
+function importFighterFeatCatalog(){
+ const existing=new Set(powerDatabase.map(p=>normalizeFeatName(p.name)));
+ let added=0,skipped=0;
+ fighterFeatCatalog.forEach(([name,prereq,summary,source,isFighter,effects])=>{
+  const key=normalizeFeatName(name);
+  if(existing.has(key)){skipped++;return}
+  const id='fighter-catalog-'+key.replaceAll(' ','-');
+  const entry={id,name,type:'Feat',source:'D&D 3.5e · '+source+(isFighter?' · Fighter bonus feat':''),description:'Prerequisites: '+prereq+'.\n\n'+summary+'\n\nFighter bonus feat: '+(isFighter?'Yes':'No / not identified as a fighter bonus feat')+'.'+(source==='Player\'s Handbook'?'':'\n\nSource note: verify the exact source and campaign ruling against your book before use.'),action:'Passive',maxUses:0,reset:'manual',effects:(effects||[]).map(e=>({...e}))};
+  powerDatabase.push(entry);existing.add(key);added++;
+ });
+ savePowerDatabase();
+ localStorage.setItem('bax_fighterFeatCatalogImported','3.5e-catalog-v1');
+ renderPowerDatabase();
+ const status=document.getElementById('fighterFeatImportStatus');
+ if(status)status.textContent='Imported '+added+' new entries; skipped '+skipped+' existing names. Situational and source-specific details may need manual review.';
+ alert('Fighter feat catalogue import complete. Added '+added+' new entries; skipped '+skipped+' existing names. Existing entries and character list were preserved.');
+}
 
 // --- Powers, feats and abilities database ---
 var powerDatabase=[];
