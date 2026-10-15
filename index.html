@@ -140,6 +140,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <section id="notes" class="tab">
 <div class="card"><h2>Notes</h2><textarea data-save="notes" placeholder="Character notes, abilities, equipment, session notes..."></textarea></div>
 <div class="card"><h2>Custom Items</h2><input data-save="items" placeholder="Weapons, armour, equipment..."></div>
+<div class="card"><h2>Data &amp; Backup</h2><p style="color:var(--muted);margin-top:0">Export Bax's saved character data before making major changes, or restore it from a previous backup.</p><div class="actions"><button type="button" onclick="exportBackup()">⬇ Export Backup</button><button type="button" onclick="document.getElementById('backupFile').click()">⬆ Import Backup</button></div><input id="backupFile" type="file" accept="application/json,.json" style="display:none" onchange="importBackupFile(this)"><p style="color:var(--muted);font-size:12px;margin-bottom:0">Backups include this app's saved Bax data on this browser, not data from other devices.</p></div>
 </section>
 </main>
 <nav><button onclick="show('home')">⚔️ Character</button><button onclick="show('stats')">📊 Stats</button><button onclick="show('weapons')">🗡️ Weapons</button><button onclick="show('feats')">🧩 Feats</button><button onclick="show('round')">🎲 Round</button><button onclick="show('notes')">📝 Notes</button></nav>
@@ -148,6 +149,42 @@ let current=Number(localStorage.getItem('bax_hp')); if(!Number.isFinite(current)
 function hp(n){current=Math.max(0,current+n);localStorage.setItem('bax_hp',current);document.getElementById('hp').textContent=current;const r=document.getElementById('hpRound');if(r)r.value=current}
 function setHp(value){current=Math.max(0,Number(value)||0);localStorage.setItem('bax_hp',current);document.getElementById('hp').textContent=current;const r=document.getElementById('hpRound');if(r)r.value=current}
 function roll(n){let r=Math.floor(Math.random()*n)+1;document.getElementById('roll').textContent='d'+n+' → '+r}
+function exportBackup(){
+  const storage={};
+  for(let i=0;i<localStorage.length;i++){
+    const key=localStorage.key(i);
+    if(key&&key.startsWith('bax_'))storage[key]=localStorage.getItem(key);
+  }
+  const backup={app:'Bax the Dwarf',formatVersion:1,exportedAt:new Date().toISOString(),storage};
+  const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement('a');
+  link.href=url;
+  link.download='bax-backup-'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+async function importBackupFile(input){
+  const file=input.files&&input.files[0];
+  if(!file)return;
+  try{
+    const backup=JSON.parse(await file.text());
+    if(!backup||backup.app!=='Bax the Dwarf'||backup.formatVersion!==1||!backup.storage||typeof backup.storage!=='object'||Array.isArray(backup.storage))throw new Error('This does not look like a supported Bax backup.');
+    const entries=Object.entries(backup.storage);
+    if(entries.some(([key,value])=>!key.startsWith('bax_')||typeof value!=='string'))throw new Error('The backup contains invalid saved data.');
+    if(!confirm('Restore this Bax backup? This replaces the Bax data saved in this browser. Export a backup first if you want to keep the current data.'))return;
+    for(let i=localStorage.length-1;i>=0;i--){const key=localStorage.key(i);if(key&&key.startsWith('bax_'))localStorage.removeItem(key)}
+    for(const [key,value] of entries)localStorage.setItem(key,value);
+    alert('Backup restored. Bax will now reload.');
+    location.reload();
+  }catch(error){
+    alert('Could not restore backup: '+(error&&error.message?error.message:'unknown error'));
+  }finally{
+    input.value='';
+  }
+}
 function show(id){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');scrollTo(0,0);if(id==='round')renderRoundOptions()}
 document.querySelectorAll('[data-save]').forEach(el=>{let k='bax_'+el.dataset.save;let saved=localStorage.getItem(k);el.value=(saved!==null&&saved!=='')?saved:el.value;el.addEventListener('input',()=>localStorage.setItem(k,el.value))});
 document.querySelectorAll('[data-sync]').forEach(el=>{el.addEventListener('input',()=>{const k=el.dataset.sync;document.querySelectorAll('[data-sync="'+k+'"]').forEach(o=>{if(o!==el)o.value=el.value})})});
