@@ -271,7 +271,7 @@ function toggleCharacterName(){const input=document.getElementById('characterNam
 function show(id){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');const back=document.getElementById('headerBack');if(back)back.classList.toggle('visible',id!=='home');scrollTo(0,0);if(id==='round')loadCurrentAttack()}
 document.querySelectorAll('[data-save]').forEach(el=>{let k='bax_'+el.dataset.save;let saved=localStorage.getItem(k);el.value=(saved!==null&&saved!=='')?saved:el.value;el.addEventListener('input',()=>localStorage.setItem(k,el.value))});
 document.querySelectorAll('[data-sync]').forEach(el=>{el.addEventListener('input',()=>{const k=el.dataset.sync;document.querySelectorAll('[data-sync="'+k+'"]').forEach(o=>{if(o!==el)o.value=el.value})})});
-function renderAbilityScoreModifiers(){[['str','ability_str'],['dex','ability_dex'],['con','ability_con'],['int','ability_int'],['wis','ability_wis'],['cha','ability_cha']].forEach(([key,id])=>{const input=document.getElementById(id),out=document.getElementById('modifier_'+key);if(!input||!out)return;const raw=input.value.trim();if(raw===''){out.textContent='—';return}const mod=Math.floor((Number(raw)-10)/2);out.textContent=(mod>0?'+':'')+mod})}
+function renderAbilityScoreModifiers(){[['str','ability_str'],['dex','ability_dex'],['con','ability_con'],['int','ability_int'],['wis','ability_wis'],['cha','ability_cha']].forEach(([key,id])=>{const input=document.getElementById(id),out=document.getElementById('modifier_'+key);if(!input||!out)return;const raw=input.value.trim();if(raw===''){out.textContent='—';return}const mod=Math.floor((Number(raw)-10)/2);out.textContent=(mod>0?'+':'')+mod});if(typeof renderWeapons==='function')renderWeapons();if(typeof updateRoundTotals==='function')updateRoundTotals()}
 document.querySelectorAll('#stats [data-save]').forEach(el=>el.addEventListener('input',renderAbilityScoreModifiers));
 renderAbilityScoreModifiers();
 // --- Armour Class calculator ---
@@ -402,6 +402,8 @@ function addWeapon(){weapons.push({id:Date.now(),name:'New Weapon',atk:blankRoll
 function removeWeapon(id){weapons=weapons.filter(w=>w.id!==id);saveWeapons();renderWeapons()}
 function updateWeaponName(id,value){const w=weapons.find(w=>w.id===id);if(!w)return;w.name=value;saveWeapons()}
 function updateWeaponField(id,rollType,field,value){const w=weapons.find(w=>w.id===id);if(!w)return;w[rollType][field]=Number(value)||0;saveWeapons();renderWeapons()}
+function effectiveStrengthModifier(roll){const input=document.getElementById('ability_str');if(input&&input.value.trim()!=='')return Math.floor((Number(input.value)-10)/2);return Number(roll.str)||0}
+function effectiveRoll(roll){return {...roll,str:effectiveStrengthModifier(roll)}}
 function total(o){return(o.base||0)+(o.str||0)+(o.feats||0)+(o.wpn||0)}
 function renderWeapons(){
   const body=document.getElementById('weaponsBody');
@@ -412,20 +414,20 @@ function renderWeapons(){
       <td>Attack</td>
       <td><input data-field="dice" type="text" placeholder="1d20" value="${(w.atk.dice||'').replace(/"/g,'&quot;')}" onchange="updateWeaponDice(${w.id},'atk',this.value)"></td>
       <td><input data-field="base" type="number" value="${w.atk.base}" onchange="updateWeaponField(${w.id},'atk','base',this.value)"></td>
-      <td><input data-field="str" type="number" value="${w.atk.str}" onchange="updateWeaponField(${w.id},'atk','str',this.value)"></td>
+      <td><input data-field="str" type="number" value="${effectiveStrengthModifier(w.atk)}" readonly aria-label="Calculated Strength modifier for attack" title="Calculated from your Strength score"></td>
       <td><input data-field="feats" type="number" value="${w.atk.feats}" onchange="updateWeaponField(${w.id},'atk','feats',this.value)"></td>
       <td><input data-field="wpn" type="number" value="${w.atk.wpn}" onchange="updateWeaponField(${w.id},'atk','wpn',this.value)"></td>
-      <td><b>${formatTotal(w.atk)}</b></td>
+      <td><b>${formatTotal(effectiveRoll(w.atk))}</b></td>
       <td rowspan="2"><button class="wpn-del" onclick="removeWeapon(${w.id})">✕</button></td>
     </tr>
     <tr>
       <td>Damage</td>
       <td><input data-field="dice" type="text" placeholder="1d8" value="${(w.dmg.dice||'').replace(/"/g,'&quot;')}" onchange="updateWeaponDice(${w.id},'dmg',this.value)"></td>
       <td><input data-field="base" type="number" value="${w.dmg.base}" onchange="updateWeaponField(${w.id},'dmg','base',this.value)"></td>
-      <td><input data-field="str" type="number" value="${w.dmg.str}" onchange="updateWeaponField(${w.id},'dmg','str',this.value)"></td>
+      <td><input data-field="str" type="number" value="${effectiveStrengthModifier(w.dmg)}" readonly aria-label="Calculated Strength modifier for damage" title="Calculated from your Strength score"></td>
       <td><input data-field="feats" type="number" value="${w.dmg.feats}" onchange="updateWeaponField(${w.id},'dmg','feats',this.value)"></td>
       <td><input data-field="wpn" type="number" value="${w.dmg.wpn}" onchange="updateWeaponField(${w.id},'dmg','wpn',this.value)"></td>
-      <td><b>${formatTotal(w.dmg)}</b></td>
+      <td><b>${formatTotal(effectiveRoll(w.dmg))}</b></td>
     </tr>
   `).join('')
 }
@@ -486,8 +488,8 @@ function renderRoundMods(){renderModRows('atk','attackModsBody');renderModRows('
 function renderRoundOptions(){const sel=document.getElementById('roundWeaponSelect');const prev=roundWeaponId;sel.innerHTML='<option value="">— Select weapon —</option>'+weapons.map(w=>`<option value="${w.id}">${String(w.name||'Unnamed weapon').replace(/&/g,'&amp;').replace(/</g,'&lt;')}</option>`).join('');if(weapons.some(w=>String(w.id)===String(prev))){sel.value=prev}else{roundWeaponId='';sel.value=''}renderRoundMods();updateWeaponDisplay()}
 function onRoundWeaponChange(value){roundWeaponId=value;localStorage.setItem('bax_round_weapon',value);updateWeaponDisplay()}
 function formatRoundTotal(dice,num){if(!dice)return String(num);if(num===0)return dice;return dice+' '+(num>=0?'+ ':'- ')+Math.abs(num)}
-function updateWeaponDisplay(){const w=weapons.find(w=>String(w.id)===String(roundWeaponId));document.getElementById('roundWeaponAtk').textContent=w?formatTotal(w.atk):'—';document.getElementById('roundWeaponDmg').textContent=w?formatTotal(w.dmg):'—';updateRoundTotals()}
-function updateRoundTotals(){const w=weapons.find(w=>String(w.id)===String(roundWeaponId));let a=w?total(w.atk):0,d=w?total(w.dmg):0;const ad=w?(w.atk.dice||'').trim():'';const dd=w?(w.dmg.dice||'').trim():'';roundMods.attackMods.forEach(m=>a+=Number(m.value)||0);roundMods.damageMods.forEach(m=>d+=Number(m.value)||0);document.getElementById('roundAtkTotal').textContent=formatRoundTotal(ad,a);document.getElementById('roundDmgTotal').textContent=formatRoundTotal(dd,d)}
+function updateWeaponDisplay(){const w=weapons.find(w=>String(w.id)===String(roundWeaponId));document.getElementById('roundWeaponAtk').textContent=w?formatTotal(effectiveRoll(w.atk)):'—';document.getElementById('roundWeaponDmg').textContent=w?formatTotal(effectiveRoll(w.dmg)):'—';updateRoundTotals()}
+function updateRoundTotals(){const w=weapons.find(w=>String(w.id)===String(roundWeaponId));let a=w?total(effectiveRoll(w.atk)):0,d=w?total(effectiveRoll(w.dmg)):0;const ad=w?(w.atk.dice||'').trim():'';const dd=w?(w.dmg.dice||'').trim():'';roundMods.attackMods.forEach(m=>a+=Number(m.value)||0);roundMods.damageMods.forEach(m=>d+=Number(m.value)||0);document.getElementById('roundAtkTotal').textContent=formatRoundTotal(ad,a);document.getElementById('roundDmgTotal').textContent=formatRoundTotal(dd,d)}
 renderAttackChoices();
 loadCurrentAttack();
 
