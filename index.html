@@ -9,7 +9,7 @@
 <title>Baxtorian — D&D Character</title>
 <style>
 :root{--bg:#17130f;--panel:#251d17;--panel2:#30251d;--gold:#d8ad55;--text:#f4ead7;--muted:#b8a890;--red:#b94a42;--green:#557d58}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px system-ui,-apple-system,Segoe UI,sans-serif;padding-bottom:76px}
+*{box-sizing:border-box;touch-action:manipulation}html,body{touch-action:pan-y;overscroll-behavior-y:none}body{margin:0;background:var(--bg);color:var(--text);font:16px system-ui,-apple-system,Segoe UI,sans-serif;padding-bottom:76px}
 header{padding:20px 16px 14px;background:linear-gradient(#211912,#17130f);position:sticky;top:0;z-index:5;border-bottom:1px solid #3d3024}
 h1{display:flex;align-items:center;gap:7px;margin:0;padding-right:125px;color:var(--gold);font-size:26px}.name-edit{display:block;flex:1;min-width:0;width:100%;max-width:100%;padding:0;margin:0;background:transparent;border:0;border-radius:0;color:var(--gold);font:inherit;font-size:26px;font-weight:800;line-height:1.25;outline:none;box-shadow:none;text-decoration:none}.name-edit[readonly]{cursor:default}.name-edit:focus{outline:none;box-shadow:none}.name-edit-toggle{flex:0 0 auto;padding:4px;background:transparent;border:0;color:var(--muted);font-size:17px;line-height:1;cursor:pointer}.name-edit-toggle:focus-visible{outline:1px solid var(--gold)}.sub{color:var(--muted);margin-top:3px}
 .deploy-badge{position:absolute;top:10px;right:12px;display:flex;align-items:center;gap:6px;padding:5px 8px;border:1px solid #426447;border-radius:999px;background:#203324;color:#bfe7c2;font-size:10px;font-weight:800;letter-spacing:.07em;white-space:nowrap}
@@ -180,6 +180,12 @@ const raceInput=document.getElementById('race'),headerRace=document.getElementBy
 if(raceInput&&headerRace){const savedRace=localStorage.getItem('bax_race');if(savedRace&&Array.from(raceInput.options).some(o=>o.value===savedRace))raceInput.value=savedRace;headerRace.textContent=raceInput.value;raceInput.addEventListener('change',()=>{headerRace.textContent=raceInput.value})}
 document.getElementById('hp').value=current;const maxHpInput=document.getElementById('maxHp');if(maxHpInput){const savedMaxHp=localStorage.getItem('bax_maxHp');if(savedMaxHp!==null)maxHpInput.value=savedMaxHp;maxHpInput.addEventListener('input',()=>{localStorage.setItem('bax_maxHp',maxHpInput.value);updateHealthBar()});}updateHealthBar();
 const hpRoundInit=document.getElementById('hpRound');if(hpRoundInit)hpRoundInit.value=current;
+// Prevent Safari/iOS gesture and double-tap zoom while keeping vertical scrolling usable.
+document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
+document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
+document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
+let lastTouchEnd=0;
+document.addEventListener('touchend',e=>{const now=Date.now();if(now-lastTouchEnd<=300)e.preventDefault();lastTouchEnd=now;},{passive:false});
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 
 // --- Inventory manager ---
