@@ -511,10 +511,10 @@ document.getElementById('ability_str').addEventListener('input',()=>{renderWeapo
 
 // --- Feats & Maneuvers ---
 const DEFAULT_FEATS=[
-  {name:'Power Attack',desc:''},
-  {name:'Improved Bull Rush',desc:''},
-  {name:'Charge',desc:''},
-  {name:'Close Quarters',desc:''}
+  {name:'Power Attack',desc:'Prerequisite: Strength 13. Before making attacks on your turn, choose a number up to your base attack bonus (minimum 1). Take it as a penalty on melee attack rolls and add it to melee damage. Two-handed weapons and one-handed weapons wielded in two hands add twice that amount; off-hand attacks add half. The choice lasts until your next turn. Does not apply to light weapons, with the usual unarmed-strike and natural-weapon exceptions. Source: Player’s Handbook, D&D 3.5e.'},
+  {name:'Improved Bull Rush',desc:'Prerequisites: Strength 13, Power Attack. Gain +4 on the opposed Strength check to bull rush, and the defender does not get an attack of opportunity against you for starting the bull rush. Normal bull rush movement, size and positioning rules still apply. Source: Player’s Handbook, D&D 3.5e.'},
+  {name:'Charge',desc:'A combat action, not a feat. Move up to twice your speed in a straight line and make one melee attack at the end. You gain +2 on the attack roll and take −2 AC until the start of your next turn. Normal charge path and ending-space restrictions apply. Source: Player’s Handbook, D&D 3.5e.'},
+  {name:'Close Quarters Fighting',desc:'Prerequisite: None. When an opponent attempts to grapple you, you may make an attack of opportunity even if an ability or feat would normally prevent it. If the attack deals damage, add that damage as a bonus on the opposed grapple check to avoid being grappled. You must still have an attack of opportunity available. Source: Complete Warrior, D&D 3.5e.'}
 ];
 let feats=[];
 try{feats=JSON.parse(localStorage.getItem('bax_feats')||'null')}catch(e){feats=null}
@@ -551,6 +551,7 @@ const fighterFeatCatalog = [
 ["Athletic","No special prerequisite","Improves Climb and Swim checks by +2 each.","Player's Handbook",false,[]],
 ["Blind-Fight","No special prerequisite","Improves fighting against concealment and reduces drawbacks of being unable to see an opponent.","Player's Handbook",true,[]],
 ["Cleave","Strength 13; Power Attack","After dropping an opponent, allows one additional melee attack against another nearby foe, subject to the feat's limits.","Player's Handbook",true,[]],
+ ["Great Cleave","Strength 13; Cleave; Power Attack; base attack bonus +4","Whenever you drop an opponent in melee, you may make an additional melee attack against another opponent within reach, at the same attack bonus. There is no per-round limit on these extra attacks, but you cannot move between them and each attack must be against a different eligible opponent.","Player's Handbook",true,[]],
 ["Combat Expertise","Intelligence 13","Trade a chosen amount of melee attack bonus for an equal dodge bonus to AC, up to the base attack bonus limit and +5 maximum.","Player's Handbook",true,[]],
 ["Combat Reflexes","No special prerequisite","Allows additional attacks of opportunity based on Dexterity and permits attacks of opportunity while flat-footed.","Player's Handbook",true,[]],
 ["Deceitful","No special prerequisite","Improves Disguise and Forgery checks by +2 each.","Player's Handbook",false,[]],
@@ -650,6 +651,29 @@ if(localStorage.getItem('bax_powerMigrationDone')!=='1'){
  }
  localStorage.setItem('bax_powerMigrationDone','1');
 }
+// Populate these existing character feats and reusable database records without overwriting non-empty descriptions.
+const legacyFeatDetails=[
+ {name:'Power Attack',aliases:[],source:"Player's Handbook",prereq:'Strength 13',summary:'Before making attacks on your turn, choose a number up to your base attack bonus (minimum 1). Take it as a penalty on melee attack rolls and add it to melee damage. Two-handed weapons and one-handed weapons wielded in two hands add twice that amount; off-hand attacks add half. The choice lasts until your next turn. Does not apply to light weapons, with the usual unarmed-strike and natural-weapon exceptions.',fighter:true},
+ {name:'Great Cleave',aliases:[],source:"Player's Handbook",prereq:'Strength 13; Cleave; Power Attack; base attack bonus +4',summary:'Whenever you drop an opponent in melee, you may make an additional melee attack against another opponent within reach, at the same attack bonus. There is no per-round limit on these extra attacks, but you cannot move between them and each attack must be against a different eligible opponent.',fighter:true},
+ {name:'Improved Bull Rush',aliases:[],source:"Player's Handbook",prereq:'Strength 13; Power Attack',summary:'Gain +4 on the opposed Strength check to bull rush, and the defender does not get an attack of opportunity against you for starting the bull rush. Normal bull rush movement, size and positioning rules still apply.',fighter:true},
+ {name:'Mobility',aliases:[],source:"Player's Handbook",prereq:'Dexterity 13; Dodge',summary:'Gain a +4 dodge bonus to Armor Class against attacks of opportunity caused by movement through threatened areas. Dodge bonuses are lost when you lose your Dexterity bonus to AC.',fighter:true},
+ {name:'Close Quarters Fighting',aliases:['Close Quarters'],source:'Complete Warrior',prereq:'None',summary:'When an opponent attempts to grapple you, you may make an attack of opportunity even if an ability or feat would normally prevent it. If the attack deals damage, add that damage as a bonus on the opposed grapple check to avoid being grappled. You must still have an attack of opportunity available.',fighter:true}
+];
+function legacyFeatKey(name){return String(name||'').toLowerCase().replace(/[^a-z0-9]/g,'')}
+function enrichLegacyFeatData(){
+ legacyFeatDetails.forEach(d=>{
+  const full='Prerequisites: '+d.prereq+'.\\n\\n'+d.summary+'\\n\\nFighter bonus feat: '+(d.fighter?'Yes':'No')+'.';
+  const feat=feats.find(f=>legacyFeatKey(f.name)===legacyFeatKey(d.name)||d.aliases.some(a=>legacyFeatKey(f.name)===legacyFeatKey(a)));
+  if(feat){if(!String(feat.desc||'').trim())feat.desc=full;if(d.aliases.includes(feat.name))feat.name=d.name}
+  const key=legacyFeatKey(d.name);
+  let db=powerDatabase.find(p=>legacyFeatKey(p.name)===key||d.aliases.some(a=>legacyFeatKey(p.name)===legacyFeatKey(a)));
+  if(!db){db={id:'legacy-detail-'+key,name:d.name,type:'Feat',source:'D&D 3.5e · '+d.source+(d.fighter?' · Fighter bonus feat':''),description:full,action:'Passive',maxUses:0,reset:'manual',effects:[]};powerDatabase.push(db)}
+  else {if(!String(db.description||'').trim())db.description=full;if(d.aliases.includes(db.name))db.name=d.name;if(!db.source)db.source='D&D 3.5e · '+d.source+(d.fighter?' · Fighter bonus feat':'');if(!Array.isArray(db.effects))db.effects=[]}
+  characterPowers.forEach(cp=>{if(String(cp.databaseId)!==String(db.id)&&legacyFeatKey(cp.name)!==key&&!d.aliases.some(a=>legacyFeatKey(cp.name)===legacyFeatKey(a)))return;if(!String(cp.description||'').trim())cp.description=db.description;cp.name=d.name;cp.type='Feat';cp.source=db.source;cp.effects=Array.isArray(cp.effects)&&cp.effects.length?cp.effects:db.effects});
+ });
+ saveFeats();savePowerDatabase();saveCharacterPowers();
+}
+enrichLegacyFeatData();
 let editingPowerId=null;
 let pendingPowerEffects=[];
 const powerEffectTypes=['Attack roll','Damage roll','AC','Initiative','Saving throw','Strength score','Dexterity score','Constitution score','Intelligence score','Wisdom score','Charisma score','Comeliness score','Other'];
