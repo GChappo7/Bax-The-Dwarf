@@ -57,7 +57,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .vitals-footer{display:flex;align-items:flex-end;justify-content:space-between;width:100%;gap:12px;margin-top:2px}
 .vitals-max-hp,.vitals-ac{position:static;flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:76px;text-align:center;border:0;padding:0;background:transparent}
 .vitals-max-hp label,.vitals-ac label{font-size:10px;color:var(--muted);letter-spacing:.05em}
-.vitals-max-hp input,.vitals-ac input{display:block;width:66px;max-width:100%;padding:0;background:transparent;border:1px solid #51402f;border-radius:6px;color:var(--gold);font:800 24px system-ui,-apple-system,Segoe UI,sans-serif;text-align:center}
+.vitals-max-hp input,.vitals-ac input{display:block;width:66px;max-width:100%;padding:0;background:transparent;border:1px solid #51402f;border-radius:6px;color:var(--gold);font:800 24px system-ui,-apple-system,Segoe UI,sans-serif;text-align:center}.vitals-ac .ac-current-value{display:block;color:var(--gold);font-size:30px;line-height:1.15}.vitals-ac .ac-base-caption{font-size:10px;color:var(--muted);white-space:nowrap}.ac-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}.ac-summary>div{display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 8px;background:var(--panel2);border:1px solid #443528;border-radius:10px}.ac-summary span{font-size:11px;letter-spacing:.08em;color:var(--muted);font-weight:800}.ac-summary strong{font-size:34px;color:var(--gold);line-height:1.1}.ac-summary small{font-size:11px;color:var(--muted);text-align:center}.ac-field{display:flex;flex-direction:column;gap:6px;margin:12px 0;color:var(--muted);font-size:13px}.ac-field input{width:100%}.ac-modifier-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ac-modifier-grid label{display:flex;flex-direction:column;gap:5px;color:var(--muted);font-size:12px}.ac-modifier-grid label:last-child{grid-column:1/-1}.ac-modifier-grid input{text-align:center}.ac-breakdown{margin-top:12px;padding:10px;background:#1d1712;border:1px solid #443528;border-radius:8px;text-align:center;color:var(--gold);font-size:13px}.gear-row{align-items:center;gap:10px}.gear-row label{flex:0 0 42%;font-size:13px;color:var(--muted)}.gear-row input{width:auto;min-width:0;flex:1}
 .xp-tile{grid-column:auto;padding:10px;text-align:left;align-self:stretch}.xp-title{display:block;text-align:left;font-size:11px!important;font-weight:800;letter-spacing:.07em;color:var(--gold)!important;margin-bottom:7px}.xp-values{display:flex;flex-direction:column;gap:7px}.xp-values label{display:flex;flex-direction:column;gap:3px;font-size:10px;color:var(--muted);text-align:left}.xp-values input{width:100%;min-width:0;padding:5px 7px;background:#17130f;border:1px solid #51402f;border-radius:6px;color:var(--text);font:600 16px system-ui,-apple-system,Segoe UI,sans-serif;text-align:center}.xp-tile .xp-values{gap:6px}.xp-tile .xp-values label{font-size:9px}.xp-tile .xp-values input{font-size:14px;padding:4px 5px}.level-up-button{width:100%;margin-top:9px;background:#3a633f;border-color:#6fa875;color:#fff3c4;font-size:12px;white-space:normal}.level-up-button[hidden]{display:none!important}#fireworksOverlay{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:999;overflow:hidden}
 </style>
 </head>
@@ -66,7 +66,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <main>
 <section id="home" class="tab active">
 <div class="grid">
-<div class="stat vitals-tile"><div class="vitals-hp"><div class="health-track" role="progressbar" id="healthTrack" aria-label="Health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="healthFill" class="health-fill unknown"></div></div><span class="vitals-label">CURRENT HP</span><div class="hp"><button onclick="hp(-1)" aria-label="Decrease hit points">−</button><input type="number" id="hp" value="100" min="0" step="1" inputmode="numeric" aria-label="Current hit points" onchange="setHp(this.value)"><button onclick="hp(1)" aria-label="Increase hit points">+</button></div></div><div class="vitals-footer"><div class="vitals-max-hp"><label for="maxHp">MAX HP</label><input id="maxHp" type="number" min="1" step="1" inputmode="numeric" placeholder="—" aria-label="Maximum hit points"></div><div class="vitals-ac"><label for="armourClassTile">ARMOUR CLASS</label><input id="armourClassTile" data-save="ac" data-sync="ac" type="number" inputmode="numeric" aria-label="Armour class" placeholder="—"></div></div></div>
+<div class="stat vitals-tile"><div class="vitals-hp"><div class="health-track" role="progressbar" id="healthTrack" aria-label="Health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="healthFill" class="health-fill unknown"></div></div><span class="vitals-label">CURRENT HP</span><div class="hp"><button onclick="hp(-1)" aria-label="Decrease hit points">−</button><input type="number" id="hp" value="100" min="0" step="1" inputmode="numeric" aria-label="Current hit points" onchange="setHp(this.value)"><button onclick="hp(1)" aria-label="Increase hit points">+</button></div></div><div class="vitals-footer"><div class="vitals-max-hp"><label for="maxHp">MAX HP</label><input id="maxHp" type="number" min="1" step="1" inputmode="numeric" placeholder="—" aria-label="Maximum hit points"></div><div class="vitals-ac"><label>CURRENT AC</label><strong id="currentAcHome" class="ac-current-value">—</strong><span id="baseAcHome" class="ac-base-caption">Base AC: —</span></div></div></div>
 <button class="stat nav-tile dice-launch" onclick="show('dicePage')" aria-label="Open dice roller"><b>🎲</b><span>DICE</span></button><button class="stat nav-tile" onclick="show('stats')"><b>📊</b><span>SKILLS</span></button><button class="stat nav-tile" onclick="show('feats')"><b>🧩</b><span>FEATS</span></button><button class="stat nav-tile" onclick="show('armour')"><b>🛡️</b><span>ARMOUR</span></button><button class="stat nav-tile" onclick="show('inventory')"><b>🎒</b><span>INVENTORY</span></button>
 </div>
 <div class="stat xp-tile"><span class="xp-title">EXPERIENCE</span><div class="xp-values"><label>Current XP<input id="xpCurrent" data-save="xpCurrent" type="number" min="0" value="0" inputmode="numeric"></label><label>Previous Level XP<input id="xpPrevious" data-save="xpPrevious" type="number" min="0" value="60000" inputmode="numeric"></label><label>Next Level XP<input id="xpNext" data-save="xpNext" type="number" min="0" value="" placeholder="Enter target" inputmode="numeric"></label></div><button type="button" id="levelUpButton" class="level-up-button" hidden onclick="confirmLevelUp()">🎉 Confirm Level Up</button></div>
@@ -81,7 +81,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <label>WIS<input data-save="wis" type="number"></label><label>CHA<input data-save="cha" type="number"></label>
 </div></div>
 <div class="card"><h2>Combat</h2>
-<div class="row"><span>Armour Class</span><input data-save="ac" data-sync="ac" type="number" style="width:80px"></div>
+<div class="row"><span>Current Armour Class</span><strong id="currentAcStats">—</strong></div><div class="row"><span>Base AC (unarmoured)</span><strong id="baseAcStats">—</strong></div>
 <div class="row"><span>Initiative</span><input data-save="init" type="number" style="width:80px"></div>
 <div class="row"><span>Speed</span><input data-save="speed" type="number" style="width:80px"></div>
 </div></section>
@@ -110,16 +110,22 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </section>
 
 <section id="armour" class="tab">
-<div class="card"><h2>Armour &amp; Equipped Gear</h2><p style="color:var(--muted);margin-top:0">Record what Bax is wearing or carrying ready to use. Changes save automatically on this phone.</p>
-<div class="row"><span>Armour</span><input data-save="wornArmour" placeholder="e.g. Full plate" style="width:58%"></div>
-<div class="row"><span>Shield</span><input data-save="wornShield" placeholder="e.g. Heavy steel" style="width:58%"></div>
-<div class="row"><span>Helmet</span><input data-save="wornHelmet" placeholder="Helmet" style="width:58%"></div>
-<div class="row"><span>Gloves / Gauntlets</span><input data-save="wornGloves" placeholder="Gloves" style="width:58%"></div>
-<div class="row"><span>Boots</span><input data-save="wornBoots" placeholder="Boots" style="width:58%"></div>
-<div class="row"><span>Cloak</span><input data-save="wornCloak" placeholder="Cloak" style="width:58%"></div>
-<div class="row"><span>Other equipped gear</span><input data-save="wornOther" placeholder="Rings, amulet, belt..." style="width:58%"></div>
+<div class="card"><h2>Armour Class</h2><p style="color:var(--muted);margin-top:0">Your current AC updates from the bonuses below. Base AC is your unarmoured AC; by default it is 10 + your Dexterity modifier. If your rules use a different base, enter an override.</p>
+<div class="ac-summary"><div><span>BASE AC</span><strong id="baseAcSummary">—</strong><small>Without gear bonuses</small></div><div><span>CURRENT AC</span><strong id="currentAcSummary">—</strong><small>With bonuses applied</small></div></div>
+<label class="ac-field">Base AC override (optional)<input id="acBaseOverride" data-save="acBaseOverride" type="number" inputmode="numeric" placeholder="Auto: 10 + Dex modifier"></label>
+<div class="ac-modifier-grid"><label>Armour bonus<input id="acArmourBonus" data-save="acArmourBonus" type="number" inputmode="numeric" value="0"></label><label>Shield bonus<input id="acShieldBonus" data-save="acShieldBonus" type="number" inputmode="numeric" value="0"></label><label>Other bonuses / penalties<input id="acOtherBonus" data-save="acOtherBonus" type="number" inputmode="numeric" value="0"></label></div>
+<div class="ac-breakdown" id="acBreakdown">Base AC + armour + shield + other bonuses</div>
 </div>
-<div class="card"><h2>Armour Class Notes</h2><textarea data-save="armourNotes" placeholder="AC bonuses, armour check penalty, max Dex, special properties..."></textarea></div>
+<div class="card"><h2>Armour &amp; Equipped Gear</h2><p style="color:var(--muted);margin-top:0">Record what Bax is wearing. Enter the AC bonus each item contributes above.</p>
+<div class="row gear-row"><label for="wornArmour">Armour</label><input id="wornArmour" data-save="wornArmour" placeholder="e.g. Full plate"></div>
+<div class="row gear-row"><label for="wornShield">Shield</label><input id="wornShield" data-save="wornShield" placeholder="e.g. Heavy steel"></div>
+<div class="row gear-row"><label for="wornHelmet">Helmet</label><input id="wornHelmet" data-save="wornHelmet" placeholder="Helmet"></div>
+<div class="row gear-row"><label for="wornGloves">Gloves / Gauntlets</label><input id="wornGloves" data-save="wornGloves" placeholder="Gloves"></div>
+<div class="row gear-row"><label for="wornBoots">Boots</label><input id="wornBoots" data-save="wornBoots" placeholder="Boots"></div>
+<div class="row gear-row"><label for="wornCloak">Cloak</label><input id="wornCloak" data-save="wornCloak" placeholder="Cloak"></div>
+<div class="row gear-row"><label for="wornOther">Other equipped gear</label><input id="wornOther" data-save="wornOther" placeholder="Rings, amulet, belt..."></div>
+</div>
+<div class="card"><h2>Armour Properties &amp; Notes</h2><textarea data-save="armourNotes" placeholder="Armour check penalty, max Dex, speed, special properties, magical effects..."></textarea></div>
 </section>
 
 <section id="inventory" class="tab">
@@ -130,7 +136,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <section id="round" class="tab">
 <div class="card"><h2>Current Status</h2>
 <div class="row"><span>Current HP</span><input type="number" id="hpRound" style="width:90px;text-align:right" onchange="setHp(this.value)"></div>
-<div class="row"><span>Current Armour Class</span><input type="number" id="acRound" data-save="ac" data-sync="ac" style="width:90px;text-align:right"></div>
+<div class="row"><span>Current Armour Class</span><strong id="currentAcRound">—</strong></div><div class="row"><span>Base AC</span><strong id="baseAcRound">—</strong></div>
 </div>
 
 <div class="card"><h2>Current Weapon</h2>
@@ -197,6 +203,32 @@ function toggleCharacterName(){const input=document.getElementById('characterNam
 function show(id){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');const back=document.getElementById('headerBack');if(back)back.classList.toggle('visible',id!=='home');scrollTo(0,0);if(id==='round')renderRoundOptions()}
 document.querySelectorAll('[data-save]').forEach(el=>{let k='bax_'+el.dataset.save;let saved=localStorage.getItem(k);el.value=(saved!==null&&saved!=='')?saved:el.value;el.addEventListener('input',()=>localStorage.setItem(k,el.value))});
 document.querySelectorAll('[data-sync]').forEach(el=>{el.addEventListener('input',()=>{const k=el.dataset.sync;document.querySelectorAll('[data-sync="'+k+'"]').forEach(o=>{if(o!==el)o.value=el.value})})});
+// --- Armour Class calculator ---
+const legacyAc=localStorage.getItem('bax_ac');
+if(localStorage.getItem('bax_acBaseOverride')===null && legacyAc!==null && legacyAc!==''){
+  const override=document.getElementById('acBaseOverride');
+  if(override){override.value=legacyAc;localStorage.setItem('bax_acBaseOverride',legacyAc)}
+}
+function abilityModifier(score){return Math.floor((Number(score)-10)/2)}
+function updateArmourClass(){
+  const dexInput=document.querySelector('[data-save="dex"]');
+  const overrideInput=document.getElementById('acBaseOverride');
+  const override=overrideInput&&overrideInput.value!==''?Number(overrideInput.value):null;
+  const dex=dexInput&&dexInput.value!==''?Number(dexInput.value):null;
+  const base=override!==null&&Number.isFinite(override)?override:(dex!==null&&Number.isFinite(dex)?10+abilityModifier(dex):10);
+  const armour=Number(document.getElementById('acArmourBonus')?.value)||0;
+  const shield=Number(document.getElementById('acShieldBonus')?.value)||0;
+  const other=Number(document.getElementById('acOtherBonus')?.value)||0;
+  const total=base+armour+shield+other;
+  const set=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=String(value)};
+  ['baseAcHome','baseAcStats','baseAcRound','baseAcSummary'].forEach(id=>set(id,base));
+  ['currentAcHome','currentAcStats','currentAcRound','currentAcSummary'].forEach(id=>set(id,total));
+  const breakdown=document.getElementById('acBreakdown');
+  if(breakdown)breakdown.textContent='Base '+base+' '+(armour>=0?'+ ':'− ')+Math.abs(armour)+' armour '+(shield>=0?'+ ':'− ')+Math.abs(shield)+' shield '+(other>=0?'+ ':'− ')+Math.abs(other)+' other = '+total+' AC';
+  localStorage.setItem('bax_ac',String(total));
+}
+document.querySelectorAll('#acBaseOverride,#acArmourBonus,#acShieldBonus,#acOtherBonus,[data-save="dex"]').forEach(el=>el.addEventListener('input',updateArmourClass));
+updateArmourClass();
 const levelInput=document.getElementById('level'),headerLevel=document.getElementById('headerLevel');
 if(levelInput&&headerLevel){headerLevel.textContent=levelInput.value;levelInput.addEventListener('input',()=>{headerLevel.textContent=levelInput.value})}
 const alignmentInput=document.getElementById('alignment'),headerAlignment=document.getElementById('headerAlignment');
