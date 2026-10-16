@@ -473,7 +473,7 @@ document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
 // Do not cancel touchend events: iOS standalone mode can suppress the synthetic click after this handler. The viewport and touch-action CSS already prevent unwanted double-tap zoom.
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=48',{updateViaCache:'none'});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=49',{updateViaCache:'none'});
 
 // --- Reusable equipment item database ---
 const equipmentCategories=['Headgear','Lens / Goggles','Armour','Shield','Robe / Vest / Shirt','Bracers','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Weapons','Ioun Stones / Jewellery','Other'];
@@ -937,6 +937,7 @@ activeAttack=Number(localStorage.getItem('bax_active_attack')||1);
 let roundWeaponId=localStorage.getItem('bax_round_weapon')||'';
 try{attackRounds=JSON.parse(localStorage.getItem('bax_attack_rounds')||'[]')}catch(e){attackRounds=[]}
 if(!Array.isArray(attackRounds))attackRounds=[];
+attackRounds=attackRounds.filter(c=>c&&typeof c==='object'&&!Array.isArray(c));
 if(!attackRounds.length){
   let oldMods=[];try{oldMods=JSON.parse(localStorage.getItem('bax_roundmods')||'[]')}catch(e){}
   attackRounds=[{label:'Main Attack',weaponId:localStorage.getItem('bax_round_weapon')||'',attackMods:oldMods.filter(m=>Number(m.atk)!==0||Number(m.dmg)===0).map(m=>({id:m.id,name:m.name,value:Number(m.atk)||0})),damageMods:oldMods.filter(m=>Number(m.dmg)!==0).map(m=>({id:Number(m.id)+100000,name:m.name,value:Number(m.dmg)||0}))}];
@@ -950,6 +951,7 @@ if(localStorage.getItem('bax_attackSlotsConfigured')!=='true'&&attackRounds.leng
 attackRounds=attackRounds.map((c,i)=>{const legacy=Array.isArray(c.mods)?c.mods:[];return {...createAttackConfig(i),...c,weaponId:c.weaponId??(i===0?(localStorage.getItem('bax_round_weapon')||''):''),label:c.hasteGenerated?'Haste Extra Attack':(i===0?'Main Attack':'Attack '+(i+1)),attackMods:(Array.isArray(c.attackMods)?c.attackMods:legacy.filter(m=>Number(m.atk)!==0||Number(m.dmg)===0).map(m=>({id:m.id,name:m.name,value:Number(m.atk)||0}))).map(m=>({...m})),damageMods:(Array.isArray(c.damageMods)?c.damageMods:legacy.filter(m=>Number(m.dmg)!==0).map(m=>({id:Number(m.id)+100000,name:m.name,value:Number(m.dmg)||0}))).map(m=>({...m})),attackBase:c.attackBase??(c.bab??null),attackFeats:c.attackFeats??0,damageBase:c.damageBase??null,damageFeats:c.damageFeats??0,damageOther:c.damageOther??0,attackRolled:c.attackRolled??null,damageRolled:c.damageRolled??null,criticalConfirmed:c.criticalConfirmed??false}});
 if(!Array.isArray(attackRounds)||!attackRounds.length)attackRounds=[createAttackConfig(0)];
 attackRounds=attackRounds.map((c,i)=>({...createAttackConfig(i),...c,label:c.hasteGenerated?'Haste Extra Attack':(i===0?'Main Attack':'Attack '+(i+1)),weaponId:String(c.weaponId||''),attackMods:(Array.isArray(c.attackMods)?c.attackMods:[]).map(m=>({...m})),damageMods:(Array.isArray(c.damageMods)?c.damageMods:[]).map(m=>({...m}))}));
+if(attackRounds.length){attackRounds[0].hasteGenerated=false;attackRounds[0].label='Main Attack';}
 if(!Number.isInteger(activeAttack)||activeAttack<1||activeAttack>attackRounds.length)activeAttack=1;
 loadedAttackIndex=activeAttack;
 try{localStorage.setItem('bax_attack_rounds',JSON.stringify(attackRounds));localStorage.setItem('bax_active_attack',String(activeAttack))}catch(e){}
