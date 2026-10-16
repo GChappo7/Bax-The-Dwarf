@@ -205,7 +205,9 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </section>
 
 <section id="itemDatabase" class="tab">
-<div class="card"><h2>Item Database</h2><p style="color:var(--muted);margin-top:0">Create reusable equipment entries here. Items and their modifiers save automatically on this device. You can add several modifiers to one item.</p>
+<div class="card"><h2>Item Database</h2><p style="color:var(--muted);margin-top:0">Manage your equipment library. Default Items are fetched from GitHub; My Items are saved locally on this device.</p></div>
+<div class="card"><h2>Default Items</h2><p style="color:var(--muted);margin-top:0">These are the shared defaults stored in the GitHub repository. Refresh to fetch the latest versions, then add or restore an item to your local My Items list.</p><p id="dbDefaultItemsStatus" style="color:var(--muted);font-size:12px">Fetching defaults from GitHub…</p><button type="button" onclick="loadDefaultEquipmentLibrary()" style="width:100%;margin-bottom:10px">↻ Refresh Default Items from GitHub</button><div id="dbDefaultItemsList"></div></div>
+<div class="card"><h2>Add or Edit My Items</h2><p style="color:var(--muted);margin-top:0">Custom entries and edits are saved only on this device.</p>
 <div class="item-form">
 <label>Item name<input id="dbItemName" placeholder="e.g. Gauntlets of Ogre Power"></label>
 <label>Equipment category<select id="dbItemCategory">
@@ -220,8 +222,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <button type="button" onclick="addPendingModifier()" style="width:100%;margin:8px 0 14px">+ Add Modifier</button>
 <button id="dbSaveButton" type="button" onclick="saveDatabaseItem()" style="width:100%;background:#5a4226;border-color:var(--gold)">Save Item to Database</button><button id="dbCancelEditButton" type="button" onclick="cancelEditDatabaseItem()" style="width:100%;display:none">Cancel Editing</button>
 </div></div>
-<div class="card"><h2>Shared Defaults &amp; Local Backup</h2><p id="dbLibraryStatus" style="color:var(--muted);margin-top:0">Loading GitHub default libraries…</p><div class="actions"><button type="button" onclick="exportEquipmentLibrary()">Export Local Backup</button><button type="button" onclick="document.getElementById('dbLibraryImportFile').click()">Import Backup</button><button type="button" class="wpn-del" onclick="resetEquipmentLibrary()">Reset Entire Library</button></div><input id="dbLibraryImportFile" type="file" accept="application/json,.json" style="display:none" onchange="importEquipmentLibraryBackup(this)"><p style="color:var(--muted);font-size:12px;margin-bottom:0">Default entries come from GitHub. Local edits and custom entries stay on this device. Export a backup before clearing browser data or changing devices.</p></div>
-<div class="card"><h2>Saved Items</h2><p style="color:var(--muted);margin-top:0">Your reusable equipment definitions appear here. Edits and deletions affect only this device.</p><div id="dbSavedItems"></div></div>
+<div class="card"><h2>My Items &amp; Local Backup</h2><p id="dbLibraryStatus" style="color:var(--muted);margin-top:0">Loading GitHub default libraries…</p><div class="actions"><button type="button" onclick="exportEquipmentLibrary()">Export Local Backup</button><button type="button" onclick="document.getElementById('dbLibraryImportFile').click()">Import Backup</button><button type="button" class="wpn-del" onclick="resetEquipmentLibrary()">Reset Entire Library</button></div><input id="dbLibraryImportFile" type="file" accept="application/json,.json" style="display:none" onchange="importEquipmentLibraryBackup(this)"><p style="color:var(--muted);font-size:12px;margin-bottom:0">Default entries come from GitHub. Local edits and custom entries stay on this device. Export a backup before clearing browser data or changing devices.</p></div>
+<div class="card"><h2>My Items</h2><p style="color:var(--muted);margin-top:0">Your local equipment library, including defaults you have added, custom entries and local edits.</p><div id="dbSavedItems"></div></div>
 <div class="card"><h2>Reset Category</h2><p style="color:var(--muted);margin-top:0">Restore a category to GitHub defaults. Custom entries in that category will also be removed.</p><label>Category to reset<select id="dbResetCategorySelect"><option>Headgear</option><option>Lens / Goggles</option><option>Armour</option><option>Shield</option><option>Robe / Vest / Shirt</option><option>Bracers</option><option>Cloak</option><option>Rings</option><option>Gloves</option><option>Amulet / Medallion</option><option>Necklace</option><option>Periapt / Phylactery</option><option>Broach / Scarab</option><option>Belt</option><option>Boots</option><option>Weapons</option><option>Ioun Stones / Jewellery</option><option>Other</option></select></label><button type="button" onclick="resetEquipmentCategory(document.getElementById('dbResetCategorySelect').value)" style="width:100%">Reset Selected Category</button></div>
 <div class="card"><h2>Category Visibility</h2><p style="color:var(--muted);margin-top:0">Choose which categories should appear in equipment selectors. Hiding a category will not delete its items.</p><div id="dbCategoryVisibility"></div></div>
 </section>
@@ -477,7 +479,7 @@ function escapeHtml(value){return String(value??'').replace(/&/g,'&amp;').replac
 function saveDatabaseItems(){localStorage.setItem('bax_itemDatabase',JSON.stringify(databaseItems));localStorage.setItem('bax_deletedDatabaseItemNames',JSON.stringify(deletedDatabaseItemNames))}
 function equipmentNameKey(name){return String(name||'').trim().toLowerCase().replace(/\\s+/g,' ')}
 async function loadDefaultEquipmentLibrary(){
- const status=document.getElementById('dbLibraryStatus');
+ const status=document.getElementById('dbLibraryStatus'),defaultStatus=document.getElementById('dbDefaultItemsStatus');
  try{
   const responses=await Promise.all([fetch('./items.json'),fetch('./armour.json')]);if(responses.some(r=>!r.ok))throw new Error('Default files could not be loaded');
   const [items,armour]=await Promise.all(responses.map(r=>r.json()));if(!Array.isArray(items)||!Array.isArray(armour))throw new Error('Invalid default library format');
@@ -485,9 +487,19 @@ async function loadDefaultEquipmentLibrary(){
   const deleted=new Set(deletedDatabaseItemNames.map(equipmentNameKey));
   databaseItems=databaseItems.filter(item=>!deleted.has(equipmentNameKey(item.name)));
   defaultDatabaseItems.forEach(base=>{if(!deleted.has(equipmentNameKey(base.name))&&!databaseItems.some(item=>equipmentNameKey(item.name)===equipmentNameKey(base.name)))databaseItems.push(JSON.parse(JSON.stringify(base)))});
-  saveDatabaseItems();if(status)status.textContent='GitHub defaults loaded. Edits, custom entries and deletions are saved only on this device.';
-  renderDatabaseItems();if(typeof renderRoundOptions==='function')renderRoundOptions();
- }catch(error){console.warn('Equipment defaults unavailable',error);if(status)status.textContent='Could not load GitHub defaults right now. Existing items on this device are still available.'}
+  saveDatabaseItems();if(status)status.textContent='GitHub defaults loaded. Edits, custom entries and deletions are saved only on this device.';if(defaultStatus)defaultStatus.textContent='Loaded '+defaultDatabaseItems.length+' default items from GitHub.';
+  renderGitHubDefaultItems();renderDatabaseItems();if(typeof renderRoundOptions==='function')renderRoundOptions();
+ }catch(error){console.warn('Equipment defaults unavailable',error);const message='Could not fetch GitHub defaults. Check your connection and try Refresh.';if(status)status.textContent=message;if(defaultStatus)defaultStatus.textContent=message;const box=document.getElementById('dbDefaultItemsList');if(box)box.innerHTML='<p style="color:var(--muted)">Default items could not be loaded.</p>'}
+}
+function renderGitHubDefaultItems(){
+ const box=document.getElementById('dbDefaultItemsList');if(!box)return;
+ if(!defaultDatabaseItems.length){box.innerHTML='<p style="color:var(--muted)">No default items were found in items.json or armour.json.</p>';return}
+ box.innerHTML=defaultDatabaseItems.map(item=>{
+  const current=databaseItems.find(entry=>equipmentNameKey(entry.name)===equipmentNameKey(item.name));
+  const modifiers=(item.modifiers||[]).map(m=>'<div class="db-modifier"><strong>'+escapeHtml(m.type)+(m.target?': '+escapeHtml(m.target):'')+'</strong>'+(m.value!==''&&m.value!==undefined?' — '+(Number(m.value)>0?'+':'')+escapeHtml(m.value):'')+(m.bonusType?' ('+escapeHtml(m.bonusType)+')':'')+(m.notes?'<p>Reminder: '+escapeHtml(m.notes)+'</p>':'')+'</div>').join('');
+  const safeName=JSON.stringify(String(item.name||'')).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+  return '<div class="db-item"><h3>'+escapeHtml(item.name)+'</h3><span class="badge">'+escapeHtml(item.category||'Other')+'</span>'+((Array.isArray(item.rarity)&&item.rarity.length?item.rarity:['Standard']).map(r=>'<span class="badge">'+escapeHtml(r)+'</span>').join(''))+(item.description?'<p>'+escapeHtml(item.description)+'</p>':'')+(modifiers||'<p>No modifiers recorded.</p>')+'<div class="db-item-actions"><button type="button" onclick="restoreDefaultItem('+safeName+')">'+(current?'Restore Default to My Items':'Add to My Items')+'</button></div></div>';
+ }).join('');
 }
 function restoreDefaultItem(name){
  const base=defaultDatabaseItems.find(item=>equipmentNameKey(item.name)===equipmentNameKey(name));if(!base)return;
