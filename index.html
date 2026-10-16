@@ -120,7 +120,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .active-items-table{border-collapse:collapse;width:max-content;min-width:100%;font-size:12px;line-height:1.2}
 .active-items-table th,.active-items-table td{padding:2px 4px;text-align:left;vertical-align:middle;border-bottom:1px solid #3a2e24;white-space:nowrap;max-width:none;font-size:12px!important;font-weight:400!important;line-height:1.2!important}
 .active-items-table th{color:var(--gold);background:var(--panel);position:sticky;top:0;border-bottom:1px solid #6b5437}
-.active-items-table td:nth-child(3),.active-items-table td:nth-child(4){font-size:12px!important;font-weight:400!important;line-height:1.2!important}
 .active-items-table tbody tr:nth-child(even){background:#211a14}
 .active-items-empty{padding:6px 0;color:var(--muted);font-size:12px}
 </style>
@@ -552,11 +551,8 @@ function removeDatabaseItem(id){if(!confirm('Delete this item from your database
 function renderActiveItemsTable(){
  const box=document.getElementById('dbActiveItemsTable');if(!box)return;
  if(!databaseItems.length){box.innerHTML='<p class="active-items-empty">No active items in the database.</p>';return}
- const rows=databaseItems.slice().sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''))).map(item=>{
-  const modifiers=(item.modifiers||[]).map(m=>String(m.type||'Modifier')+(m.target?': '+m.target:'')+(m.value!==''&&m.value!==undefined?' '+(Number(m.value)>0?'+':'')+m.value:'')+(m.bonusType?' ('+m.bonusType+')':'')+(m.notes?' — '+m.notes:'')).join('; ');
-  return '<tr><td>'+escapeHtml(item.name||'—')+'</td><td>'+escapeHtml(item.category||'Other')+'</td><td>'+escapeHtml(item.description||'—')+'</td><td>'+escapeHtml(modifiers||'—')+'</td></tr>';
- }).join('');
- box.innerHTML='<table class="active-items-table"><thead><tr><th>Item name</th><th>Category</th><th>Description</th><th>Modifiers</th></tr></thead><tbody>'+rows+'</tbody></table>';
+ const rows=databaseItems.slice().sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''))).map(item=>'<tr><td>'+escapeHtml(item.name||'—')+'</td><td>'+escapeHtml(item.category||'Other')+'</td></tr>').join('');
+ box.innerHTML='<table class="active-items-table"><thead><tr><th>Item name</th><th>Category</th></tr></thead><tbody>'+rows+'</tbody></table>';
 }
 function renderDatabaseItems(){
  renderActiveItemsTable();renderEquippedSelectors();if(typeof updateArmourClass==='function')updateArmourClass();if(typeof renderAbilityScoreModifiers==='function')renderAbilityScoreModifiers();if(typeof renderRoundCalc==='function')renderRoundCalc();
