@@ -1,0 +1,31 @@
+[
+  {
+    "id": "charge",
+    "name": "Charge",
+    "description": "Charge at an opponent, doubling your movement rate, +2 to Attack Roll, -2 to your AC this turn.",
+    "modifiers": [
+      {
+        "type": "Attack roll",
+        "value": 2,
+        "label": "+2 to Attack roll"
+      },
+      {
+        "type": "AC",
+        "value": -2,
+        "label": "-2 to Armour Class"
+      }
+    ]
+  },
+  {
+    "id": "haste",
+    "name": "Haste",
+    "description": "Whilst hasted, double movement and an extra main attack.",
+    "modifiers": [
+      {
+        "type": "Extra main attack",
+        "value": 1,
+        "label": "Duplicates Main Attack so there are two"
+      }
+    ]
+  }
+]
