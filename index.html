@@ -76,7 +76,16 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .ability-modifier-row strong{font-size:20px;color:var(--gold)}
 @media(min-width:520px){.ability-score-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .skills-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.round-calc-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border,#454b50)}.round-calc-row span,.round-calc-row label{font-weight:650}.round-calc-row small{display:block;color:var(--muted);font-size:11px;font-weight:400}.round-calc-row input{width:100px;max-width:38%;text-align:right}.round-roll-row{margin-top:4px;padding:12px 0}.round-roll-row input{font-size:18px;font-weight:800}.round-calc-total{display:flex;justify-content:space-between;align-items:center;padding:14px 0 2px;font-size:16px}.round-calc-total strong{font-size:24px;color:var(--gold)}
+.round-calc-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border,#454b50)}
+.attack-calc-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin-top:8px}
+.attack-calc-cell{min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 2px;background:var(--panel2);border:1px solid var(--border,#454b50);border-radius:8px}
+.attack-calc-cell>span{min-height:26px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:11px;line-height:1.1;font-weight:750;color:var(--muted)}
+.attack-calc-cell>strong{min-height:31px;display:flex;align-items:center;justify-content:center;font-size:21px;color:var(--gold)}
+.attack-calc-cell>input{box-sizing:border-box;width:100%;min-width:0;max-width:58px;padding:3px 0;text-align:center;font-size:20px;font-weight:800}
+.attack-adjust{width:34px;height:27px;padding:0;border:1px solid var(--border,#51402f);border-radius:6px;background:var(--panel,#211b15);color:var(--text,#eee2cc);font-size:19px;line-height:1}
+.attack-calc-cell:not(:has(input)) .attack-calc-cell{gap:0}
+@media(max-width:360px){.attack-calc-grid{gap:3px}.attack-calc-cell{padding:5px 1px}.attack-calc-cell>span{font-size:10px}.attack-calc-cell>input{font-size:18px}}
+.round-calc-row span,.round-calc-row label{font-weight:650}.round-calc-row small{display:block;color:var(--muted);font-size:11px;font-weight:400}.round-calc-row input{width:100px;max-width:38%;text-align:right}.round-roll-row{margin-top:4px;padding:12px 0}.round-roll-row input{font-size:18px;font-weight:800}.round-calc-total{display:flex;justify-content:space-between;align-items:center;padding:14px 0 2px;font-size:16px}.round-calc-total strong{font-size:24px;color:var(--gold)}
 .skill-box{min-width:0;aspect-ratio:1/0.82;display:flex;flex-direction:column;justify-content:space-between;gap:8px;padding:10px;background:var(--panel2);border:1px solid #51402f;border-radius:10px}
 .skill-box>label{font-size:13px;font-weight:800;color:var(--gold);overflow-wrap:anywhere}
 .skill-modifier{display:flex;align-items:center;justify-content:space-between;gap:6px;border-top:1px solid #443528;padding-top:7px}
@@ -282,13 +291,13 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <div class="round-calc-total" style="margin-top:10px"><span>Attack Total</span><strong id="cqAttackTotal">Enter your d20 roll</strong></div>
 <button type="button" style="width:100%;margin-top:10px" onclick="clearCloseQuartersAoO()">Finish / dismiss action</button>
 </div></div></div>
-<div class="card"><h2>Attack Roll</h2>
-<p style="color:var(--muted);margin-top:0">Set the modifiers that contribute to your attack total.</p>
-<div class="round-calc-row"><span>Base attack</span><input id="roundAttackBase" type="number" inputmode="numeric" onchange="updateRoundCalc('attackBase',this.value)" aria-label="Attack base attack bonus"></div>
-<div class="round-calc-row"><span>STR bonus <small>(from ability score)</small></span><strong id="roundAttackStr">—</strong></div>
-<div class="round-calc-row"><span>Feats</span><input id="roundAttackFeats" type="number" inputmode="numeric" onchange="updateRoundCalc('attackFeats',this.value)" aria-label="Attack feats bonus"></div>
-<div class="round-calc-row"><span>Weapon bonus</span><strong id="roundAttackWeapon">—</strong></div>
-
+<div class="card attack-calc-card"><h2>Attack Roll</h2>
+<div class="attack-calc-grid">
+<div class="attack-calc-cell"><span>Base attack</span><button type="button" class="attack-adjust" aria-label="Increase base attack" onclick="adjustRoundAttackValue('roundAttackBase',1)">+</button><input id="roundAttackBase" type="number" inputmode="numeric" onchange="updateRoundCalc('attackBase',this.value)" aria-label="Attack base attack bonus"><button type="button" class="attack-adjust" aria-label="Decrease base attack" onclick="adjustRoundAttackValue('roundAttackBase',-1)">−</button></div>
+<div class="attack-calc-cell"><span>STR bonus</span><strong id="roundAttackStr">—</strong></div>
+<div class="attack-calc-cell"><span>Feats</span><button type="button" class="attack-adjust" aria-label="Increase feats bonus" onclick="adjustRoundAttackValue('roundAttackFeats',1)">+</button><input id="roundAttackFeats" type="number" inputmode="numeric" onchange="updateRoundCalc('attackFeats',this.value)" aria-label="Attack feats bonus"><button type="button" class="attack-adjust" aria-label="Decrease feats bonus" onclick="adjustRoundAttackValue('roundAttackFeats',-1)">−</button></div>
+<div class="attack-calc-cell"><span>Weapon Bonus</span><strong id="roundAttackWeapon">—</strong></div>
+</div>
 </div>
 <div class="card"><h2>Damage Roll</h2>
 <p style="color:var(--muted);margin-top:0">Set the modifiers that contribute to your damage total.</p>
@@ -464,7 +473,7 @@ document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
 // Do not cancel touchend events: iOS standalone mode can suppress the synthetic click after this handler. The viewport and touch-action CSS already prevent unwanted double-tap zoom.
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=39',{updateViaCache:'none'});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=40',{updateViaCache:'none'});
 
 // --- Reusable equipment item database ---
 const equipmentCategories=['Headgear','Lens / Goggles','Armour','Shield','Robe / Vest / Shirt','Bracers','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Weapons','Ioun Stones / Jewellery','Other'];
@@ -939,7 +948,8 @@ function saveAttackRounds(){try{localStorage.setItem('bax_attack_rounds',JSON.st
 function currentAttackConfig(){return attackRounds[activeAttack-1]||(attackRounds[activeAttack-1]={weaponId:'',attackMods:[],damageMods:[],attackBase:null,attackFeats:0,damageBase:null,damageFeats:0,attackRolled:null,damageRolled:null,criticalConfirmed:false})}
 function saveCurrentAttack(){const c=currentAttackConfig();c.attackMods=roundMods.attackMods.map(m=>({...m}));c.damageMods=roundMods.damageMods.map(m=>({...m}));c.weaponId=String(roundWeaponId||'');saveAttackRounds();localStorage.setItem('bax_round_weapon',roundWeaponId)}
 function loadCurrentAttack(){const hasteToggle=document.getElementById('bootsHasteToggle');if(hasteToggle)hasteToggle.checked=bootsHasteActive;const c=currentAttackConfig();roundWeaponId=String(c.weaponId??(activeAttack===1?(localStorage.getItem('bax_round_weapon')||''):''));roundMods={attackMods:c.attackMods.map(m=>({...m})),damageMods:c.damageMods.map(m=>({...m}))};[['roundAttackBase','attackBase'],['roundAttackFeats','attackFeats'],['roundDamageBase','damageBase'],['roundDamageFeats','damageFeats'],['roundDamageOther','damageOther'],['roundAttackRolled','attackRolled'],['roundDamageRolled','damageRolled']].forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.value=c[key]===null||c[key]===undefined?'':c[key]});const critCheck=document.getElementById('roundCriticalConfirmed');if(critCheck)critCheck.checked=!!c.criticalConfirmed;localStorage.setItem('bax_active_attack',String(activeAttack));renderAttackChoices();renderRoundOptions();renderRoundCalc()}
-function persistCurrentAttackFromInputs(){const c=currentAttackConfig();[['roundAttackBase','attackBase'],['roundAttackFeats','attackFeats'],['roundDamageBase','damageBase'],['roundDamageFeats','damageFeats'],['roundDamageOther','damageOther'],['roundAttackRolled','attackRolled'],['roundDamageRolled','damageRolled']].forEach(([id,key])=>{const el=document.getElementById(id);if(el)c[key]=el.value.trim()===''?null:(Number(el.value)||0)});const crit=document.getElementById('roundCriticalConfirmed');if(crit)c.criticalConfirmed=!!crit.checked;c.weaponId=String(roundWeaponId||'');c.attackMods=roundMods.attackMods.map(m=>({...m}));c.damageMods=roundMods.damageMods.map(m=>({...m}));saveAttackRounds();try{localStorage.setItem('bax_active_attack',String(activeAttack));localStorage.setItem('bax_round_weapon',roundWeaponId||'')}catch(e){console.error('Could not persist current attack:',e)}}\nfunction updateRoundCalc(key,value){const c=currentAttackConfig();c[key]=value.trim()===''?null:(Number(value)||0);if(key==='attackRolled')c.criticalConfirmed=false;saveAttackRounds();renderRoundCalc()}
+function persistCurrentAttackFromInputs(){const c=currentAttackConfig();[['roundAttackBase','attackBase'],['roundAttackFeats','attackFeats'],['roundDamageBase','damageBase'],['roundDamageFeats','damageFeats'],['roundDamageOther','damageOther'],['roundAttackRolled','attackRolled'],['roundDamageRolled','damageRolled']].forEach(([id,key])=>{const el=document.getElementById(id);if(el)c[key]=el.value.trim()===''?null:(Number(el.value)||0)});const crit=document.getElementById('roundCriticalConfirmed');if(crit)c.criticalConfirmed=!!crit.checked;c.weaponId=String(roundWeaponId||'');c.attackMods=roundMods.attackMods.map(m=>({...m}));c.damageMods=roundMods.damageMods.map(m=>({...m}));saveAttackRounds();try{localStorage.setItem('bax_active_attack',String(activeAttack));localStorage.setItem('bax_round_weapon',roundWeaponId||'')}catch(e){console.error('Could not persist current attack:',e)}}\nfunction adjustRoundAttackValue(id,delta){const el=document.getElementById(id);if(!el)return;const current=el.value.trim()===''?0:(Number(el.value)||0);el.value=current+delta;const key=id==='roundAttackBase'?'attackBase':'attackFeats';updateRoundCalc(key,el.value);persistCurrentAttackFromInputs()}
+function updateRoundCalc(key,value){const c=currentAttackConfig();c[key]=value.trim()===''?null:(Number(value)||0);if(key==='attackRolled')c.criticalConfirmed=false;saveAttackRounds();renderRoundCalc()}
 function abilityStrength(){const el=document.getElementById('ability_str');if(!el||el.value.trim()==='')return 0;const score=effectiveAbilityScore('str',el.value);return Math.floor((score-10)/2)}
 function roundWeaponBonus(item,type){if(!item)return 0;return (item.modifiers||[]).filter(m=>m.type===(type==='atk'?'Attack roll':'Damage roll')).reduce((sum,m)=>sum+(Number(m.value)||0),0)}
 let closeQuartersAoOTriggered=false;
