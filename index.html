@@ -389,21 +389,30 @@ function renderAbilityScoreModifiers(){
 document.querySelectorAll('#stats [data-save]').forEach(el=>el.addEventListener('input',renderAbilityScoreModifiers));
 renderAbilityScoreModifiers();
 // --- Armour Class calculator ---
+// bax_ac stores the calculated TOTAL AC, not the base AC. Never migrate it into the base override.
 const legacyAc=localStorage.getItem('bax_ac');
-if(localStorage.getItem('bax_acBaseOverride')===null && legacyAc!==null && legacyAc!==''){
+const savedBaseOverride=localStorage.getItem('bax_acBaseOverride');
+if(savedBaseOverride!==null && savedBaseOverride!=='' && legacyAc!==null && legacyAc!=='' && Number(savedBaseOverride)===Number(legacyAc)){
+  // Earlier versions incorrectly copied total AC into this override; clear that stale value.
+  localStorage.removeItem('bax_acBaseOverride');
   const override=document.getElementById('acBaseOverride');
-  if(override){override.value=legacyAc;localStorage.setItem('bax_acBaseOverride',legacyAc)}
+  if(override)override.value='';
 }
 function abilityModifier(score){return Math.floor((Number(score)-10)/2)}
 function getEquippedAcBonuses(){
   const groups={armour:[],shield:[],other:[]};
   const selected=[];
-  equipmentCategories.forEach(category=>getEquippedIds(category).forEach(id=>{const item=databaseItems.find(x=>String(x.id)===String(id));if(item)selected.push({category,item})}));
+  equipmentCategories.forEach(category=>getEquippedIds(category).filter(Boolean).forEach(id=>{
+    const item=databaseItems.find(x=>String(x.id)===String(id));
+    if(item&&!selected.some(entry=>String(entry.item.id)===String(item.id)))selected.push({category,item});
+  }));
+  const categoryKey=value=>String(value||'').trim().toLowerCase();
   selected.forEach(({category,item})=>(Array.isArray(item.modifiers)?item.modifiers:[]).filter(m=>String(m.type||'').trim().toLowerCase()==='ac'&&m.value!==''&&m.value!==null&&m.value!==undefined&&Number.isFinite(Number(m.value))).forEach(m=>{
     const itemCategory=item.category||category;
+    const key=categoryKey(itemCategory);
     const entry={item:item.name,source:itemCategory,target:m.target||'AC',value:Number(m.value),bonusType:m.bonusType||'',notes:m.notes||''};
-    if(itemCategory==='Armour'||itemCategory==='Robe / Vest / Shirt')groups.armour.push(entry);
-    else if(itemCategory==='Shield')groups.shield.push(entry);
+    if(key==='armour'||key==='robe / vest / shirt')groups.armour.push(entry);
+    else if(key==='shield')groups.shield.push(entry);
     else groups.other.push(entry);
   }));
   return groups;
@@ -514,7 +523,7 @@ async function loadDefaultEquipmentLibrary(){
    if(Array.isArray(base.rarity))existing.rarity=JSON.parse(JSON.stringify(base.rarity));
   });
   saveDatabaseItems();if(status)status.textContent='GitHub defaults loaded. AC modifiers are refreshed from shared defaults; other local edits are kept.';if(defaultStatus)defaultStatus.textContent='Loaded '+defaultDatabaseItems.length+' default items from GitHub.';
-  renderGitHubDefaultItems();renderDatabaseItems();if(typeof renderRoundOptions==='function')renderRoundOptions();
+  renderGitHubDefaultItems();renderDatabaseItems();renderEquippedSelectors();updateArmourClass();if(typeof renderRoundOptions==='function')renderRoundOptions();
  }catch(error){console.warn('Equipment defaults unavailable',error);const message='Could not load GitHub defaults: '+(error&&error.message?error.message:'unknown error')+'. Check your connection and try Refresh.';if(status)status.textContent=message;if(defaultStatus)defaultStatus.textContent=message;const box=document.getElementById('dbDefaultItemsList');if(box)box.innerHTML='<p style="color:var(--muted)">Default items could not be loaded.</p>'}
 }
 function renderGitHubDefaultItems(){
