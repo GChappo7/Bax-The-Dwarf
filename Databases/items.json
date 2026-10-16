@@ -1,0 +1,188 @@
+[
+  {
+    "id": "resistance-cloak-plus-1",
+    "name": "Resistance Cloak +1",
+    "category": "Cloak",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Standard D&D 3.5e cloak of resistance: +1 resistance bonus on saving throws (not AC).",
+    "modifiers": [
+      {
+        "id": "seed-resistance-cloak-save",
+        "type": "Saving throw",
+        "target": "All saving throws",
+        "value": 1,
+        "bonusType": "Resistance",
+        "notes": "Does not increase AC under standard D&D 3.5e rules."
+      }
+    ]
+  },
+  {
+    "id": "ring-of-protection-plus-1",
+    "name": "Ring of Protection +1",
+    "category": "Rings",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Grants a +1 deflection bonus to AC.",
+    "modifiers": [
+      {
+        "id": "seed-ring-protection-ac",
+        "type": "AC",
+        "target": "AC",
+        "value": 1,
+        "bonusType": "Deflection",
+        "notes": "Deflection bonus to AC."
+      }
+    ]
+  },
+  {
+    "id": "ring-of-water-walking",
+    "name": "Ring of Water Walking",
+    "category": "Rings",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Allows the wearer to walk on water.",
+    "modifiers": [
+      {
+        "id": "seed-ring-water-walking",
+        "type": "Granted ability",
+        "target": "Other ability",
+        "value": 0,
+        "notes": "Walk on water while worn."
+      }
+    ]
+  },
+  {
+    "id": "ring-of-freedom-of-movement",
+    "name": "Ring of Freedom of Movement",
+    "category": "Rings",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Protects the wearer from effects that impede movement, as described by the D&D 3.5e item.",
+    "modifiers": [
+      {
+        "id": "seed-ring-freedom-movement",
+        "type": "Granted ability",
+        "target": "Other ability",
+        "value": 0,
+        "notes": "Freedom of movement while worn."
+      }
+    ]
+  },
+  {
+    "id": "gauntlets-of-ogre-power",
+    "name": "Gauntlets of Ogre Power",
+    "category": "Gloves",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "These magical gauntlets grant a +2 enhancement bonus to Strength while equipped.",
+    "modifiers": [
+      {
+        "id": "seed-gauntlets-str",
+        "type": "Ability score",
+        "target": "Strength",
+        "value": 2,
+        "bonusType": "Enhancement",
+        "notes": "Applies only while equipped."
+      }
+    ]
+  },
+  {
+    "id": "boots-of-speed",
+    "name": "Boots of Speed",
+    "category": "Boots",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Haste for up to 10 rounds per day. Track remaining rounds manually; this item does not automatically modify attack rolls or AC in the app.",
+    "modifiers": [
+      {
+        "id": "seed-boots-speed-haste",
+        "type": "Granted ability",
+        "target": "Other ability",
+        "value": 0,
+        "notes": "Track the 10 rounds/day manually. Configure any desired effects separately."
+      }
+    ]
+  },
+  {
+    "id": "lavender-ioun-stone",
+    "name": "Lavender Ioun Stone",
+    "category": "Ioun Stones / Jewellery",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Immunity to spells of 4th level and below, as specified for Bax’s item.",
+    "modifiers": [
+      {
+        "id": "seed-lavender-ioun-immunity",
+        "type": "Granted ability",
+        "target": "Other ability",
+        "value": 0,
+        "notes": "Immunity to spells of 4th level or lower."
+      }
+    ]
+  },
+  {
+    "id": "necklace-of-fireballs",
+    "name": "Necklace of Fireballs",
+    "category": "Necklace",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Necklace of fireballs. Track remaining beads/charges and the bead type separately; details not specified yet.",
+    "modifiers": []
+  },
+  {
+    "id": "plus-2-frost-dwarven-waraxe",
+    "name": "+2 Frost Dwarven Waraxe",
+    "category": "Weapons",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Dwarven waraxe with +2 enhancement to attack rolls, +3 total damage bonus as specified for Bax, plus 1d6 cold damage from frost. Critical multiplier ×3.",
+    "critThreshold": 20,
+    "critMultiplier": 3,
+    "modifiers": [
+      {
+        "id": "seed-waraxe-atk",
+        "type": "Attack roll",
+        "target": "Attack roll",
+        "value": 2,
+        "bonusType": "Enhancement",
+        "notes": "Weapon enhancement bonus."
+      },
+      {
+        "id": "seed-waraxe-dmg",
+        "type": "Damage roll",
+        "target": "Damage roll",
+        "value": 3,
+        "notes": "Total weapon damage bonus as specified for Bax."
+      },
+      {
+        "id": "seed-waraxe-frost",
+        "type": "Damage roll",
+        "target": "Damage roll",
+        "value": 0,
+        "notes": "Frost enchantment adds +1d6 cold damage; add this dice damage separately when rolling."
+      }
+    ]
+  },
+  {
+    "id": "composite-longbow-plus-3-strength-rating",
+    "name": "Composite Longbow (+3 Strength Rating)",
+    "category": "Weapons",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "Composite longbow with a +3 Strength rating. This is the bow’s rated Strength bonus, not a +3 magical enhancement; it can apply up to +3 Strength bonus to damage.",
+    "critThreshold": 20,
+    "critMultiplier": 3,
+    "modifiers": []
+  }
+]
