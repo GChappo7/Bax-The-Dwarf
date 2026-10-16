@@ -1,0 +1,47 @@
+[
+  {
+    "id": "magical-full-plate-plus-2",
+    "name": "Magical Full Plate (+2)",
+    "category": "Armour",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Full plate armour: +8 armour bonus and +2 enhancement bonus, for +10 total armour AC.",
+    "modifiers": [
+      {
+        "id": "seed-fullplate-total-ac",
+        "type": "AC",
+        "target": "AC",
+        "value": 10,
+        "bonusType": "Armour + enhancement",
+        "notes": "Combined total: +8 base full plate armour bonus and +2 magical enhancement bonus."
+      }
+    ]
+  },
+  {
+    "id": "adamant-heavy-shield",
+    "name": "Adamant Heavy Shield",
+    "category": "Shield",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Heavy adamantine shield: +2 shield bonus to AC and damage reduction 3/− against physical damage, per Bax’s campaign rules.",
+    "modifiers": [
+      {
+        "id": "seed-adamant-heavy-shield-ac",
+        "type": "AC",
+        "target": "AC",
+        "value": 2,
+        "bonusType": "Shield",
+        "notes": "Heavy shield bonus to AC."
+      },
+      {
+        "id": "seed-adamant-heavy-shield-dr",
+        "type": "Damage reduction",
+        "target": "Physical damage",
+        "value": 3,
+        "notes": "DR 3/− against physical damage; reminder only, not automatically subtracted."
+      }
+    ]
+  }
+]
