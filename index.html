@@ -227,12 +227,12 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <section id="round" class="tab">
 <div class="card"><h2>Choose Attack</h2>
 <p style="color:var(--muted);margin-top:0">Choose which attack in your sequence you are setting up. Each attack keeps its own weapon and modifiers.</p>
-<div class="grid" style="grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
-<button type="button" id="attackChoice1" class="attack-choice" onclick="selectAttack(1)">Attack 1</button>
-<button type="button" id="attackChoice2" class="attack-choice" onclick="selectAttack(2)">Attack 2</button>
-<button type="button" id="attackChoice3" class="attack-choice" onclick="selectAttack(3)">Attack 3</button>
+<div id="attackChoices" class="grid" style="grid-template-columns:repeat(3,minmax(0,1fr));gap:8px"></div>
+<div class="actions" style="margin-top:10px">
+<button type="button" onclick="addAttackSlot()">+ Add Attack</button>
+<button type="button" id="removeAttackSlotButton" onclick="removeAttackSlot()">− Remove Selected Attack</button>
 </div>
-<p id="activeAttackHint" style="margin-bottom:0;color:var(--muted)">Editing Attack 1</p>
+<p id="activeAttackHint" style="margin-bottom:0;color:var(--muted)">Editing Main Attack</p>
 </div>
 <div class="card"><h2>Rolls & Totals</h2>
 <p style="color:var(--muted);margin-top:0">Enter your dice results here. Totals update using the modifiers below.</p>
@@ -292,12 +292,10 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 
 
 <div class="card"><h2>Round Modifiers</h2>
-<p style="color:var(--muted);margin-top:0">Add effects that apply to this attack sequence. Haste gives +1 to attack rolls; Bard Song starts at +2 to attack and damage. Adjust bonuses to match the bard's current bonus.</p>
+<p style="color:var(--muted);margin-top:0">Add effects that apply to this attack sequence. Bard Song starts at +2 to attack and damage; adjust bonuses to match the current effect.</p>
 <div class="grid" style="grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">
-<label class="category-toggle" style="padding:8px;border:1px solid var(--border);border-radius:8px"><input id="bootsHasteToggle" type="checkbox" onchange="setBootsHaste(this.checked)"><span><strong>Hasted</strong><small style="display:block;color:var(--muted)">Boots of Speed · +1 attack, +1 AC</small></span></label>
 <button type="button" onclick="addRoundPreset('bard')">+ Bard Song (+2 attack, +2 damage)</button>
 </div>
-<p style="font-size:12px;color:var(--muted);margin:8px 0 0">Boots of Speed grant up to 10 rounds of Haste per day. Switch this on while active and off when it ends; track the 10-round daily limit here manually. Haste's extra full-attack action is not added as a fourth attack slot.</p>
 <h3 style="margin-bottom:8px">Attack Roll Modifiers</h3>
 <div style="overflow-x:auto"><table class="modtable"><thead><tr><th>Modifier</th><th>Bonus</th><th></th></tr></thead><tbody id="attackModsBody"></tbody></table></div>
 <button type="button" onclick="addRoundMod('atk')" style="margin-top:8px;width:100%">+ Add Attack Modifier</button>
@@ -405,12 +403,12 @@ function updateArmourClass(){
   const base=override!==null&&Number.isFinite(override)?override:(dex!==null&&Number.isFinite(dex)?10+abilityModifier(dex):10);
   const groups=typeof getEquippedAcBonuses==='function'?getEquippedAcBonuses():{armour:[],shield:[],other:[]};
   const sum=entries=>entries.reduce((total,entry)=>total+entry.value,0);
-  const armour=sum(groups.armour),shield=sum(groups.shield),other=sum(groups.other),powerAc=typeof activePowerEffects==='function'?activePowerEffects('AC'):0,hasteAc=localStorage.getItem('bax_boots_haste_active')==='true'?1:0,total=base+armour+shield+other+powerAc+hasteAc;
+  const armour=sum(groups.armour),shield=sum(groups.shield),other=sum(groups.other),powerAc=typeof activePowerEffects==='function'?activePowerEffects('AC'):0,total=base+armour+shield+other+powerAc;
   const set=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=String(value)};
   ['baseAcHome','baseAcStats','baseAcRound'].forEach(id=>set(id,base));
   set('baseAcSummary','Base AC '+base);
   ['currentAcHome','currentAcStats','currentAcRound','currentAcSummary'].forEach(id=>set(id,total));
-  renderAcBonusDetails('acAllDetails',[...groups.armour,...groups.shield,...groups.other,...(powerAc?[{item:'Active abilities',source:'Powers & Abilities',target:'AC',value:powerAc}]:[]),...(hasteAc?[{item:'Haste (Boots of Speed)',source:'Situational effect',target:'Dodge AC',value:hasteAc}]:[])],'No AC modifiers on equipped items or active abilities.');
+  renderAcBonusDetails('acAllDetails',[...groups.armour,...groups.shield,...groups.other,...(powerAc?[{item:'Active abilities',source:'Powers & Abilities',target:'AC',value:powerAc}]:[])],'No AC modifiers on equipped items or active abilities.');
   const breakdown=document.getElementById('acBreakdown');
   if(breakdown)breakdown.textContent='Base '+base+' '+(armour>=0?'+ ':'− ')+Math.abs(armour)+' armour '+(shield>=0?'+ ':'− ')+Math.abs(shield)+' shield '+(other>=0?'+ ':'− ')+Math.abs(other)+' other '+(powerAc>=0?'+ ':'− ')+Math.abs(powerAc)+' active abilities '+(hasteAc>=0?'+ ':'− ')+Math.abs(hasteAc)+' Haste = '+total+' AC';
   localStorage.setItem('bax_ac',String(total));
@@ -807,15 +805,15 @@ renderPowerEffectsEditor();renderPowerDatabase();renderCharacterPowers();
 
 // --- Current Round ---
 let activeAttack=Number(localStorage.getItem('bax_active_attack')||1);
-if(![1,2,3].includes(activeAttack))activeAttack=1;
 let roundWeaponId=localStorage.getItem('bax_round_weapon')||'';
 let attackRounds=[];
 try{attackRounds=JSON.parse(localStorage.getItem('bax_attack_rounds')||'[]')}catch(e){attackRounds=[]}
-if(!Array.isArray(attackRounds)||attackRounds.length!==3){
+if(!Array.isArray(attackRounds)||!attackRounds.length){
   let oldMods=[];try{oldMods=JSON.parse(localStorage.getItem('bax_roundmods')||'[]')}catch(e){}
   attackRounds=[1,2,3].map((n)=>({attackMods:n===1?oldMods.filter(m=>Number(m.atk)!==0||Number(m.dmg)===0).map(m=>({id:m.id,name:m.name,value:Number(m.atk)||0})):[],damageMods:n===1?oldMods.filter(m=>Number(m.dmg)!==0).map(m=>({id:Number(m.id)+100000,name:m.name,value:Number(m.dmg)||0})):[]}));
 }
-attackRounds=attackRounds.map(c=>{const legacy=Array.isArray(c.mods)?c.mods:[];return {...c,attackMods:Array.isArray(c.attackMods)?c.attackMods:legacy.filter(m=>Number(m.atk)!==0||Number(m.dmg)===0).map(m=>({id:m.id,name:m.name,value:Number(m.atk)||0})),damageMods:Array.isArray(c.damageMods)?c.damageMods:legacy.filter(m=>Number(m.dmg)!==0).map(m=>({id:Number(m.id)+100000,name:m.name,value:Number(m.dmg)||0})),attackBase:c.attackBase??(c.bab??null),attackFeats:c.attackFeats??0,damageBase:c.damageBase??null,damageFeats:c.damageFeats??0,damageOther:c.damageOther??0,attackRolled:c.attackRolled??null,damageRolled:c.damageRolled??null,criticalConfirmed:c.criticalConfirmed??false}});
+attackRounds=attackRounds.map((c,i)=>{const legacy=Array.isArray(c.mods)?c.mods:[];return {...c,label:i===0?'Main Attack':(i===1?'2nd Attack':(i===2?'3rd Attack':(i+1)+'th Attack')),attackMods:Array.isArray(c.attackMods)?c.attackMods:legacy.filter(m=>Number(m.atk)!==0||Number(m.dmg)===0).map(m=>({id:m.id,name:m.name,value:Number(m.atk)||0})),damageMods:Array.isArray(c.damageMods)?c.damageMods:legacy.filter(m=>Number(m.dmg)!==0).map(m=>({id:Number(m.id)+100000,name:m.name,value:Number(m.dmg)||0})),attackBase:c.attackBase??(c.bab??null),attackFeats:c.attackFeats??0,damageBase:c.damageBase??null,damageFeats:c.damageFeats??0,damageOther:c.damageOther??0,attackRolled:c.attackRolled??null,damageRolled:c.damageRolled??null,criticalConfirmed:c.criticalConfirmed??false}});
+if(activeAttack<1||activeAttack>attackRounds.length)activeAttack=1;
 let roundMods={attackMods:[],damageMods:[]};
 function saveAttackRounds(){localStorage.setItem('bax_attack_rounds',JSON.stringify(attackRounds))}
 function currentAttackConfig(){return attackRounds[activeAttack-1]||(attackRounds[activeAttack-1]={attackMods:[],damageMods:[],attackBase:null,attackFeats:0,damageBase:null,damageFeats:0,attackRolled:null,damageRolled:null,criticalConfirmed:false})}
@@ -828,13 +826,16 @@ let closeQuartersAoOTriggered=false;
 function triggerCloseQuartersAoO(){closeQuartersAoOTriggered=true;const panel=document.getElementById('closeQuartersAoOPanel');if(panel)panel.style.display='block';const roll=document.getElementById('cqD20Roll');if(roll)roll.value='';renderCloseQuartersAoO();if(panel)panel.scrollIntoView({behavior:'smooth',block:'nearest'})}
 function clearCloseQuartersAoO(){closeQuartersAoOTriggered=false;const panel=document.getElementById('closeQuartersAoOPanel');if(panel)panel.style.display='none';const roll=document.getElementById('cqD20Roll');if(roll)roll.value=''}
 function renderCloseQuartersAoO(){if(!closeQuartersAoOTriggered)return;const c=currentAttackConfig();const w=databaseItems.find(item=>String(item.id)===String(roundWeaponId)&&item.category==='Weapons');const base=Number(c.attackBase)||0;const str=abilityStrength();const weapon=roundWeaponBonus(w,'atk');[['cqBaseAttack',base],['cqStrBonus',str],['cqWeaponBonus',weapon]].forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.textContent=(v>0?'+':'')+v});const roll=document.getElementById('cqD20Roll');const total=document.getElementById('cqAttackTotal');if(total){if(!roll||roll.value.trim()==='')total.textContent='Enter your d20 roll';else{const d20=Number(roll.value)||0;const effects=typeof activePowerEffects==='function'?activePowerEffects('Attack roll'):0;total.textContent=String(d20+base+str+weapon+2+effects)}}}
-function renderRoundCalc(){const c=currentAttackConfig();const w=databaseItems.find(item=>String(item.id)===String(roundWeaponId)&&item.category==='Weapons');const str=abilityStrength();const atkWeapon=roundWeaponBonus(w,'atk');const dmgWeapon=roundWeaponBonus(w,'dmg');const fields=[['roundAttackStr',str],['roundDamageStr',str],['roundAttackWeapon',atkWeapon],['roundDamageWeapon',dmgWeapon]];fields.forEach(([id,val])=>{const el=document.getElementById(id);if(el)el.textContent=(val>0?'+':'')+val});const hasteAttack=typeof bootsHasteActive!=='undefined'&&bootsHasteActive?1:0;const attackTotal=(Number(c.attackBase)||0)+str+(Number(c.attackFeats)||0)+atkWeapon+(Number(c.attackRolled)||0)+roundMods.attackMods.reduce((sum,m)=>sum+(Number(m.value)||0),0)+hasteAttack+(typeof activePowerEffects==='function'?activePowerEffects('Attack roll'):0);const multipliedDamage=(Number(c.damageBase)||0)+str+(Number(c.damageFeats)||0)+dmgWeapon+(Number(c.damageRolled)||0)+(typeof activePowerEffects==='function'?activePowerEffects('Damage roll'):0);const nonMultipliedDamage=(Number(c.damageOther)||0)+roundMods.damageMods.reduce((sum,m)=>sum+(Number(m.value)||0),0);const baseDamageTotal=multipliedDamage+nonMultipliedDamage;const critThreshold=w?Number(w.critThreshold??20):20;const critMultiplier=w?Number(w.critMultiplier??2):2;const hasCritThreat=c.attackRolled!==null&&c.attackRolled!==undefined&&Number(c.attackRolled)>=critThreshold;const isCritical=hasCritThreat&&!!c.criticalConfirmed;const damageTotal=isCritical?multipliedDamage*critMultiplier+nonMultipliedDamage:baseDamageTotal;const critStatus=document.getElementById('roundCriticalStatus');if(critStatus){critStatus.textContent=hasCritThreat?(isCritical?`Critical hit! Weapon damage multiplied ×${critMultiplier}; other damage is added once.`:`Critical threat on natural ${c.attackRolled}! Confirm the critical hit to apply ×${critMultiplier} damage.`):`Critical threshold: ${w?critThreshold+'–20':'20'}; multiplier: ×${critMultiplier}. Mark confirmed only after the critical is confirmed.`;if(!w)critStatus.textContent='Select a weapon to use its critical settings.'}const critCheck=document.getElementById('roundCriticalConfirmed');if(critCheck)critCheck.disabled=!hasCritThreat;const ar=document.getElementById('roundAttackResult'),dr=document.getElementById('roundDamageResult');if(ar)ar.textContent=c.attackRolled===null||c.attackRolled===undefined?'Enter your d20 roll':String(attackTotal);if(dr)dr.textContent=c.damageRolled===null||c.damageRolled===undefined?'Enter your damage roll':String(damageTotal);renderCloseQuartersAoO()}
+function renderRoundCalc(){const c=currentAttackConfig();const w=databaseItems.find(item=>String(item.id)===String(roundWeaponId)&&item.category==='Weapons');const str=abilityStrength();const atkWeapon=roundWeaponBonus(w,'atk');const dmgWeapon=roundWeaponBonus(w,'dmg');const fields=[['roundAttackStr',str],['roundDamageStr',str],['roundAttackWeapon',atkWeapon],['roundDamageWeapon',dmgWeapon]];fields.forEach(([id,val])=>{const el=document.getElementById(id);if(el)el.textContent=(val>0?'+':'')+val});const attackTotal=(Number(c.attackBase)||0)+str+(Number(c.attackFeats)||0)+atkWeapon+(Number(c.attackRolled)||0)+roundMods.attackMods.reduce((sum,m)=>sum+(Number(m.value)||0),0)+(typeof activePowerEffects==='function'?activePowerEffects('Attack roll'):0);const multipliedDamage=(Number(c.damageBase)||0)+str+(Number(c.damageFeats)||0)+dmgWeapon+(Number(c.damageRolled)||0)+(typeof activePowerEffects==='function'?activePowerEffects('Damage roll'):0);const nonMultipliedDamage=(Number(c.damageOther)||0)+roundMods.damageMods.reduce((sum,m)=>sum+(Number(m.value)||0),0);const baseDamageTotal=multipliedDamage+nonMultipliedDamage;const critThreshold=w?Number(w.critThreshold??20):20;const critMultiplier=w?Number(w.critMultiplier??2):2;const hasCritThreat=c.attackRolled!==null&&c.attackRolled!==undefined&&Number(c.attackRolled)>=critThreshold;const isCritical=hasCritThreat&&!!c.criticalConfirmed;const damageTotal=isCritical?multipliedDamage*critMultiplier+nonMultipliedDamage:baseDamageTotal;const critStatus=document.getElementById('roundCriticalStatus');if(critStatus){critStatus.textContent=hasCritThreat?(isCritical?`Critical hit! Weapon damage multiplied ×${critMultiplier}; other damage is added once.`:`Critical threat on natural ${c.attackRolled}! Confirm the critical hit to apply ×${critMultiplier} damage.`):`Critical threshold: ${w?critThreshold+'–20':'20'}; multiplier: ×${critMultiplier}. Mark confirmed only after the critical is confirmed.`;if(!w)critStatus.textContent='Select a weapon to use its critical settings.'}const critCheck=document.getElementById('roundCriticalConfirmed');if(critCheck)critCheck.disabled=!hasCritThreat;const ar=document.getElementById('roundAttackResult'),dr=document.getElementById('roundDamageResult');if(ar)ar.textContent=c.attackRolled===null||c.attackRolled===undefined?'Enter your d20 roll':String(attackTotal);if(dr)dr.textContent=c.damageRolled===null||c.damageRolled===undefined?'Enter your damage roll':String(damageTotal);renderCloseQuartersAoO()}
 function updateRoundCriticalConfirmed(checked){const c=currentAttackConfig();c.criticalConfirmed=!!checked;saveAttackRounds();renderRoundCalc()}
-function selectAttack(n){n=Number(n);if(![1,2,3].includes(n))return;try{saveCurrentAttack()}catch(e){console.error('Could not save previous attack settings:',e)}activeAttack=n;try{localStorage.setItem('bax_active_attack',String(activeAttack))}catch(e){}try{loadCurrentAttack()}catch(e){console.error('Could not fully load attack settings:',e);renderAttackChoices();const h=document.getElementById('activeAttackHint');if(h)h.textContent='Editing Attack '+activeAttack;try{renderRoundMods();renderRoundCalc()}catch(ignore){}}}
-function renderAttackChoices(){[1,2,3].forEach(n=>{const b=document.getElementById('attackChoice'+n);if(b){b.style.background=n===activeAttack?'var(--accent, #d6b15e)':'var(--card, #22282c)';b.style.color=n===activeAttack?'#171717':'inherit';b.style.border=n===activeAttack?'2px solid var(--accent, #d6b15e)':'1px solid var(--border, #454b50)';b.setAttribute('aria-pressed',String(n===activeAttack))}});const h=document.getElementById('activeAttackHint');if(h)h.textContent='Editing Attack '+activeAttack+' — attack and damage modifiers are separate.';}
+function attackLabel(index){if(index===0)return 'Main Attack';if(index===1)return '2nd Attack';if(index===2)return '3rd Attack';return (index+1)+'th Attack'}
+function selectAttack(n){n=Number(n);if(!Number.isInteger(n)||n<1||n>attackRounds.length)return;try{saveCurrentAttack()}catch(e){console.error('Could not save previous attack settings:',e)}activeAttack=n;try{localStorage.setItem('bax_active_attack',String(activeAttack))}catch(e){}try{loadCurrentAttack()}catch(e){console.error('Could not fully load attack settings:',e);renderAttackChoices();const h=document.getElementById('activeAttackHint');if(h)h.textContent='Editing '+attackLabel(activeAttack-1);try{renderRoundMods();renderRoundCalc()}catch(ignore){}}}
+function addAttackSlot(){try{saveCurrentAttack()}catch(e){}const index=attackRounds.length;attackRounds.push({label:attackLabel(index),attackMods:[],damageMods:[],attackBase:null,attackFeats:0,damageBase:null,damageFeats:0,damageOther:0,attackRolled:null,damageRolled:null,criticalConfirmed:false});activeAttack=attackRounds.length;saveAttackRounds();localStorage.setItem('bax_active_attack',String(activeAttack));loadCurrentAttack()}
+function removeAttackSlot(){if(activeAttack===1||attackRounds.length<=1)return;try{saveCurrentAttack()}catch(e){}attackRounds.splice(activeAttack-1,1);activeAttack=Math.min(activeAttack,attackRounds.length);saveAttackRounds();localStorage.setItem('bax_active_attack',String(activeAttack));loadCurrentAttack()}
+function renderAttackChoices(){const box=document.getElementById('attackChoices');if(box){box.innerHTML=attackRounds.map((c,i)=>'<button type="button" id="attackChoice'+(i+1)+'" class="attack-choice" onclick="selectAttack('+(i+1)+')" aria-pressed="'+(i+1===activeAttack)+'">'+attackLabel(i)+'</button>').join('');Array.from(box.querySelectorAll('.attack-choice')).forEach((b,i)=>{b.style.background=i+1===activeAttack?'#557d58':'#b94a42';b.style.color='#fff';b.style.border=i+1===activeAttack?'2px solid #79b984':'1px solid #8c3832'})}const h=document.getElementById('activeAttackHint');if(h)h.textContent='Editing '+attackLabel(activeAttack-1)+' — attack and damage modifiers are separate.';const remove=document.getElementById('removeAttackSlotButton');if(remove){remove.disabled=activeAttack===1||attackRounds.length<=1;remove.style.opacity=remove.disabled?'.45':'1'}}
 function addRoundMod(type){const list=type==='atk'?roundMods.attackMods:roundMods.damageMods;list.push({id:Date.now()+Math.random(),name:type==='atk'?'New Attack Modifier':'New Damage Modifier',value:0});saveCurrentAttack();renderRoundMods();renderRoundCalc()}
-var bootsHasteActive=localStorage.getItem('bax_boots_haste_active')==='true';
-function setBootsHaste(active){bootsHasteActive=!!active;localStorage.setItem('bax_boots_haste_active',String(bootsHasteActive));const toggle=document.getElementById('bootsHasteToggle');if(toggle)toggle.checked=bootsHasteActive;renderRoundCalc();updateArmourClass()}
+var bootsHasteActive=false;
+function setBootsHaste(active){bootsHasteActive=false;localStorage.setItem('bax_boots_haste_active','false');renderRoundCalc();updateArmourClass()}
 function addRoundPreset(preset){if(preset==='haste'){setBootsHaste(true)}else if(preset==='bard'){roundMods.attackMods.push({id:Date.now()+Math.random(),name:'Bard Song',value:2});roundMods.damageMods.push({id:Date.now()+Math.random(),name:'Bard Song',value:2})}saveCurrentAttack();renderRoundMods();renderRoundCalc()}
 function removeRoundMod(type,id){const key=type==='atk'?'attackMods':'damageMods';roundMods[key]=roundMods[key].filter(m=>String(m.id)!==String(id));saveCurrentAttack();renderRoundMods();renderRoundCalc()}
 function updateRoundModField(type,id,field,value){const key=type==='atk'?'attackMods':'damageMods';const m=roundMods[key].find(m=>String(m.id)===String(id));if(!m)return;m[field]=field==='name'?value:(Number(value)||0);saveCurrentAttack();if(field!=='name')renderRoundCalc()}
@@ -851,47 +852,13 @@ loadCurrentAttack();
 (function(){
   document.addEventListener('click',function(ev){
     var target=ev.target;
-    var button=target&&target.closest?target.closest('#attackChoice1, #attackChoice2, #attackChoice3'):null;
+    var button=target&&target.closest?target.closest('.attack-choice'):null;
     if(!button)return;
     ev.preventDefault();
     ev.stopPropagation();
     var n=Number(button.id.replace('attackChoice',''));
-    if(![1,2,3].includes(n))return;
-    try {
-      if(typeof saveCurrentAttack==='function')saveCurrentAttack();
-    } catch(err) { console.error('Saving previous attack failed',err); }
-    try {
-      activeAttack=n;
-      localStorage.setItem('bax_active_attack',String(n));
-      var c=attackRounds[n-1];
-      if(!c||typeof c!=='object')c=attackRounds[n-1]={attackMods:[],damageMods:[]};
-      c.attackMods=Array.isArray(c.attackMods)?c.attackMods:[];
-      c.damageMods=Array.isArray(c.damageMods)?c.damageMods:[];
-      roundMods={attackMods:c.attackMods.map(function(m){return Object.assign({},m)}),damageMods:c.damageMods.map(function(m){return Object.assign({},m)})};
-      [['roundAttackBase','attackBase'],['roundAttackFeats','attackFeats'],['roundDamageBase','damageBase'],['roundDamageFeats','damageFeats'],['roundDamageOther','damageOther'],['roundAttackRolled','attackRolled'],['roundDamageRolled','damageRolled']].forEach(function(pair){
-        var el=document.getElementById(pair[0]);
-        if(el)el.value=c[pair[1]]==null?'':c[pair[1]];
-      });
-      var critical=document.getElementById('roundCriticalConfirmed');
-      if(critical)critical.checked=!!c.criticalConfirmed;
-      [1,2,3].forEach(function(k){
-        var b=document.getElementById('attackChoice'+k);
-        if(!b)return;
-        b.style.background=k===n?'var(--accent, #d6b15e)':'var(--card, #22282c)';
-        b.style.color=k===n?'#171717':'inherit';
-        b.style.border=k===n?'2px solid var(--accent, #d6b15e)':'1px solid var(--border, #454b50)';
-        b.setAttribute('aria-pressed',String(k===n));
-      });
-      var hint=document.getElementById('activeAttackHint');
-      if(hint)hint.textContent='Editing Attack '+n+' — attack and damage modifiers are separate.';
-      try{if(typeof renderRoundOptions==='function')renderRoundOptions()}catch(err){console.error('Weapon options refresh failed',err)}
-      try{if(typeof renderRoundMods==='function')renderRoundMods()}catch(err){console.error('Modifier refresh failed',err)}
-      try{if(typeof renderRoundCalc==='function')renderRoundCalc()}catch(err){console.error('Attack totals refresh failed',err)}
-    } catch(err) {
-      console.error('Attack switch failed',err);
-      var hint=document.getElementById('activeAttackHint');
-      if(hint)hint.textContent='Attack '+n+' selected, but some fields could not refresh. Please reload the app.';
-    }
+    if(!Number.isInteger(n)||n<1)return;
+    try{if(typeof selectAttack==='function')selectAttack(n)}catch(err){console.error('Attack switch failed',err)}
   },true);
 })();
 /* Recovery safety net: seed the two essential character items independently of the main app script. */
@@ -908,7 +875,7 @@ loadCurrentAttack();
   {name:'Ring of Water Walking',category:'Rings',rarity:['Magic'],description:'Allows the wearer to walk on water.',modifiers:[{id:'restored-ring-water-walking',type:'Granted ability',target:'Other ability',value:0,notes:'Walk on water while worn.'}]},
   {name:'Ring of Freedom of Movement',category:'Rings',rarity:['Magic'],description:'Protects the wearer from effects that impede movement, as described by the D&D 3.5e item.',modifiers:[{id:'restored-ring-freedom-movement',type:'Granted ability',target:'Other ability',value:0,notes:'Freedom of movement while worn.'}]},
   {name:'Gauntlets of Ogre Power',category:'Gloves',rarity:['Magic'],description:'These magical gauntlets grant a +2 enhancement bonus to Strength while equipped.',modifiers:[{id:'restored-gauntlets-str',type:'Ability score',target:'Strength',value:2,bonusType:'Enhancement',notes:'Applies only while equipped.'}]},
-  {name:'Boots of Speed',category:'Boots',rarity:['Magic'],description:'Haste for up to 10 rounds per day. When active, grants the haste benefits, including +1 attack and AC in this app and one additional attack during a full attack. Track remaining rounds manually.',modifiers:[{id:'restored-boots-speed-haste',type:'Granted ability',target:'Other ability',value:0,notes:'Use the Hasted toggle in Action Round; track the 10 rounds/day manually.'}]},
+  {name:'Boots of Speed',category:'Boots',rarity:['Magic'],description:'Haste for up to 10 rounds per day. Track remaining rounds manually; this item does not automatically modify attack rolls or AC in the app.',modifiers:[{id:'restored-boots-speed-haste',type:'Granted ability',target:'Other ability',value:0,notes:'Track the 10 rounds/day manually. Configure any desired effects separately.'}]},
   {name:'Lavender Ioun Stone',category:'Ioun Stones / Jewellery',rarity:['Magic'],description:'Immunity to spells of 4th level and below, as specified for Bax’s item.',modifiers:[{id:'restored-lavender-ioun-immunity',type:'Granted ability',target:'Other ability',value:0,notes:'Immunity to spells of 4th level or lower.'}]},
   {name:'Adamant Heavy Shield',category:'Shield',rarity:['Magic'],description:'Heavy adamantine shield: +2 shield bonus to AC and damage reduction 3/− against physical damage, per Bax’s campaign rules.',modifiers:[{id:'restored-adamant-heavy-shield-ac',type:'AC',target:'AC',value:2,bonusType:'Shield',notes:'Heavy shield bonus to AC.'},{id:'restored-adamant-heavy-shield-dr',type:'Damage reduction',target:'Physical damage',value:3,notes:'DR 3/− against physical damage; reminder only, not automatically subtracted.'}]},
   {name:'Necklace of Fireballs',category:'Necklace',rarity:['Magic'],description:'Necklace of fireballs. Track remaining beads/charges and the bead type separately; details not specified yet.',modifiers:[]},
