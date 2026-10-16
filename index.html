@@ -918,6 +918,8 @@ function onRoundWeaponChange(value){roundWeaponId=value;const c=currentAttackCon
 renderAttackChoices();
 renderAttackEffectTiles();
 loadCurrentAttack();
+// Load the shared GitHub item and armour defaults into the local database on startup.
+loadDefaultEquipmentLibrary();
 
 </script>
 <script>
