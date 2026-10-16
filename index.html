@@ -497,14 +497,14 @@ function restoreDefaultItem(name){
 }
 function resetEquipmentCategory(category){
  if(!confirm('Reset '+category+' to GitHub defaults? Custom entries in this category will also be removed.'))return;
- databaseItems=databaseItems.filter(item=>item.category!==category);
- const defaults=defaultDatabaseItems.filter(item=>item.category===category);defaults.forEach(item=>databaseItems.push(JSON.parse(JSON.stringify(item))));
+ const previous=databaseItems.slice();databaseItems=previous.filter(item=>item.category!==category);
+ const defaults=defaultDatabaseItems.filter(item=>item.category===category);defaults.forEach(item=>{const restored=JSON.parse(JSON.stringify(item)),old=previous.find(entry=>equipmentNameKey(entry.name)===equipmentNameKey(item.name));if(old)restored.id=old.id;databaseItems.push(restored)});
  deletedDatabaseItemNames=deletedDatabaseItemNames.filter(name=>!defaults.some(item=>equipmentNameKey(item.name)===equipmentNameKey(name)));
  saveDatabaseItems();renderDatabaseItems();if(typeof renderRoundOptions==='function')renderRoundOptions();
 }
 function resetEquipmentLibrary(){
  if(!confirm('Reset the entire local equipment library to GitHub defaults? This removes custom entries and local edits on this device only.'))return;
- databaseItems=defaultDatabaseItems.map(item=>JSON.parse(JSON.stringify(item)));deletedDatabaseItemNames=[];saveDatabaseItems();renderDatabaseItems();if(typeof renderRoundOptions==='function')renderRoundOptions();
+ const previous=databaseItems.slice();databaseItems=defaultDatabaseItems.map(item=>{const restored=JSON.parse(JSON.stringify(item)),old=previous.find(entry=>equipmentNameKey(entry.name)===equipmentNameKey(item.name));if(old)restored.id=old.id;return restored});deletedDatabaseItemNames=[];saveDatabaseItems();renderDatabaseItems();if(typeof renderRoundOptions==='function')renderRoundOptions();
 }
 function exportEquipmentLibrary(){
  const backup={format:'bax-equipment-library-backup',version:1,exportedAt:new Date().toISOString(),items:databaseItems,deletedNames:deletedDatabaseItemNames};
