@@ -463,7 +463,7 @@ document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
 // Do not cancel touchend events: iOS standalone mode can suppress the synthetic click after this handler. The viewport and touch-action CSS already prevent unwanted double-tap zoom.
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=33',{updateViaCache:'none'});
 
 // --- Reusable equipment item database ---
 const equipmentCategories=['Headgear','Lens / Goggles','Armour','Shield','Robe / Vest / Shirt','Bracers','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Weapons','Ioun Stones / Jewellery','Other'];
