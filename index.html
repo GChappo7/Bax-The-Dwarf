@@ -503,7 +503,6 @@ async function loadDefaultEquipmentLibrary(){
    const localModifiers=Array.isArray(existing.modifiers)?existing.modifiers:[];
    const defaultAc=Array.isArray(base.modifiers)?base.modifiers.filter(m=>String(m.type||'').trim().toLowerCase()==='ac'):[];
    const localNonAc=localModifiers.filter(m=>String(m.type||'').trim().toLowerCase()!=='ac');
-   const localAc=localModifiers.filter(m=>String(m.type||'').trim().toLowerCase()==='ac');
    if(defaultAc.length)existing.modifiers=[...localNonAc,...JSON.parse(JSON.stringify(defaultAc))];
   });
   saveDatabaseItems();if(status)status.textContent='GitHub defaults loaded. AC modifiers are refreshed from shared defaults; other local edits are kept.';if(defaultStatus)defaultStatus.textContent='Loaded '+defaultDatabaseItems.length+' default items from GitHub.';
