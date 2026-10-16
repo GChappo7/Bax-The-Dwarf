@@ -472,7 +472,7 @@ document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
 // Do not cancel touchend events: iOS standalone mode can suppress the synthetic click after this handler. The viewport and touch-action CSS already prevent unwanted double-tap zoom.
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=43',{updateViaCache:'none'});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=44',{updateViaCache:'none'});
 
 // --- Reusable equipment item database ---
 const equipmentCategories=['Headgear','Lens / Goggles','Armour','Shield','Robe / Vest / Shirt','Bracers','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Weapons','Ioun Stones / Jewellery','Other'];
@@ -937,9 +937,14 @@ let roundWeaponId=localStorage.getItem('bax_round_weapon')||'';
 try{attackRounds=JSON.parse(localStorage.getItem('bax_attack_rounds')||'[]')}catch(e){attackRounds=[]}
 if(!Array.isArray(attackRounds)||!attackRounds.length){
   let oldMods=[];try{oldMods=JSON.parse(localStorage.getItem('bax_roundmods')||'[]')}catch(e){}
-  attackRounds=[1,2,3].map((n)=>({attackMods:n===1?oldMods.filter(m=>Number(m.atk)!==0||Number(m.dmg)===0).map(m=>({id:m.id,name:m.name,value:Number(m.atk)||0})):[],damageMods:n===1?oldMods.filter(m=>Number(m.dmg)!==0).map(m=>({id:Number(m.id)+100000,name:m.name,value:Number(m.dmg)||0})):[]}));
+  attackRounds=[{attackMods:oldMods.filter(m=>Number(m.atk)!==0||Number(m.dmg)===0).map(m=>({id:m.id,name:m.name,value:Number(m.atk)||0})),damageMods:oldMods.filter(m=>Number(m.dmg)!==0).map(m=>({id:Number(m.id)+100000,name:m.name,value:Number(m.dmg)||0}))}];
 }
-if(localStorage.getItem('bax_attackSlotsConfigured')!=='true'&&attackRounds.length<3){while(attackRounds.length<3)attackRounds.push({attackMods:[],damageMods:[],attackBase:null,attackFeats:0,damageBase:null,damageFeats:0,damageOther:0,attackRolled:null,damageRolled:null,criticalConfirmed:false});localStorage.setItem('bax_attack_rounds',JSON.stringify(attackRounds));}
+// Older builds created three placeholder attacks automatically. If the user has never
+// configured attack slots, keep Main Attack and discard only empty generated placeholders.
+if(localStorage.getItem('bax_attackSlotsConfigured')!=='true'&&attackRounds.length>1){
+  const hasSavedSettings=c=>!!(c&&(c.weaponId||c.attackBase!==null&&c.attackBase!==undefined||Number(c.attackFeats)||c.damageBase!==null&&c.damageBase!==undefined||Number(c.damageFeats)||Number(c.damageOther)||c.attackRolled!==null&&c.attackRolled!==undefined||c.damageRolled!==null&&c.damageRolled!==undefined||c.criticalConfirmed||(Array.isArray(c.attackMods)&&c.attackMods.length)||(Array.isArray(c.damageMods)&&c.damageMods.length)));
+  if(attackRounds.slice(1).every(c=>!hasSavedSettings(c))){attackRounds=attackRounds.slice(0,1);activeAttack=1;try{localStorage.setItem('bax_active_attack','1');localStorage.setItem('bax_attack_rounds',JSON.stringify(attackRounds))}catch(e){}}
+}
 attackRounds=attackRounds.map((c,i)=>{const legacy=Array.isArray(c.mods)?c.mods:[];return {...c,weaponId:c.weaponId??(i===0?(localStorage.getItem('bax_round_weapon')||''):'') ,label:c.hasteGenerated?'Haste Extra Attack':(i===0?'Main Attack':'Attack '+(i+1)),attackMods:Array.isArray(c.attackMods)?c.attackMods:legacy.filter(m=>Number(m.atk)!==0||Number(m.dmg)===0).map(m=>({id:m.id,name:m.name,value:Number(m.atk)||0})),damageMods:Array.isArray(c.damageMods)?c.damageMods:legacy.filter(m=>Number(m.dmg)!==0).map(m=>({id:Number(m.id)+100000,name:m.name,value:Number(m.dmg)||0})),attackBase:c.attackBase??(c.bab??null),attackFeats:c.attackFeats??0,damageBase:c.damageBase??null,damageFeats:c.damageFeats??0,damageOther:c.damageOther??0,attackRolled:c.attackRolled??null,damageRolled:c.damageRolled??null,criticalConfirmed:c.criticalConfirmed??false}});
 if(activeAttack<1||activeAttack>attackRounds.length)activeAttack=1;
 let roundMods={attackMods:[],damageMods:[]};
