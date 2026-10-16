@@ -396,10 +396,11 @@ function getEquippedAcBonuses(){
   const groups={armour:[],shield:[],other:[]};
   const selected=[];
   equipmentCategories.forEach(category=>getEquippedIds(category).forEach(id=>{const item=databaseItems.find(x=>String(x.id)===String(id));if(item)selected.push({category,item})}));
-  selected.forEach(({category,item})=>(item.modifiers||[]).filter(m=>m.type==='AC'&&m.value!==''&&Number.isFinite(Number(m.value))).forEach(m=>{
-    const entry={item:item.name,source:category,target:m.target||'AC',value:Number(m.value),bonusType:m.bonusType||'',notes:m.notes||''};
-    if(category==='Armour'||category==='Robe / Vest / Shirt')groups.armour.push(entry);
-    else if(category==='Shield')groups.shield.push(entry);
+  selected.forEach(({category,item})=>(Array.isArray(item.modifiers)?item.modifiers:[]).filter(m=>String(m.type||'').trim().toLowerCase()==='ac'&&m.value!==''&&m.value!==null&&m.value!==undefined&&Number.isFinite(Number(m.value))).forEach(m=>{
+    const itemCategory=item.category||category;
+    const entry={item:item.name,source:itemCategory,target:m.target||'AC',value:Number(m.value),bonusType:m.bonusType||'',notes:m.notes||''};
+    if(itemCategory==='Armour'||itemCategory==='Robe / Vest / Shirt')groups.armour.push(entry);
+    else if(itemCategory==='Shield')groups.shield.push(entry);
     else groups.other.push(entry);
   }));
   return groups;
@@ -494,8 +495,18 @@ async function loadDefaultEquipmentLibrary(){
   const seen=new Set();defaultDatabaseItems=[...items,...armour].filter(item=>{const key=equipmentNameKey(item&&item.name);if(!key||seen.has(key))return false;seen.add(key);return true});
   const deleted=new Set(deletedDatabaseItemNames.map(equipmentNameKey));
   databaseItems=databaseItems.filter(item=>!deleted.has(equipmentNameKey(item.name)));
-  defaultDatabaseItems.forEach(base=>{if(!deleted.has(equipmentNameKey(base.name))&&!databaseItems.some(item=>equipmentNameKey(item.name)===equipmentNameKey(base.name)))databaseItems.push(JSON.parse(JSON.stringify(base)))});
-  saveDatabaseItems();if(status)status.textContent='GitHub defaults loaded. Edits, custom entries and deletions are saved only on this device.';if(defaultStatus)defaultStatus.textContent='Loaded '+defaultDatabaseItems.length+' default items from GitHub.';
+  defaultDatabaseItems.forEach(base=>{
+   if(deleted.has(equipmentNameKey(base.name)))return;
+   const existing=databaseItems.find(item=>equipmentNameKey(item.name)===equipmentNameKey(base.name));
+   if(!existing){databaseItems.push(JSON.parse(JSON.stringify(base)));return}
+   // Preserve local IDs and non-AC edits while refreshing AC values from GitHub defaults.
+   const localModifiers=Array.isArray(existing.modifiers)?existing.modifiers:[];
+   const defaultAc=Array.isArray(base.modifiers)?base.modifiers.filter(m=>String(m.type||'').trim().toLowerCase()==='ac'):[];
+   const localNonAc=localModifiers.filter(m=>String(m.type||'').trim().toLowerCase()!=='ac');
+   const localAc=localModifiers.filter(m=>String(m.type||'').trim().toLowerCase()==='ac');
+   if(defaultAc.length||localAc.length)existing.modifiers=[...localNonAc,...JSON.parse(JSON.stringify(defaultAc))];
+  });
+  saveDatabaseItems();if(status)status.textContent='GitHub defaults loaded. AC modifiers are refreshed from shared defaults; other local edits are kept.';if(defaultStatus)defaultStatus.textContent='Loaded '+defaultDatabaseItems.length+' default items from GitHub.';
   renderGitHubDefaultItems();renderDatabaseItems();if(typeof renderRoundOptions==='function')renderRoundOptions();
  }catch(error){console.warn('Equipment defaults unavailable',error);const message='Could not load GitHub defaults: '+(error&&error.message?error.message:'unknown error')+'. Check your connection and try Refresh.';if(status)status.textContent=message;if(defaultStatus)defaultStatus.textContent=message;const box=document.getElementById('dbDefaultItemsList');if(box)box.innerHTML='<p style="color:var(--muted)">Default items could not be loaded.</p>'}
 }
