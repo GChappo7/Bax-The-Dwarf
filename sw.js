@@ -1,5 +1,5 @@
-const CACHE="bax-v30";
-const ASSETS=["./","./index.html","./manifest.json","./icon.svg","./effects.json","./items.json","./armour.json"];
+const CACHE="bax-v31";
+const ASSETS=["./","./index.html","./manifest.json","./icon.svg","./Databases/effects.json","./Databases/items.json","./Databases/armour.json"];
 
 self.addEventListener("install",e=>{
   self.skipWaiting();
