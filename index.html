@@ -434,8 +434,7 @@ const hpRoundInit=document.getElementById('hpRound');if(hpRoundInit)hpRoundInit.
 document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
-let lastTouchEnd=0;
-document.addEventListener('touchend',e=>{const now=Date.now();if(now-lastTouchEnd<=300)e.preventDefault();lastTouchEnd=now;},{passive:false});
+// Do not cancel touchend events: iOS standalone mode can suppress the synthetic click after this handler. The viewport and touch-action CSS already prevent unwanted double-tap zoom.
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 
 // --- Reusable equipment item database ---
