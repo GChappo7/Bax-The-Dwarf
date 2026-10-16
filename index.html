@@ -119,6 +119,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .active-items-table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .active-items-table{border-collapse:collapse;width:max-content;min-width:100%;font-size:12px;line-height:1.2}
 .active-items-table th,.active-items-table td{padding:2px 4px;text-align:left;vertical-align:middle;border-bottom:1px solid #3a2e24;white-space:nowrap;max-width:none;font-size:12px!important;font-weight:400!important;line-height:1.2!important}
+.active-items-table td.active-items-effects{white-space:normal;min-width:180px;max-width:280px;overflow-wrap:anywhere}
 .active-items-table th{color:var(--gold);background:var(--panel);position:sticky;top:0;border-bottom:1px solid #6b5437}
 .active-items-table tbody tr:nth-child(even){background:#211a14}
 .active-items-empty{padding:6px 0;color:var(--muted);font-size:12px}
@@ -501,9 +502,14 @@ async function loadDefaultEquipmentLibrary(){
    if(!existing){databaseItems.push(JSON.parse(JSON.stringify(base)));return}
    // Preserve local IDs and non-AC edits while refreshing AC values from GitHub defaults.
    const localModifiers=Array.isArray(existing.modifiers)?existing.modifiers:[];
-   const defaultAc=Array.isArray(base.modifiers)?base.modifiers.filter(m=>String(m.type||'').trim().toLowerCase()==='ac'):[];
-   const localNonAc=localModifiers.filter(m=>String(m.type||'').trim().toLowerCase()!=='ac');
-   if(defaultAc.length)existing.modifiers=[...localNonAc,...JSON.parse(JSON.stringify(defaultAc))];
+   const normalType=value=>String(value||'').trim().toLowerCase();
+   const defaultAc=Array.isArray(base.modifiers)?base.modifiers.filter(m=>normalType(m.type)==='ac'):[];
+   const localNonAc=localModifiers.filter(m=>normalType(m.type)!=='ac');
+   // Always sync default AC modifiers, including removing stale local AC entries if the shared item no longer grants AC.
+   if(defaultDatabaseItems.some(d=>equipmentNameKey(d.name)===equipmentNameKey(existing.name)))existing.modifiers=[...localNonAc,...JSON.parse(JSON.stringify(defaultAc))];
+   // Keep item category and rarity aligned with the shared definition so Armour-tab selectors and summaries stay accurate.
+   existing.category=base.category||existing.category;
+   if(Array.isArray(base.rarity))existing.rarity=JSON.parse(JSON.stringify(base.rarity));
   });
   saveDatabaseItems();if(status)status.textContent='GitHub defaults loaded. AC modifiers are refreshed from shared defaults; other local edits are kept.';if(defaultStatus)defaultStatus.textContent='Loaded '+defaultDatabaseItems.length+' default items from GitHub.';
   renderGitHubDefaultItems();renderDatabaseItems();if(typeof renderRoundOptions==='function')renderRoundOptions();
@@ -561,8 +567,24 @@ function removeDatabaseItem(id){if(!confirm('Delete this item from your database
 function renderActiveItemsTable(){
  const box=document.getElementById('dbActiveItemsTable');if(!box)return;
  if(!databaseItems.length){box.innerHTML='<p class="active-items-empty">No active items in the database.</p>';return}
- const rows=databaseItems.slice().sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''))).map(item=>'<tr><td>'+escapeHtml(item.name||'—')+'</td><td>'+escapeHtml(item.category||'Other')+'</td></tr>').join('');
- box.innerHTML='<table class="active-items-table"><thead><tr><th>Item name</th><th>Category</th></tr></thead><tbody>'+rows+'</tbody></table>';
+ const cleanType=value=>String(value||'').trim().toLowerCase().replace(/\\s+/g,' ');
+ const modifiers=item=>Array.isArray(item.modifiers)?item.modifiers:[];
+ const sumType=(item,type)=>{const values=modifiers(item).filter(m=>cleanType(m.type)===cleanType(type)&&m.value!==''&&m.value!==null&&m.value!==undefined&&Number.isFinite(Number(m.value))).map(m=>Number(m.value));return values.length?values.reduce((a,b)=>a+b,0):null};
+ const fmt=value=>value===null?'—':(value>0?'+':'')+value;
+ const rarityText=item=>Array.isArray(item.rarity)?item.rarity.filter(Boolean).join(', '):(item.rarity||'—');
+ const effectsText=item=>{
+  const core=['ac','attack roll','damage roll'];
+  const parts=[];
+  modifiers(item).forEach(m=>{
+   const type=String(m.type||'').trim(),notes=String(m.notes||m.label||'').trim();
+   if(!type)return;
+   if(!core.includes(cleanType(type)))parts.push(type+(m.target&&cleanType(m.target)!=='other ability'?' · '+m.target:'')+(notes?' — '+notes:''));
+   else if(cleanType(type)==='damage roll'&&notes&&(!Number.isFinite(Number(m.value))||Number(m.value)===0))parts.push(notes);
+  });
+  return parts.length?[...new Set(parts)].join('; '):'—';
+ };
+ const rows=databaseItems.slice().sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''))).map(item=>'<tr><td>'+escapeHtml(item.name||'—')+'</td><td>'+escapeHtml(item.category||'Other')+'</td><td>'+escapeHtml(rarityText(item))+'</td><td>'+escapeHtml(fmt(sumType(item,'AC')))+'</td><td>'+escapeHtml(fmt(sumType(item,'Attack roll')))+'</td><td>'+escapeHtml(fmt(sumType(item,'Damage roll')))+'</td><td class="active-items-effects">'+escapeHtml(effectsText(item))+'</td></tr>').join('');
+ box.innerHTML='<table class="active-items-table"><thead><tr><th>Item name</th><th>Category</th><th>Rarity</th><th>AC</th><th>Attack roll</th><th>Damage roll</th><th>Effects</th></tr></thead><tbody>'+rows+'</tbody></table>';
 }
 function renderDatabaseItems(){
  renderActiveItemsTable();renderEquippedSelectors();if(typeof updateArmourClass==='function')updateArmourClass();if(typeof renderAbilityScoreModifiers==='function')renderAbilityScoreModifiers();if(typeof renderRoundCalc==='function')renderRoundCalc();
