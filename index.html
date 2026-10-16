@@ -474,6 +474,19 @@ if(fullPlateItem){
   fullPlateItem.updatedAt=new Date().toISOString();
   seededCharacterItems=true;
 }
+// Update an existing Boots of Speed entry so it no longer describes the removed automatic Haste bonuses.
+const bootsOfSpeedItem=databaseItems.find(item=>String(item.name||'').trim().toLowerCase()==='boots of speed');
+if(bootsOfSpeedItem){
+  const oldDescription=String(bootsOfSpeedItem.description||'');
+  const staleHasteText=/hasted toggle|\+1 attack and ac|haste benefits/i;
+  const oldNotes=(bootsOfSpeedItem.modifiers||[]).some(m=>staleHasteText.test(String(m.notes||'')));
+  if(staleHasteText.test(oldDescription)||oldNotes){
+    bootsOfSpeedItem.description='Haste for up to 10 rounds per day. Track remaining rounds manually; this item does not automatically modify attack rolls or AC in the app.';
+    bootsOfSpeedItem.modifiers=(bootsOfSpeedItem.modifiers||[]).map(m=>({...m,notes:staleHasteText.test(String(m.notes||''))?'Track the 10 rounds/day manually. Configure any desired effects separately.':m.notes}));
+    bootsOfSpeedItem.updatedAt=new Date().toISOString();
+    seededCharacterItems=true;
+  }
+}
 if(seededCharacterItems)localStorage.setItem('bax_itemDatabase',JSON.stringify(databaseItems));
 let categoryVisibility={};
 try{categoryVisibility=JSON.parse(localStorage.getItem('bax_itemCategoryVisibility')||'{}')}catch(e){categoryVisibility={}}
