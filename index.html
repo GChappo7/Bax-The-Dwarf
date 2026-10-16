@@ -347,6 +347,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </main>
 <nav><button onclick="show('home')">⚔️ Char</button><button onclick="show('weapons')">🗡️ Weapons</button><button onclick="show('round')">🎲 Round</button><button onclick="show('notes')">📝 Notes</button></nav>
 <script>
+// Declare attack-round state before any UI callbacks can run, avoiding temporal-dead-zone errors.
+var attackRounds=[];
 const savedHp=localStorage.getItem('bax_hp'); let current=(savedHp===null||savedHp==='')?100:Number(savedHp); if(!Number.isFinite(current))current=100;
 function updateHealthBar(){const maxInput=document.getElementById('maxHp');const max=Number(maxInput&&maxInput.value);const fill=document.getElementById('healthFill');const track=document.getElementById('healthTrack');if(!fill||!track)return;const valid=Number.isFinite(max)&&max>0;const ratio=valid?Math.max(0,Math.min(1,current/max)):0;fill.style.width=(ratio*100)+'%';fill.classList.remove('healthy','average','bad','unknown');fill.classList.add(!valid?'unknown':ratio>0.6?'healthy':ratio>0.3?'average':'bad');track.setAttribute('aria-valuemax',valid?String(max):'100');track.setAttribute('aria-valuenow',String(current));track.setAttribute('aria-valuetext',valid?current+' of '+max+' HP':'Set Max HP to show health bar')}
 function hp(n){current=Math.max(0,current+n);localStorage.setItem('bax_hp',current);document.getElementById('hp').value=current;const r=document.getElementById('hpRound');if(r)r.value=current;updateHealthBar()}
@@ -922,7 +924,6 @@ renderPowerEffectsEditor();renderPowerDatabase();renderCharacterPowers();
 // --- Current Round ---
 let activeAttack=Number(localStorage.getItem('bax_active_attack')||1);
 let roundWeaponId=localStorage.getItem('bax_round_weapon')||'';
-let attackRounds=[];
 try{attackRounds=JSON.parse(localStorage.getItem('bax_attack_rounds')||'[]')}catch(e){attackRounds=[]}
 if(!Array.isArray(attackRounds)||!attackRounds.length){
   let oldMods=[];try{oldMods=JSON.parse(localStorage.getItem('bax_roundmods')||'[]')}catch(e){}
