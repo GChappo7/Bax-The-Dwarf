@@ -464,7 +464,7 @@ document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
 // Do not cancel touchend events: iOS standalone mode can suppress the synthetic click after this handler. The viewport and touch-action CSS already prevent unwanted double-tap zoom.
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=35',{updateViaCache:'none'});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=36',{updateViaCache:'none'});
 
 // --- Reusable equipment item database ---
 const equipmentCategories=['Headgear','Lens / Goggles','Armour','Shield','Robe / Vest / Shirt','Bracers','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Weapons','Ioun Stones / Jewellery','Other'];
@@ -473,6 +473,7 @@ const abilityTargets=['Strength','Dexterity','Constitution','Intelligence','Wisd
 let databaseItems=[],pendingModifiers=[],editingDatabaseItemId=null,defaultDatabaseItems=[],deletedDatabaseItemNames=[];
 try{const deleted=JSON.parse(localStorage.getItem('bax_deletedDatabaseItemNames')||'[]');if(Array.isArray(deleted))deletedDatabaseItemNames=deleted}catch(e){}
 try{databaseItems=JSON.parse(localStorage.getItem('bax_itemDatabase')||'[]')}catch(e){databaseItems=[]}
+if(!Array.isArray(databaseItems))databaseItems=[];
 // Restore key character items if they are missing, without replacing any existing database entries.
 let seededCharacterItems=false;
 const characterItemDefaults=[
@@ -527,7 +528,7 @@ async function loadDefaultEquipmentLibrary(){
   });
   saveDatabaseItems();if(status)status.textContent='GitHub defaults loaded. AC modifiers are refreshed from shared defaults; other local edits are kept.';if(defaultStatus)defaultStatus.textContent='Loaded '+defaultDatabaseItems.length+' default items from GitHub.';
   renderGitHubDefaultItems();renderDatabaseItems();renderEquippedSelectors();updateArmourClass();if(typeof renderRoundOptions==='function')renderRoundOptions();
- }catch(error){console.warn('Equipment defaults unavailable',error);const message='Could not load GitHub defaults: '+(error&&error.message?error.message:'unknown error')+'. Check your connection and try Refresh.';if(status)status.textContent=message;if(defaultStatus)defaultStatus.textContent=message;const box=document.getElementById('dbDefaultItemsList');if(box)box.innerHTML='<p style="color:var(--muted)">Default items could not be loaded.</p>'}
+ }catch(error){console.warn('Equipment defaults unavailable',error);const message='Could not load GitHub defaults: '+(error&&error.message?error.message:'unknown error')+'. Check your connection and try Refresh.';if(status)status.textContent=message;if(defaultStatus)defaultStatus.textContent=message;const box=document.getElementById('dbDefaultItemsList');if(box)box.innerHTML='<p style="color:var(--muted)">Default items could not be loaded.</p>';if(typeof renderRoundOptions==='function')renderRoundOptions()}
 }
 function renderGitHubDefaultItems(){
  const box=document.getElementById('dbDefaultItemsList');if(!box)return;
@@ -984,7 +985,7 @@ function removeRoundMod(type,id){const key=type==='atk'?'attackMods':'damageMods
 function updateRoundModField(type,id,field,value){const key=type==='atk'?'attackMods':'damageMods';const m=roundMods[key].find(m=>String(m.id)===String(id));if(!m)return;m[field]=field==='name'?value:(Number(value)||0);saveCurrentAttack();if(field!=='name')renderRoundCalc()}
 function renderModRows(type,bodyId){const list=type==='atk'?roundMods.attackMods:roundMods.damageMods;const body=document.getElementById(bodyId);if(!body)return;if(!list.length){body.innerHTML='<tr><td colspan="3" style="color:var(--muted);padding:14px;text-align:center;white-space:normal">No modifiers added.</td></tr>';return}body.innerHTML=list.map(m=>`<tr><td><input value="${String(m.name||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}" onchange="updateRoundModField('${type}',${Number(m.id)},'name',this.value)"></td><td><input type="number" value="${Number(m.value)||0}" onchange="updateRoundModField('${type}',${Number(m.id)},'value',this.value)"></td><td><button class="wpn-del" onclick="removeRoundMod('${type}',${Number(m.id)})">✕</button></td></tr>`).join('')}
 function renderRoundMods(){renderModRows('atk','attackModsBody');renderModRows('dmg','damageModsBody')}
-function renderRoundOptions(){const sel=document.getElementById('roundWeaponSelect');if(!sel)return;const prev=String(roundWeaponId||localStorage.getItem('bax_round_weapon')||'');const roundWeapons=databaseItems.filter(item=>String(item.category||'').trim().toLowerCase()==='weapons');const options=roundWeapons.map(w=>`<option value="${String(w.id).replace(/&/g,'&amp;').replace(/"/g,'&quot;')}">${String(w.name||'Unnamed weapon').replace(/&/g,'&amp;').replace(/</g,'&lt;')}</option>`).join('');sel.innerHTML=(roundWeapons.length?'<option value="">— Select weapon —</option>':'<option value="">Loading weapons…</option>')+options;if(roundWeapons.some(w=>String(w.id)===prev)){roundWeaponId=prev;sel.value=prev;localStorage.setItem('bax_round_weapon',prev)}else{sel.value='';if(roundWeapons.length){roundWeaponId='';localStorage.removeItem('bax_round_weapon')}}renderRoundMods();renderRoundCalc()}
+function renderRoundOptions(){const sel=document.getElementById('roundWeaponSelect');if(!sel)return;const prev=String(roundWeaponId||localStorage.getItem('bax_round_weapon')||'');const roundWeapons=databaseItems.filter(item=>{const category=String(item.category||'').trim().toLowerCase();return category==='weapons'||category==='weapon'});const options=roundWeapons.map(w=>`<option value="${String(w.id).replace(/&/g,'&amp;').replace(/"/g,'&quot;')}">${String(w.name||'Unnamed weapon').replace(/&/g,'&amp;').replace(/</g,'&lt;')}</option>`).join('');sel.innerHTML=(roundWeapons.length?'<option value="">— Select weapon —</option>':'<option value="">Loading weapons…</option>')+options;if(roundWeapons.some(w=>String(w.id)===prev)){roundWeaponId=prev;sel.value=prev;localStorage.setItem('bax_round_weapon',prev)}else{sel.value='';if(roundWeapons.length){roundWeaponId='';localStorage.removeItem('bax_round_weapon')}}renderRoundMods();renderRoundCalc()}
 function onRoundWeaponChange(value){roundWeaponId=value;const c=currentAttackConfig();c.criticalConfirmed=false;saveAttackRounds();localStorage.setItem('bax_round_weapon',value);renderRoundCalc()}
 renderAttackChoices();
 renderAttackEffectTiles();
