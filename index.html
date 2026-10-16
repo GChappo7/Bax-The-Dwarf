@@ -225,7 +225,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </section>
 
 <section id="round" class="tab">
-<div class="card"><h2>Active Effects</h2><p style="color:var(--muted);margin-top:0">Red means off; green means on. Configure each tile’s attack bonus below.</p><div id="attackEffectTiles" class="attack-effect-tiles"></div><div class="actions" style="margin-top:10px"><button type="button" onclick="addAttackEffectTile()">+ Add Effect Tile</button></div><div id="attackEffectSettings" class="attack-effect-settings"></div></div>
+<div class="card"><h2>Active Effects</h2><p style="color:var(--muted);margin-top:0">Red means off; green means on.</p><div id="attackEffectTiles" class="attack-effect-tiles"></div></div>
 <div class="card"><h2>Choose Attack</h2>
 <p style="color:var(--muted);margin-top:0">Choose which attack in your sequence you are setting up. Each attack keeps its own weapon and modifiers.</p>
 <div id="attackChoices" class="grid" style="grid-template-columns:repeat(3,minmax(0,1fr));gap:8px"></div>
@@ -303,6 +303,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <h3 style="margin:18px 0 8px">Damage Roll Modifiers</h3>
 <div style="overflow-x:auto"><table class="modtable"><thead><tr><th>Modifier</th><th>Bonus</th><th></th></tr></thead><tbody id="damageModsBody"></tbody></table></div>
 <button type="button" onclick="addRoundMod('dmg')" style="margin-top:8px;width:100%">+ Add Damage Modifier</button>
+<div class="card"><h2>Configure Active Effects</h2><p style="color:var(--muted);margin-top:0">Customise effect names, attack bonuses and which tiles appear above. These settings do not take up space beside the active-effect buttons.</p><div class="actions" style="margin-bottom:10px"><button type="button" onclick="addAttackEffectTile()">+ Add Effect Tile</button></div><div id="attackEffectSettings" class="attack-effect-settings"></div></div>
 </div>
 
 </section>
