@@ -389,7 +389,7 @@ function renderAbilityScoreModifiers(){
     if(key==='str'){const effective=document.getElementById('effective_str');if(effective)effective.textContent=String(score)+' / '+(mod>0?'+':'')+mod}
   });
 }
-document.querySelectorAll('#stats [data-save]').forEach(el=>el.addEventListener('input',renderAbilityScoreModifiers));
+document.querySelectorAll('#stats [data-save]').forEach(el=>el.addEventListener('input',()=>{renderAbilityScoreModifiers();if(typeof renderRoundCalc==='function')renderRoundCalc();if(typeof updateArmourClass==='function')updateArmourClass()}));
 renderAbilityScoreModifiers();
 // --- Armour Class calculator ---
 // bax_ac stores the calculated TOTAL AC, not the base AC. Never migrate it into the base override.
@@ -464,7 +464,7 @@ document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
 // Do not cancel touchend events: iOS standalone mode can suppress the synthetic click after this handler. The viewport and touch-action CSS already prevent unwanted double-tap zoom.
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=36',{updateViaCache:'none'});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=37',{updateViaCache:'none'});
 
 // --- Reusable equipment item database ---
 const equipmentCategories=['Headgear','Lens / Goggles','Armour','Shield','Robe / Vest / Shirt','Bracers','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Weapons','Ioun Stones / Jewellery','Other'];
