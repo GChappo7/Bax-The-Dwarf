@@ -220,7 +220,9 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <button type="button" onclick="addPendingModifier()" style="width:100%;margin:8px 0 14px">+ Add Modifier</button>
 <button id="dbSaveButton" type="button" onclick="saveDatabaseItem()" style="width:100%;background:#5a4226;border-color:var(--gold)">Save Item to Database</button><button id="dbCancelEditButton" type="button" onclick="cancelEditDatabaseItem()" style="width:100%;display:none">Cancel Editing</button>
 </div></div>
-<div class="card"><h2>Saved Items</h2><p style="color:var(--muted);margin-top:0">Your reusable item definitions appear here. Removing an entry deletes it from this device's item database.</p><div id="dbSavedItems"></div></div>
+<div class="card"><h2>Shared Defaults &amp; Local Backup</h2><p id="dbLibraryStatus" style="color:var(--muted);margin-top:0">Loading GitHub default libraries…</p><div class="actions"><button type="button" onclick="exportEquipmentLibrary()">Export Local Backup</button><button type="button" onclick="document.getElementById('dbLibraryImportFile').click()">Import Backup</button><button type="button" class="wpn-del" onclick="resetEquipmentLibrary()">Reset Entire Library</button></div><input id="dbLibraryImportFile" type="file" accept="application/json,.json" style="display:none" onchange="importEquipmentLibraryBackup(this)"><p style="color:var(--muted);font-size:12px;margin-bottom:0">Default entries come from GitHub. Local edits and custom entries stay on this device. Export a backup before clearing browser data or changing devices.</p></div>
+<div class="card"><h2>Saved Items</h2><p style="color:var(--muted);margin-top:0">Your reusable equipment definitions appear here. Edits and deletions affect only this device.</p><div id="dbSavedItems"></div></div>
+<div class="card"><h2>Reset Category</h2><p style="color:var(--muted);margin-top:0">Restore a category to GitHub defaults. Custom entries in that category will also be removed.</p><label>Category to reset<select id="dbResetCategorySelect"><option>Headgear</option><option>Lens / Goggles</option><option>Armour</option><option>Shield</option><option>Robe / Vest / Shirt</option><option>Bracers</option><option>Cloak</option><option>Rings</option><option>Gloves</option><option>Amulet / Medallion</option><option>Necklace</option><option>Periapt / Phylactery</option><option>Broach / Scarab</option><option>Belt</option><option>Boots</option><option>Weapons</option><option>Ioun Stones / Jewellery</option><option>Other</option></select></label><button type="button" onclick="resetEquipmentCategory(document.getElementById('dbResetCategorySelect').value)" style="width:100%">Reset Selected Category</button></div>
 <div class="card"><h2>Category Visibility</h2><p style="color:var(--muted);margin-top:0">Choose which categories should appear in equipment selectors. Hiding a category will not delete its items.</p><div id="dbCategoryVisibility"></div></div>
 </section>
 
@@ -442,7 +444,8 @@ if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 const equipmentCategories=['Headgear','Lens / Goggles','Armour','Shield','Robe / Vest / Shirt','Bracers','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Weapons','Ioun Stones / Jewellery','Other'];
 const modifierTypes=['Ability score','AC','Saving throw','Skill','Attack roll','Damage roll','Damage reduction','Resistance','Movement speed','Granted ability','Penalty','Other'];
 const abilityTargets=['Strength','Dexterity','Constitution','Intelligence','Wisdom','Charisma','Comeliness'];
-let databaseItems=[],pendingModifiers=[],editingDatabaseItemId=null;
+let databaseItems=[],pendingModifiers=[],editingDatabaseItemId=null,defaultDatabaseItems=[],deletedDatabaseItemNames=[];
+try{const deleted=JSON.parse(localStorage.getItem('bax_deletedDatabaseItemNames')||'[]');if(Array.isArray(deleted))deletedDatabaseItemNames=deleted}catch(e){}
 try{databaseItems=JSON.parse(localStorage.getItem('bax_itemDatabase')||'[]')}catch(e){databaseItems=[]}
 // Restore key character items if they are missing, without replacing any existing database entries.
 let seededCharacterItems=false;
@@ -466,34 +469,56 @@ characterItemDefaults.forEach(defaultItem=>{
     seededCharacterItems=true;
   }
 });
-// Normalize an already-seeded full plate entry so its AC bonus displays as +10, not just the +2 enhancement.
-const fullPlateItem=databaseItems.find(item=>String(item.name||'').trim().toLowerCase()==='magical full plate (+2)');
-if(fullPlateItem){
-  fullPlateItem.category='Armour';
-  fullPlateItem.description='Full plate armour: +8 armour bonus and +2 magical enhancement bonus, for +10 total armour AC.';
-  fullPlateItem.modifiers=[{id:'seed-fullplate-total-ac',type:'AC',target:'AC',value:10,bonusType:'Armour + enhancement',notes:'Combined total: +8 base full plate armour bonus and +2 magical enhancement bonus.'}];
-  fullPlateItem.updatedAt=new Date().toISOString();
-  seededCharacterItems=true;
-}
-// Update an existing Boots of Speed entry so it no longer describes the removed automatic Haste bonuses.
-const bootsOfSpeedItem=databaseItems.find(item=>String(item.name||'').trim().toLowerCase()==='boots of speed');
-if(bootsOfSpeedItem){
-  const oldDescription=String(bootsOfSpeedItem.description||'');
-  const staleHasteText=/hasted toggle|\+1 attack and ac|haste benefits/i;
-  const oldNotes=(bootsOfSpeedItem.modifiers||[]).some(m=>staleHasteText.test(String(m.notes||'')));
-  if(staleHasteText.test(oldDescription)||oldNotes){
-    bootsOfSpeedItem.description='Haste for up to 10 rounds per day. Track remaining rounds manually; this item does not automatically modify attack rolls or AC in the app.';
-    bootsOfSpeedItem.modifiers=(bootsOfSpeedItem.modifiers||[]).map(m=>({...m,notes:staleHasteText.test(String(m.notes||''))?'Track the 10 rounds/day manually. Configure any desired effects separately.':m.notes}));
-    bootsOfSpeedItem.updatedAt=new Date().toISOString();
-    seededCharacterItems=true;
-  }
-}
 if(seededCharacterItems)localStorage.setItem('bax_itemDatabase',JSON.stringify(databaseItems));
 let categoryVisibility={};
 try{categoryVisibility=JSON.parse(localStorage.getItem('bax_itemCategoryVisibility')||'{}')}catch(e){categoryVisibility={}}
 equipmentCategories.forEach(c=>{if(categoryVisibility[c]===undefined)categoryVisibility[c]=!['Periapt / Phylactery','Broach / Scarab'].includes(c)});
 function escapeHtml(value){return String(value??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
-function saveDatabaseItems(){localStorage.setItem('bax_itemDatabase',JSON.stringify(databaseItems))}
+function saveDatabaseItems(){localStorage.setItem('bax_itemDatabase',JSON.stringify(databaseItems));localStorage.setItem('bax_deletedDatabaseItemNames',JSON.stringify(deletedDatabaseItemNames))}
+function equipmentNameKey(name){return String(name||'').trim().toLowerCase().replace(/\\s+/g,' ')}
+async function loadDefaultEquipmentLibrary(){
+ const status=document.getElementById('dbLibraryStatus');
+ try{
+  const responses=await Promise.all([fetch('./items.json'),fetch('./armour.json')]);if(responses.some(r=>!r.ok))throw new Error('Default files could not be loaded');
+  const [items,armour]=await Promise.all(responses.map(r=>r.json()));if(!Array.isArray(items)||!Array.isArray(armour))throw new Error('Invalid default library format');
+  const seen=new Set();defaultDatabaseItems=[...items,...armour].filter(item=>{const key=equipmentNameKey(item&&item.name);if(!key||seen.has(key))return false;seen.add(key);return true});
+  const deleted=new Set(deletedDatabaseItemNames.map(equipmentNameKey));
+  databaseItems=databaseItems.filter(item=>!deleted.has(equipmentNameKey(item.name)));
+  defaultDatabaseItems.forEach(base=>{if(!deleted.has(equipmentNameKey(base.name))&&!databaseItems.some(item=>equipmentNameKey(item.name)===equipmentNameKey(base.name)))databaseItems.push(JSON.parse(JSON.stringify(base)))});
+  saveDatabaseItems();if(status)status.textContent='GitHub defaults loaded. Edits, custom entries and deletions are saved only on this device.';
+  renderDatabaseItems();if(typeof renderRoundOptions==='function')renderRoundOptions();
+ }catch(error){console.warn('Equipment defaults unavailable',error);if(status)status.textContent='Could not load GitHub defaults right now. Existing items on this device are still available.'}
+}
+function restoreDefaultItem(name){
+ const base=defaultDatabaseItems.find(item=>equipmentNameKey(item.name)===equipmentNameKey(name));if(!base)return;
+ deletedDatabaseItemNames=deletedDatabaseItemNames.filter(n=>equipmentNameKey(n)!==equipmentNameKey(name));
+ const current=databaseItems.find(item=>equipmentNameKey(item.name)===equipmentNameKey(name)),restored=JSON.parse(JSON.stringify(base));if(current)restored.id=current.id;
+ databaseItems=databaseItems.filter(item=>equipmentNameKey(item.name)!==equipmentNameKey(name));databaseItems.push(restored);saveDatabaseItems();renderDatabaseItems();if(typeof renderRoundOptions==='function')renderRoundOptions();
+}
+function resetEquipmentCategory(category){
+ if(!confirm('Reset '+category+' to GitHub defaults? Custom entries in this category will also be removed.'))return;
+ databaseItems=databaseItems.filter(item=>item.category!==category);
+ const defaults=defaultDatabaseItems.filter(item=>item.category===category);defaults.forEach(item=>databaseItems.push(JSON.parse(JSON.stringify(item))));
+ deletedDatabaseItemNames=deletedDatabaseItemNames.filter(name=>!defaults.some(item=>equipmentNameKey(item.name)===equipmentNameKey(name)));
+ saveDatabaseItems();renderDatabaseItems();if(typeof renderRoundOptions==='function')renderRoundOptions();
+}
+function resetEquipmentLibrary(){
+ if(!confirm('Reset the entire local equipment library to GitHub defaults? This removes custom entries and local edits on this device only.'))return;
+ databaseItems=defaultDatabaseItems.map(item=>JSON.parse(JSON.stringify(item)));deletedDatabaseItemNames=[];saveDatabaseItems();renderDatabaseItems();if(typeof renderRoundOptions==='function')renderRoundOptions();
+}
+function exportEquipmentLibrary(){
+ const backup={format:'bax-equipment-library-backup',version:1,exportedAt:new Date().toISOString(),items:databaseItems,deletedNames:deletedDatabaseItemNames};
+ const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='bax-equipment-library-backup.json';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+}
+async function importEquipmentLibraryBackup(input){
+ const file=input.files&&input.files[0];if(!file)return;
+ try{const parsed=JSON.parse(await file.text()),items=Array.isArray(parsed)?parsed:parsed.items;if(!Array.isArray(items)||!items.every(item=>item&&typeof item.name==='string'))throw new Error('This file does not contain a valid equipment backup.');
+ if(!confirm('Import '+items.length+' entries and replace this device’s local equipment library?'))return;
+ databaseItems=items.map((item,index)=>({...item,id:item.id??('imported-'+Date.now()+'-'+index),category:item.category||'Other',modifiers:Array.isArray(item.modifiers)?item.modifiers:[]}));
+ deletedDatabaseItemNames=Array.isArray(parsed.deletedNames)?parsed.deletedNames.filter(n=>typeof n==='string'):[];
+ saveDatabaseItems();renderDatabaseItems();if(typeof renderRoundOptions==='function')renderRoundOptions();alert('Equipment library imported on this device.');
+ }catch(error){alert('Could not import this backup: '+error.message)}finally{input.value=''}
+}
 function addPendingModifier(){pendingModifiers.push({id:Date.now()+Math.random(),type:'Ability score',target:'Strength',value:2,notes:''});renderPendingModifiers()}
 function removePendingModifier(id){pendingModifiers=pendingModifiers.filter(m=>String(m.id)!==String(id));renderPendingModifiers()}
 function updatePendingModifier(id,field,value){const m=pendingModifiers.find(x=>String(x.id)===String(id));if(!m)return;m[field]=field==='value'?(value===''?'':Number(value)):value;if(field==='type'){if(value==='Ability score')m.target='Strength';else if(value==='AC')m.target='AC';else if(value==='Saving throw')m.target='All saving throws';else if(value==='Damage reduction')m.target='Physical damage';else m.target='Other'}renderPendingModifiers()}
@@ -502,8 +527,16 @@ function resetDatabaseItemForm(){editingDatabaseItemId=null;document.getElementB
 function editDatabaseItem(id){const item=databaseItems.find(i=>String(i.id)===String(id));if(!item)return;editingDatabaseItemId=item.id;document.getElementById('dbItemName').value=item.name||'';document.getElementById('dbItemCategory').value=item.category||'Other';document.getElementById('dbItemDescription').value=item.description||'';document.getElementById('dbCritThreshold').value=item.critThreshold??20;document.getElementById('dbCritMultiplier').value=item.critMultiplier??2;const rarities=Array.isArray(item.rarity)&&item.rarity.length?item.rarity:['Standard'];document.querySelectorAll('input[name="dbItemRarity"]').forEach(el=>el.checked=rarities.includes(el.value));pendingModifiers=(item.modifiers||[]).map((m,i)=>({...m,id:m.id??(Date.now()+i+Math.random())}));renderPendingModifiers();document.getElementById('dbSaveButton').textContent='Save Changes';document.getElementById('dbCancelEditButton').style.display='block';document.getElementById('dbItemName').scrollIntoView({behavior:'smooth',block:'center'});document.getElementById('dbItemName').focus()}
 function cancelEditDatabaseItem(){resetDatabaseItemForm()}
 function saveDatabaseItem(){const name=document.getElementById('dbItemName').value.trim();if(!name){alert('Please enter an item name.');document.getElementById('dbItemName').focus();return}const selectedRarities=Array.from(document.querySelectorAll('input[name="dbItemRarity"]:checked')).map(el=>el.value);const existing=editingDatabaseItemId===null?null:databaseItems.find(i=>String(i.id)===String(editingDatabaseItemId));const item={...(existing||{}),id:existing?existing.id:Date.now(),name,category:document.getElementById('dbItemCategory').value,rarity:selectedRarities,description:document.getElementById('dbItemDescription').value.trim(),critThreshold:Math.min(20,Math.max(2,Number(document.getElementById('dbCritThreshold').value)||20)),critMultiplier:Math.min(5,Math.max(2,Number(document.getElementById('dbCritMultiplier').value)||2)),modifiers:pendingModifiers.map(m=>({...m})),createdAt:existing?.createdAt||new Date().toISOString(),updatedAt:new Date().toISOString()};if(existing){databaseItems=databaseItems.map(i=>String(i.id)===String(existing.id)?item:i)}else{databaseItems.push(item)}saveDatabaseItems();resetDatabaseItemForm();renderDatabaseItems();if(typeof renderRoundOptions==='function')renderRoundOptions();alert(existing?'Changes saved to your item database on this device.':'Item saved to your database on this device.')}
-function removeDatabaseItem(id){if(!confirm('Delete this item from your database?'))return;if(String(editingDatabaseItemId)===String(id))resetDatabaseItemForm();databaseItems=databaseItems.filter(i=>String(i.id)!==String(id));saveDatabaseItems();renderDatabaseItems();if(typeof renderRoundOptions==='function')renderRoundOptions()}
-function renderDatabaseItems(){renderEquippedSelectors();if(typeof updateArmourClass==='function')updateArmourClass();if(typeof renderAbilityScoreModifiers==='function')renderAbilityScoreModifiers();if(typeof renderRoundCalc==='function')renderRoundCalc();const box=document.getElementById('dbSavedItems');if(!box)return;if(!databaseItems.length){box.innerHTML='<p style="color:var(--muted);text-align:center;padding:12px 0">No items saved yet. Add your first item above.</p>'}else{box.innerHTML=databaseItems.slice().reverse().map(item=>'<div class="db-item"><h3>'+escapeHtml(item.name)+'</h3><span class="badge">'+escapeHtml(item.category)+'</span>'+((Array.isArray(item.rarity)&&item.rarity.length?item.rarity:['Standard']).map(rarity=>'<span class="badge">'+escapeHtml(rarity)+'</span>').join(''))+(item.description?'<p>'+escapeHtml(item.description)+'</p>':'')+((item.modifiers||[]).length?item.modifiers.map(m=>'<div class="db-modifier"><strong>'+escapeHtml(m.type)+': '+escapeHtml(m.target)+'</strong>'+(m.value!==''&&m.value!==undefined?' — '+(Number(m.value)>0?'+':'')+escapeHtml(m.value):'')+(m.bonusType?' ('+escapeHtml(m.bonusType)+')':'')+(m.notes?'<p>Reminder: '+escapeHtml(m.notes)+'</p>':'')+'</div>').join(''):'<p>No modifiers recorded.</p>')+'<div class="db-item-actions"><button onclick="editDatabaseItem(\''+item.id+'\')">Edit Item</button><button class="wpn-del" onclick="removeDatabaseItem(\''+item.id+'\')">Delete Item</button></div></div>').join('')}renderCategoryVisibility()}
+function removeDatabaseItem(id){if(!confirm('Delete this item from your database?'))return;const item=databaseItems.find(i=>String(i.id)===String(id));if(item&&defaultDatabaseItems.some(d=>equipmentNameKey(d.name)===equipmentNameKey(item.name))&&!deletedDatabaseItemNames.some(n=>equipmentNameKey(n)===equipmentNameKey(item.name)))deletedDatabaseItemNames.push(item.name);if(String(editingDatabaseItemId)===String(id))resetDatabaseItemForm();databaseItems=databaseItems.filter(i=>String(i.id)!==String(id));saveDatabaseItems();renderDatabaseItems();if(typeof renderRoundOptions==='function')renderRoundOptions()}
+function renderDatabaseItems(){
+ renderEquippedSelectors();if(typeof updateArmourClass==='function')updateArmourClass();if(typeof renderAbilityScoreModifiers==='function')renderAbilityScoreModifiers();if(typeof renderRoundCalc==='function')renderRoundCalc();
+ const box=document.getElementById('dbSavedItems');if(!box)return;
+ if(!databaseItems.length){box.innerHTML='<p style="color:var(--muted);text-align:center;padding:12px 0">No items loaded yet. Check your connection or add a custom item.</p>'}
+ else{box.innerHTML=databaseItems.slice().reverse().map(item=>{
+  const hasDefault=defaultDatabaseItems.some(d=>equipmentNameKey(d.name)===equipmentNameKey(item.name)),id=String(item.id).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+  return '<div class="db-item"><h3>'+escapeHtml(item.name)+'</h3><span class="badge">'+escapeHtml(item.category)+'</span>'+((Array.isArray(item.rarity)&&item.rarity.length?item.rarity:['Standard']).map(rarity=>'<span class="badge">'+escapeHtml(rarity)+'</span>').join(''))+(item.description?'<p>'+escapeHtml(item.description)+'</p>':'')+((item.modifiers||[]).length?item.modifiers.map(m=>'<div class="db-modifier"><strong>'+escapeHtml(m.type)+': '+escapeHtml(m.target)+'</strong>'+(m.value!==''&&m.value!==undefined?' — '+(Number(m.value)>0?'+':'')+escapeHtml(m.value):'')+(m.bonusType?' ('+escapeHtml(m.bonusType)+')':'')+(m.notes?'<p>Reminder: '+escapeHtml(m.notes)+'</p>':'')+'</div>').join(''):'<p>No modifiers recorded.</p>')+'<div class="db-item-actions"><button onclick="editDatabaseItem(\''+id+'\')">Edit Item</button>'+(hasDefault?'<button onclick="restoreDefaultItem(\''+escapeHtml(item.name).replace(/'/g,"&#39;")+'\')">Reset to Default</button>':'')+'<button class="wpn-del" onclick="removeDatabaseItem(\''+id+'\')">Delete Item</button></div></div>';
+ }).join('')}renderCategoryVisibility()
+}
 function renderCategoryVisibility(){const box=document.getElementById('dbCategoryVisibility');if(!box)return;box.innerHTML=equipmentCategories.map(c=>'<label class="category-toggle"><input type="checkbox" data-category="'+escapeHtml(c)+'" '+(categoryVisibility[c]?'checked':'')+'><span>'+escapeHtml(c)+'</span></label>').join('')}
 function setCategoryVisibility(category,visible){if(!equipmentCategories.includes(category))return;categoryVisibility[category]=!!visible;try{localStorage.setItem('bax_itemCategoryVisibility',JSON.stringify(categoryVisibility))}catch(e){console.error('Could not save category visibility',e)}renderCategoryVisibility();renderEquippedSelectors()}
 document.getElementById('dbCategoryVisibility')?.addEventListener('change',function(event){const input=event.target;if(!input||input.type!=='checkbox'||!input.dataset.category)return;setCategoryVisibility(input.dataset.category,input.checked)});
@@ -516,7 +549,7 @@ function updateEquippedItem(category,index,value){const ids=getEquippedIds(categ
 function addEquippedSlot(category){const ids=getEquippedIds(category);ids.push('');equippedItems[category]=ids;saveEquippedItems();renderEquippedSelectors();updateArmourClass()}
 function removeEquippedSlot(category,index){const ids=getEquippedIds(category);ids.splice(index,1);equippedItems[category]=ids;saveEquippedItems();renderEquippedSelectors();updateArmourClass()}
 function renderEquippedSelectors(){const box=document.getElementById('equippedCategorySelectors');if(!box)return;const hint=document.getElementById('equippedEmptyHint');const visible=equipmentCategories.filter(c=>categoryVisibility[c]);if(hint)hint.style.display=visible.length?'none':'block';box.innerHTML=visible.map(category=>{const items=databaseItems.filter(item=>item.category===category);const ids=getEquippedIds(category);const slots=multipleEquipmentCategories.includes(category)?(ids.length?ids:['']):[ids[0]||''];let html='<div class="equipped-category"><label>'+escapeHtml(category);slots.forEach((selected,index)=>{html+='<select aria-label="'+escapeHtml(category)+' item '+(index+1)+'" onchange="updateEquippedItem(\''+escapeHtml(category)+'\','+index+',this.value)"><option value="">— No item selected —</option>'+items.map(item=>'<option value="'+escapeHtml(item.id)+'" '+(String(item.id)===String(selected)?'selected':'')+'>'+escapeHtml(item.name)+'</option>').join('')+'</select>';if(multipleEquipmentCategories.includes(category)&&slots.length>1)html+='<div class="equipped-extra"><button type="button" onclick="removeEquippedSlot(\''+escapeHtml(category)+'\','+index+')">Remove slot</button></div>'});if(multipleEquipmentCategories.includes(category))html+='<div class="equipped-extra"><button type="button" onclick="addEquippedSlot(\''+escapeHtml(category)+'\')">+ Add another ring</button></div>';if(!items.length)html+='<p style="font-size:12px;color:var(--muted);margin:6px 0 0">No '+escapeHtml(category)+' items in the database yet.</p>';return html+'</label></div>'}).join('')}
-addPendingModifier();renderDatabaseItems();renderCategoryVisibility();renderEquippedSelectors();updateArmourClass();
+addPendingModifier();renderDatabaseItems();renderCategoryVisibility();renderEquippedSelectors();updateArmourClass();loadDefaultEquipmentLibrary();
 
 // --- Inventory manager ---
 let inventoryItems=[];
@@ -901,38 +934,7 @@ loadCurrentAttack();
     try{if(typeof selectAttack==='function')selectAttack(n)}catch(err){console.error('Attack switch failed',err)}
   },true);
 })();
-/* Recovery safety net: seed the two essential character items independently of the main app script. */
-(function(){
-  try {
-    const storageKey='bax_itemDatabase';
-    const raw=localStorage.getItem(storageKey);
-    let items=raw?JSON.parse(raw):[];
-    if(!Array.isArray(items)) return;
-    const defaults=[
-  {name:'Magical Full Plate (+2)',category:'Armour',rarity:['Magic'],description:'Full plate armour: +8 armour bonus and +2 enhancement bonus, for +10 total armour AC.',modifiers:[{id:'restored-fullplate-total-ac',type:'AC',target:'AC',value:10,bonusType:'Armour + enhancement',notes:'Combined total: +8 base full plate armour bonus and +2 magical enhancement bonus.'}]},
-  {name:'Resistance Cloak +1',category:'Cloak',rarity:['Magic'],description:'Standard D&D 3.5e cloak of resistance: +1 resistance bonus on saving throws (not AC).',modifiers:[{id:'restored-resistance-cloak-save',type:'Saving throw',target:'All saving throws',value:1,bonusType:'Resistance',notes:'Does not increase AC under standard D&D 3.5e rules.'}]},
-  {name:'Ring of Protection +1',category:'Rings',rarity:['Magic'],description:'Grants a +1 deflection bonus to AC.',modifiers:[{id:'restored-ring-protection-ac',type:'AC',target:'AC',value:1,bonusType:'Deflection',notes:'Deflection bonus to AC.'}]},
-  {name:'Ring of Water Walking',category:'Rings',rarity:['Magic'],description:'Allows the wearer to walk on water.',modifiers:[{id:'restored-ring-water-walking',type:'Granted ability',target:'Other ability',value:0,notes:'Walk on water while worn.'}]},
-  {name:'Ring of Freedom of Movement',category:'Rings',rarity:['Magic'],description:'Protects the wearer from effects that impede movement, as described by the D&D 3.5e item.',modifiers:[{id:'restored-ring-freedom-movement',type:'Granted ability',target:'Other ability',value:0,notes:'Freedom of movement while worn.'}]},
-  {name:'Gauntlets of Ogre Power',category:'Gloves',rarity:['Magic'],description:'These magical gauntlets grant a +2 enhancement bonus to Strength while equipped.',modifiers:[{id:'restored-gauntlets-str',type:'Ability score',target:'Strength',value:2,bonusType:'Enhancement',notes:'Applies only while equipped.'}]},
-  {name:'Boots of Speed',category:'Boots',rarity:['Magic'],description:'Haste for up to 10 rounds per day. Track remaining rounds manually; this item does not automatically modify attack rolls or AC in the app.',modifiers:[{id:'restored-boots-speed-haste',type:'Granted ability',target:'Other ability',value:0,notes:'Track the 10 rounds/day manually. Configure any desired effects separately.'}]},
-  {name:'Lavender Ioun Stone',category:'Ioun Stones / Jewellery',rarity:['Magic'],description:'Immunity to spells of 4th level and below, as specified for Bax’s item.',modifiers:[{id:'restored-lavender-ioun-immunity',type:'Granted ability',target:'Other ability',value:0,notes:'Immunity to spells of 4th level or lower.'}]},
-  {name:'Adamant Heavy Shield',category:'Shield',rarity:['Magic'],description:'Heavy adamantine shield: +2 shield bonus to AC and damage reduction 3/− against physical damage, per Bax’s campaign rules.',modifiers:[{id:'restored-adamant-heavy-shield-ac',type:'AC',target:'AC',value:2,bonusType:'Shield',notes:'Heavy shield bonus to AC.'},{id:'restored-adamant-heavy-shield-dr',type:'Damage reduction',target:'Physical damage',value:3,notes:'DR 3/− against physical damage; reminder only, not automatically subtracted.'}]},
-  {name:'Necklace of Fireballs',category:'Necklace',rarity:['Magic'],description:'Necklace of fireballs. Track remaining beads/charges and the bead type separately; details not specified yet.',modifiers:[]},
-  {name:'+2 Frost Dwarven Waraxe',category:'Weapons',rarity:['Magic'],description:'Dwarven waraxe with +2 enhancement to attack rolls, +3 total damage bonus as specified for Bax, plus 1d6 cold damage from frost. Critical multiplier ×3.',critThreshold:20,critMultiplier:3,modifiers:[{id:'restored-waraxe-atk',type:'Attack roll',target:'Attack roll',value:2,bonusType:'Enhancement',notes:'Weapon enhancement bonus.'},{id:'restored-waraxe-dmg',type:'Damage roll',target:'Damage roll',value:3,notes:'Total weapon damage bonus as specified for Bax.'},{id:'restored-waraxe-frost',type:'Damage roll',target:'Damage roll',value:0,notes:'Frost enchantment adds +1d6 cold damage; add this dice damage separately when rolling.'}]},
-  {name:'Composite Longbow (+3 Strength Rating)',category:'Weapons',rarity:['Standard'],description:'Composite longbow with a +3 Strength rating. This is the bow’s rated Strength bonus, not a +3 magical enhancement; it can apply up to +3 Strength bonus to damage.',critThreshold:20,critMultiplier:3,modifiers:[]}
-];
-    let changed=false;
-    defaults.forEach(d=>{
-      if(!items.some(i=>String(i&&i.name||'').trim().toLowerCase()===d.name.toLowerCase())){
-        items.push({...d,id:'restored-'+d.name.toLowerCase().replace(/[^a-z0-9]+/g,'-'),createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()});
-        changed=true;
-      }
-    });
-    if(changed) localStorage.setItem(storageKey,JSON.stringify(items));
-    try { databaseItems=items; if(typeof renderDatabaseItems==='function') renderDatabaseItems(); } catch(e) {}
-  } catch(e) { console.error('Character item recovery failed:',e); }
-})();
+
 </script>
 
 <script>
