@@ -489,7 +489,7 @@ function equipmentNameKey(name){return String(name||'').trim().toLowerCase().rep
 async function loadDefaultEquipmentLibrary(){
  const status=document.getElementById('dbLibraryStatus'),defaultStatus=document.getElementById('dbDefaultItemsStatus');
  try{
-  const baseUrl=new URL('./',window.location.href);const version='20261016';const responses=await Promise.all([fetch(new URL('items.json?v='+version,baseUrl),{cache:'no-store'}),fetch(new URL('armour.json?v='+version,baseUrl),{cache:'no-store'})]);if(responses.some(r=>!r.ok))throw new Error('HTTP '+responses.filter(r=>!r.ok).map(r=>r.status+' '+r.url).join('; '));
+  const baseUrl=new URL('./',window.location.href);const version='20261016';const responses=await Promise.all([fetch(new URL('Databases/items.json?v='+version,baseUrl),{cache:'no-store'}),fetch(new URL('Databases/armour.json?v='+version,baseUrl),{cache:'no-store'})]);if(responses.some(r=>!r.ok))throw new Error('HTTP '+responses.filter(r=>!r.ok).map(r=>r.status+' '+r.url).join('; '));
   const [items,armour]=await Promise.all(responses.map(r=>r.json()));if(!Array.isArray(items)||!Array.isArray(armour))throw new Error('Invalid default library format');
   const seen=new Set();defaultDatabaseItems=[...items,...armour].filter(item=>{const key=equipmentNameKey(item&&item.name);if(!key||seen.has(key))return false;seen.add(key);return true});
   const deleted=new Set(deletedDatabaseItemNames.map(equipmentNameKey));
@@ -501,7 +501,7 @@ async function loadDefaultEquipmentLibrary(){
 }
 function renderGitHubDefaultItems(){
  const box=document.getElementById('dbDefaultItemsList');if(!box)return;
- if(!defaultDatabaseItems.length){box.innerHTML='<p style="color:var(--muted)">No default items were found in items.json or armour.json.</p>';return}
+ if(!defaultDatabaseItems.length){box.innerHTML='<p style="color:var(--muted)">No default items were found in Databases/items.json or Databases/armour.json.</p>';return}
  box.innerHTML=defaultDatabaseItems.map(item=>{
   const current=databaseItems.find(entry=>equipmentNameKey(entry.name)===equipmentNameKey(item.name));
   const modifiers=(item.modifiers||[]).map(m=>'<div class="db-modifier"><strong>'+escapeHtml(m.type)+(m.target?': '+escapeHtml(m.target):'')+'</strong>'+(m.value!==''&&m.value!==undefined?' — '+(Number(m.value)>0?'+':'')+escapeHtml(m.value):'')+(m.bonusType?' ('+escapeHtml(m.bonusType)+')':'')+(m.notes?'<p>Reminder: '+escapeHtml(m.notes)+'</p>':'')+'</div>').join('');
@@ -906,7 +906,7 @@ const fallbackAttackEffectDatabase=[
  {id:'charge',name:'Charge',description:'Charge at an opponent, doubling your movement rate, +2 to Attack Roll, -2 to your AC this turn.',modifiers:[{type:'Attack roll',value:2,label:'+2 to Attack roll'},{type:'AC',value:-2,label:'-2 to Armour Class'}]},
  {id:'haste',name:'Haste',description:'Whilst hasted, double movement and an extra main attack.',modifiers:[{type:'Extra main attack',value:1,label:'Duplicates Main Attack so there are two'}]}
 ];
-fetch('./effects.json').then(response=>{if(!response.ok)throw new Error('Could not load effects.json');return response.json()}).then(data=>{
+fetch('./Databases/effects.json').then(response=>{if(!response.ok)throw new Error('Could not load effects.json');return response.json()}).then(data=>{
  if(!Array.isArray(data))throw new Error('Effect database format is invalid');
  attackEffectDatabase=data;
  renderAttackEffectTiles();
