@@ -481,7 +481,7 @@ function equipmentNameKey(name){return String(name||'').trim().toLowerCase().rep
 async function loadDefaultEquipmentLibrary(){
  const status=document.getElementById('dbLibraryStatus'),defaultStatus=document.getElementById('dbDefaultItemsStatus');
  try{
-  const responses=await Promise.all([fetch('./items.json'),fetch('./armour.json')]);if(responses.some(r=>!r.ok))throw new Error('Default files could not be loaded');
+  const baseUrl=new URL('./',window.location.href);const version='20261016';const responses=await Promise.all([fetch(new URL('items.json?v='+version,baseUrl),{cache:'no-store'}),fetch(new URL('armour.json?v='+version,baseUrl),{cache:'no-store'})]);if(responses.some(r=>!r.ok))throw new Error('HTTP '+responses.filter(r=>!r.ok).map(r=>r.status+' '+r.url).join('; '));
   const [items,armour]=await Promise.all(responses.map(r=>r.json()));if(!Array.isArray(items)||!Array.isArray(armour))throw new Error('Invalid default library format');
   const seen=new Set();defaultDatabaseItems=[...items,...armour].filter(item=>{const key=equipmentNameKey(item&&item.name);if(!key||seen.has(key))return false;seen.add(key);return true});
   const deleted=new Set(deletedDatabaseItemNames.map(equipmentNameKey));
@@ -489,7 +489,7 @@ async function loadDefaultEquipmentLibrary(){
   defaultDatabaseItems.forEach(base=>{if(!deleted.has(equipmentNameKey(base.name))&&!databaseItems.some(item=>equipmentNameKey(item.name)===equipmentNameKey(base.name)))databaseItems.push(JSON.parse(JSON.stringify(base)))});
   saveDatabaseItems();if(status)status.textContent='GitHub defaults loaded. Edits, custom entries and deletions are saved only on this device.';if(defaultStatus)defaultStatus.textContent='Loaded '+defaultDatabaseItems.length+' default items from GitHub.';
   renderGitHubDefaultItems();renderDatabaseItems();if(typeof renderRoundOptions==='function')renderRoundOptions();
- }catch(error){console.warn('Equipment defaults unavailable',error);const message='Could not fetch GitHub defaults. Check your connection and try Refresh.';if(status)status.textContent=message;if(defaultStatus)defaultStatus.textContent=message;const box=document.getElementById('dbDefaultItemsList');if(box)box.innerHTML='<p style="color:var(--muted)">Default items could not be loaded.</p>'}
+ }catch(error){console.warn('Equipment defaults unavailable',error);const message='Could not load GitHub defaults: '+(error&&error.message?error.message:'unknown error')+'. Check your connection and try Refresh.';if(status)status.textContent=message;if(defaultStatus)defaultStatus.textContent=message;const box=document.getElementById('dbDefaultItemsList');if(box)box.innerHTML='<p style="color:var(--muted)">Default items could not be loaded.</p>'}
 }
 function renderGitHubDefaultItems(){
  const box=document.getElementById('dbDefaultItemsList');if(!box)return;
