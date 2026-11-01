@@ -27,5 +27,22 @@
         "label": "Duplicates Main Attack so there are two"
       }
     ]
+  },
+  {
+    "id": "bard-song",
+    "name": "Bard Song",
+    "description": "Bardic music inspires allies: +2 to attack rolls and +2 to damage rolls.",
+    "modifiers": [
+      {
+        "type": "Attack roll",
+        "value": 2,
+        "label": "+2 Attack"
+      },
+      {
+        "type": "Damage roll",
+        "value": 2,
+        "label": "+2 Damage"
+      }
+    ]
   }
 ]
