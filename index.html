@@ -357,6 +357,11 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <script>
 // Declare weapon selection before equipment startup callbacks can reference it.
 let roundWeaponId=localStorage.getItem("bax_round_weapon")||"";
+let roundWeaponCatalog=[];
+const builtInRoundWeapons=[
+ {id:'plus-2-frost-dwarven-waraxe',name:'+2 Frost Dwarven Waraxe',category:'Weapons',critThreshold:19,critMultiplier:3,modifiers:[{type:'Attack roll',value:2},{type:'Damage roll',value:3}]},
+ {id:'composite-longbow-plus-3-strength-rating',name:'Composite Longbow (+3 Strength Rating)',category:'Weapons',modifiers:[]}
+];
 // Declare attack-round state before any UI callbacks can run, avoiding temporal-dead-zone errors.
 var attackRounds=[];
 var activeAttack=1;
@@ -475,7 +480,7 @@ document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
 // Do not cancel touchend events: iOS standalone mode can suppress the synthetic click after this handler. The viewport and touch-action CSS already prevent unwanted double-tap zoom.
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=56',{updateViaCache:'none'});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=57',{updateViaCache:'none'});
 
 // --- Reusable equipment item database ---
 const equipmentCategories=['Headgear','Lens / Goggles','Armour','Shield','Robe / Vest / Shirt','Bracers','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Weapons','Ioun Stones / Jewellery','Other'];
@@ -1014,11 +1019,7 @@ function updateRoundModField(type,id,field,value){const c=loadedAttackConfig();c
 function renderModRows(type,bodyId){const c=loadedAttackConfig();const list=type==='atk'?c.attackMods:c.damageMods;const body=document.getElementById(bodyId);if(!body)return;if(!list.length){body.innerHTML='<tr><td colspan="3" style="color:var(--muted);padding:14px;text-align:center;white-space:normal">No modifiers added.</td></tr>';return}body.innerHTML=list.map(m=>`<tr><td><input value="${String(m.name||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}" onchange="updateRoundModField('${type}',${Number(m.id)},'name',this.value)"></td><td><input type="number" value="${Number(m.value)||0}" onchange="updateRoundModField('${type}',${Number(m.id)},'value',this.value)"></td><td><button class="wpn-del" onclick="removeRoundMod('${type}',${Number(m.id)})">✕</button></td></tr>`).join('')}
 function renderRoundMods(){renderModRows('atk','attackModsBody');renderModRows('dmg','damageModsBody')}
 // Current Weapon is deliberately independent of the Armour-page equipped-item selectors.
-let roundWeaponCatalog=[];
-const builtInRoundWeapons=[
- {id:'plus-2-frost-dwarven-waraxe',name:'+2 Frost Dwarven Waraxe',category:'Weapons',critThreshold:19,critMultiplier:3,modifiers:[{type:'Attack roll',value:2},{type:'Damage roll',value:3}]},
- {id:'composite-longbow-plus-3-strength-rating',name:'Composite Longbow (+3 Strength Rating)',category:'Weapons',modifiers:[]}
-];
+// Weapon catalog state and built-in fallbacks are declared at the start of the main script.
 function isRoundWeapon(item){const category=String(item&&item.category||'').trim().toLowerCase();return category==='weapon'||category==='weapons'}
 function rebuildRoundWeaponCatalog(extraItems=[]){
  const seen=new Set(),all=[...(Array.isArray(databaseItems)?databaseItems:[]),...(Array.isArray(defaultDatabaseItems)?defaultDatabaseItems:[]),...(Array.isArray(extraItems)?extraItems:[]),...builtInRoundWeapons];
