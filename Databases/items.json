@@ -146,7 +146,7 @@
       "Magic"
     ],
     "description": "Dwarven waraxe with +2 enhancement to attack rolls, +3 total damage bonus as specified for Bax, plus 1d6 cold damage from frost. Critical multiplier ×3.",
-    "critThreshold": 20,
+    "critThreshold": 19,
     "critMultiplier": 3,
     "modifiers": [
       {
