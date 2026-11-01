@@ -273,7 +273,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </div>
 <div class="card"><h2>Current Weapon</h2>
 <label for="roundWeaponSelect">Weapon</label>
-<select id="roundWeaponSelect" onchange="onRoundWeaponChange(this.value)"><option value="">Loading weapons…</option></select><p id="roundWeaponStatus" style="color:var(--muted);font-size:12px;margin:6px 0 0">Loading weapons…</p>
+<select id="roundWeaponSelect" onchange="onRoundWeaponChange(this.value)"><option value="">— Select weapon —</option><option value="plus-2-frost-dwarven-waraxe">+2 Frost Dwarven Waraxe</option><option value="composite-longbow-plus-3-strength-rating">Composite Longbow (+3 Strength Rating)</option></select><p id="roundWeaponStatus" style="color:var(--muted);font-size:12px;margin:6px 0 0">2 built-in weapons ready; loading your database…</p>
 </div>
 <div class="card"><h2>Situational Feats</h2>
 <p style="color:var(--muted);margin-top:0">These actions are separate from your normal attacks and do not change their bonuses.</p>
@@ -473,7 +473,7 @@ document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
 // Do not cancel touchend events: iOS standalone mode can suppress the synthetic click after this handler. The viewport and touch-action CSS already prevent unwanted double-tap zoom.
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=54',{updateViaCache:'none'});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=55',{updateViaCache:'none'});
 
 // --- Reusable equipment item database ---
 const equipmentCategories=['Headgear','Lens / Goggles','Armour','Shield','Robe / Vest / Shirt','Bracers','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Weapons','Ioun Stones / Jewellery','Other'];
@@ -1065,6 +1065,10 @@ loadRoundWeaponCatalog();
 // Load the shared GitHub item and armour defaults into the local database on startup.
 loadDefaultEquipmentLibrary();
 
+</script>
+<script>
+// Report uncaught startup errors in the weapon panel instead of leaving its status stuck on “Loading”.
+window.addEventListener("error",function(event){const status=document.getElementById("roundWeaponStatus");if(status&&/round|weapon|attack|database|undefined|null/i.test(String(event.message||"")))status.textContent="Weapon setup error: "+String(event.message||"unknown JavaScript error");});
 </script>
 <script>
 /* Capture-phase attack selector: ensure taps always change the active attack and load its fields. */
