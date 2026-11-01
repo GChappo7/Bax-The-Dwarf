@@ -484,7 +484,7 @@ document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
 // Do not cancel touchend events: iOS standalone mode can suppress the synthetic click after this handler. The viewport and touch-action CSS already prevent unwanted double-tap zoom.
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=63',{updateViaCache:'none'});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=64',{updateViaCache:'none'});
 
 // --- Reusable equipment item database ---
 const equipmentCategories=['Headgear','Lens / Goggles','Armour','Shield','Robe / Vest / Shirt','Bracers','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Weapons','Ioun Stones / Jewellery','Other'];
@@ -1028,7 +1028,12 @@ function renderRoundMods(){renderModRows('atk','attackModsBody');renderModRows('
 function isRoundWeapon(item){const category=String(item&&item.category||'').trim().toLowerCase();return category==='weapon'||category==='weapons'}
 function rebuildRoundWeaponCatalog(extraItems=[]){
  const seen=new Set(),all=[...(Array.isArray(databaseItems)?databaseItems:[]),...(Array.isArray(defaultDatabaseItems)?defaultDatabaseItems:[]),...(Array.isArray(extraItems)?extraItems:[]),...builtInRoundWeapons];
- roundWeaponCatalog=all.filter(item=>item&&item.name&&(isRoundWeapon(item)||builtInRoundWeapons.some(b=>String(b.id)===String(item.id)))).filter(item=>{const name=String(item.name||'').trim().toLowerCase().split(' ').filter(Boolean).join(' ');if(!name||seen.has(name))return false;seen.add(name);return true});
+ roundWeaponCatalog=all.filter(item=>item&&item.name&&(isRoundWeapon(item)||builtInRoundWeapons.some(b=>String(b.id)===String(item.id)))).filter(item=>{const name=String(item.name||'').trim().toLowerCase().split(' ').filter(Boolean).join(' ');if(!name||seen.has(name))return false;seen.add(name);return true}).map(item=>{
+  // Bax's named frost waraxe has a fixed 19–20 / ×3 profile. Older local
+  // copies may still say 20, so enforce the character's canonical weapon data.
+  if(equipmentNameKey(item.name)==='+2 frost dwarven waraxe')return {...item,critThreshold:19,critMultiplier:3};
+  return item
+ });
  return roundWeaponCatalog
 }
 function getRoundWeaponItem(){
