@@ -355,6 +355,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </main>
 <nav><button onclick="show('home')">⚔️ Char</button><button onclick="show('round')">🎲 Round</button><button onclick="show('notes')">📝 Notes</button></nav>
 <script>
+// Declare weapon selection before equipment startup callbacks can reference it.
+let roundWeaponId=localStorage.getItem("bax_round_weapon")||"";
 // Declare attack-round state before any UI callbacks can run, avoiding temporal-dead-zone errors.
 var attackRounds=[];
 var activeAttack=1;
@@ -473,7 +475,7 @@ document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
 // Do not cancel touchend events: iOS standalone mode can suppress the synthetic click after this handler. The viewport and touch-action CSS already prevent unwanted double-tap zoom.
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=55',{updateViaCache:'none'});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=56',{updateViaCache:'none'});
 
 // --- Reusable equipment item database ---
 const equipmentCategories=['Headgear','Lens / Goggles','Armour','Shield','Robe / Vest / Shirt','Bracers','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Weapons','Ioun Stones / Jewellery','Other'];
@@ -934,7 +936,7 @@ renderPowerEffectsEditor();renderPowerDatabase();renderCharacterPowers();
 
 // --- Current Round ---
 activeAttack=Number(localStorage.getItem('bax_active_attack')||1);
-let roundWeaponId=localStorage.getItem('bax_round_weapon')||'';
+// roundWeaponId is declared at the top of this script to avoid startup temporal-dead-zone errors.
 try{attackRounds=JSON.parse(localStorage.getItem('bax_attack_rounds')||'[]')}catch(e){attackRounds=[]}
 if(!Array.isArray(attackRounds))attackRounds=[];
 attackRounds=attackRounds.filter(c=>c&&typeof c==='object'&&!Array.isArray(c));
