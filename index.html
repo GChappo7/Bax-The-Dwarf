@@ -273,7 +273,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </div>
 <div class="card"><h2>Current Weapon</h2>
 <label for="roundWeaponSelect">Weapon</label>
-<select id="roundWeaponSelect" onchange="onRoundWeaponChange(this.value)"></select>
+<select id="roundWeaponSelect" onchange="onRoundWeaponChange(this.value)"><option value="">Loading weapons…</option></select><p id="roundWeaponStatus" style="color:var(--muted);font-size:12px;margin:6px 0 0">Loading weapons…</p>
 </div>
 <div class="card"><h2>Situational Feats</h2>
 <p style="color:var(--muted);margin-top:0">These actions are separate from your normal attacks and do not change their bonuses.</p>
@@ -473,7 +473,7 @@ document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
 // Do not cancel touchend events: iOS standalone mode can suppress the synthetic click after this handler. The viewport and touch-action CSS already prevent unwanted double-tap zoom.
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=52',{updateViaCache:'none'});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=53',{updateViaCache:'none'});
 
 // --- Reusable equipment item database ---
 const equipmentCategories=['Headgear','Lens / Goggles','Armour','Shield','Robe / Vest / Shirt','Bracers','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Weapons','Ioun Stones / Jewellery','Other'];
@@ -971,7 +971,7 @@ function roundWeaponBonus(item,type){if(!item)return 0;return (item.modifiers||[
 let closeQuartersAoOTriggered=false;
 function triggerCloseQuartersAoO(){closeQuartersAoOTriggered=true;const panel=document.getElementById('closeQuartersAoOPanel');if(panel)panel.style.display='block';const roll=document.getElementById('cqD20Roll');if(roll)roll.value='';renderCloseQuartersAoO();if(panel)panel.scrollIntoView({behavior:'smooth',block:'nearest'})}
 function clearCloseQuartersAoO(){closeQuartersAoOTriggered=false;const panel=document.getElementById('closeQuartersAoOPanel');if(panel)panel.style.display='none';const roll=document.getElementById('cqD20Roll');if(roll)roll.value=''}
-function renderCloseQuartersAoO(){if(!closeQuartersAoOTriggered)return;const c=currentAttackConfig();const w=databaseItems.find(item=>String(item.id)===String(roundWeaponId)&&item.category==='Weapons');const base=Number(c.attackBase)||0;const str=abilityStrength();const weapon=roundWeaponBonus(w,'atk');[['cqBaseAttack',base],['cqStrBonus',str],['cqWeaponBonus',weapon]].forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.textContent=(v>0?'+':'')+v});const roll=document.getElementById('cqD20Roll');const total=document.getElementById('cqAttackTotal');if(total){if(!roll||roll.value.trim()==='')total.textContent='Enter your d20 roll';else{const d20=Number(roll.value)||0;const effects=typeof activePowerEffects==='function'?activePowerEffects('Attack roll'):0;total.textContent=String(d20+base+str+weapon+2+effects)}}}
+function renderCloseQuartersAoO(){if(!closeQuartersAoOTriggered)return;const c=currentAttackConfig();const w=getRoundWeaponItem();const base=Number(c.attackBase)||0;const str=abilityStrength();const weapon=roundWeaponBonus(w,'atk');[['cqBaseAttack',base],['cqStrBonus',str],['cqWeaponBonus',weapon]].forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.textContent=(v>0?'+':'')+v});const roll=document.getElementById('cqD20Roll');const total=document.getElementById('cqAttackTotal');if(total){if(!roll||roll.value.trim()==='')total.textContent='Enter your d20 roll';else{const d20=Number(roll.value)||0;const effects=typeof activePowerEffects==='function'?activePowerEffects('Attack roll'):0;total.textContent=String(d20+base+str+weapon+2+effects)}}}
 function renderRoundCalc(){const c=loadedAttackConfig();const w=databaseItems.find(item=>String(item.id)===String(roundWeaponId)&&item.category==='Weapons');const str=abilityStrength();const atkWeapon=roundWeaponBonus(w,'atk');const dmgWeapon=roundWeaponBonus(w,'dmg');const fields=[['roundAttackStr',str],['roundDamageStr',str],['roundAttackWeapon',atkWeapon],['roundDamageWeapon',dmgWeapon]];fields.forEach(([id,val])=>{const el=document.getElementById(id);if(el)el.textContent=(val>0?'+':'')+val});const tileAttackBonus=(Array.isArray(attackEffectTiles)?attackEffectTiles:[]).filter(t=>t.visible&&t.enabled).reduce((sum,t)=>sum+(Number(t.attackBonus)||0),0);const attackTotal=(Number(c.attackBase)||0)+str+(Number(c.attackFeats)||0)+atkWeapon+(Number(c.attackRolled)||0)+c.attackMods.reduce((sum,m)=>sum+(Number(m.value)||0),0)+tileAttackBonus+activeAttackEffectTotal('Attack roll')+(typeof activePowerEffects==='function'?activePowerEffects('Attack roll'):0);const multipliedDamage=(Number(c.damageBase)||0)+str+(Number(c.damageFeats)||0)+dmgWeapon+(Number(c.damageRolled)||0)+(typeof activePowerEffects==='function'?activePowerEffects('Damage roll'):0);const nonMultipliedDamage=(Number(c.damageOther)||0)+c.damageMods.reduce((sum,m)=>sum+(Number(m.value)||0),0);const baseDamageTotal=multipliedDamage+nonMultipliedDamage;const critThreshold=w?Number(w.critThreshold??20):20;const critMultiplier=w?Number(w.critMultiplier??2):2;const hasCritThreat=c.attackRolled!==null&&c.attackRolled!==undefined&&Number(c.attackRolled)>=critThreshold;const isCritical=hasCritThreat&&!!c.criticalConfirmed;const damageTotal=isCritical?multipliedDamage*critMultiplier+nonMultipliedDamage:baseDamageTotal;const critStatus=document.getElementById('roundCriticalStatus');if(critStatus){critStatus.textContent=hasCritThreat?(isCritical?`Critical hit! Weapon damage multiplied ×${critMultiplier}; other damage is added once.`:`Critical threat on natural ${c.attackRolled}! Confirm the critical hit to apply ×${critMultiplier} damage.`):`Critical threshold: ${w?critThreshold+'–20':'20'}; multiplier: ×${critMultiplier}. Mark confirmed only after the critical is confirmed.`;if(!w)critStatus.textContent='Select a weapon to use its critical settings.'}const critCheck=document.getElementById('roundCriticalConfirmed');if(critCheck)critCheck.disabled=!hasCritThreat;const ar=document.getElementById('roundAttackResult'),dr=document.getElementById('roundDamageResult');if(ar)ar.textContent=c.attackRolled===null||c.attackRolled===undefined?'Enter your d20 roll':String(attackTotal);if(dr)dr.textContent=c.damageRolled===null||c.damageRolled===undefined?'Enter your damage roll':String(damageTotal);renderCloseQuartersAoO()}
 var attackEffectDatabase=[];
 const fallbackAttackEffectDatabase=[
@@ -1011,12 +1011,56 @@ function removeRoundMod(type,id){const c=loadedAttackConfig();const key=type==='
 function updateRoundModField(type,id,field,value){const c=loadedAttackConfig();const key=type==='atk'?'attackMods':'damageMods';const m=c[key].find(m=>String(m.id)===String(id));if(!m)return;m[field]=field==='name'?value:(Number(value)||0);saveCurrentAttack();if(field!=='name')renderRoundCalc()}
 function renderModRows(type,bodyId){const c=loadedAttackConfig();const list=type==='atk'?c.attackMods:c.damageMods;const body=document.getElementById(bodyId);if(!body)return;if(!list.length){body.innerHTML='<tr><td colspan="3" style="color:var(--muted);padding:14px;text-align:center;white-space:normal">No modifiers added.</td></tr>';return}body.innerHTML=list.map(m=>`<tr><td><input value="${String(m.name||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}" onchange="updateRoundModField('${type}',${Number(m.id)},'name',this.value)"></td><td><input type="number" value="${Number(m.value)||0}" onchange="updateRoundModField('${type}',${Number(m.id)},'value',this.value)"></td><td><button class="wpn-del" onclick="removeRoundMod('${type}',${Number(m.id)})">✕</button></td></tr>`).join('')}
 function renderRoundMods(){renderModRows('atk','attackModsBody');renderModRows('dmg','damageModsBody')}
-function getWieldedWeaponId(){const raw=getEquippedIds('Weapons').filter(Boolean)[0]||'';if(!raw)return '';const match=databaseItems.find(item=>String(item.id)===String(raw)||String(item.name||'').trim().toLowerCase()===String(raw).trim().toLowerCase());return match?String(match.id):String(raw)}
-function renderRoundOptions(){const sel=document.getElementById('roundWeaponSelect');if(!sel)return;const c=currentAttackConfig();const key=item=>String(item&&item.name||'').trim().toLowerCase();const isWeapon=item=>['weapon','weapons'].includes(String(item&&item.category||'').trim().toLowerCase());let roundWeapons=[],seen=new Set();[...(Array.isArray(databaseItems)?databaseItems:[]),...(Array.isArray(defaultDatabaseItems)?defaultDatabaseItems:[])].filter(isWeapon).forEach(item=>{const id=String(item.id||'');const name=key(item);const dedupe=id||name;if(!dedupe||seen.has(dedupe))return;seen.add(dedupe);roundWeapons.push(item)});if(!roundWeapons.length){roundWeapons=[{id:'plus-2-frost-dwarven-waraxe',name:'+2 Frost Dwarven Waraxe',category:'Weapons',critThreshold:20,critMultiplier:3,modifiers:[{type:'Attack roll',value:2},{type:'Damage roll',value:3}]},{id:'composite-longbow-plus-3-strength-rating',name:'Composite Longbow (+3 Strength Rating)',category:'Weapons',modifiers:[]}]}const equippedId=getWieldedWeaponId();const stored=String(localStorage.getItem('bax_round_weapon')||'');const saved=String(c.weaponId||roundWeaponId||stored||'');const findMatch=value=>roundWeapons.find(w=>String(w.id)===String(value)||key(w)===String(value).trim().toLowerCase());const match=findMatch(equippedId)||findMatch(saved)||null;const options=roundWeapons.map(w=>'<option value="'+escapeHtml(w.id)+'">'+escapeHtml(w.name||'Unnamed weapon')+'</option>').join('');sel.innerHTML='<option value="">— Select weapon —</option>'+options;if(match){roundWeaponId=String(match.id);sel.value=String(match.id);c.weaponId=String(match.id);try{localStorage.setItem('bax_round_weapon',String(match.id));saveAttackRounds()}catch(e){}const raw=getEquippedIds('Weapons').filter(Boolean)[0];if(raw&&String(raw)!==String(match.id)){equippedItems.Weapons=String(match.id);saveEquippedItems()}}else{sel.value='';roundWeaponId='';c.weaponId='';if(activeAttack===1)localStorage.removeItem('bax_round_weapon')}renderRoundMods();renderRoundCalc()}
-function onRoundWeaponChange(value){const chosen=String(value||'');roundWeaponId=chosen;equippedItems.Weapons=chosen;saveEquippedItems();attackRounds.forEach(c=>{c.weaponId=chosen;c.criticalConfirmed=false});saveAttackRounds();localStorage.setItem('bax_round_weapon',chosen);renderEquippedSelectors();renderRoundCalc()}
+// Current Weapon is deliberately independent of the Armour-page equipped-item selectors.
+let roundWeaponCatalog=[];
+const builtInRoundWeapons=[
+ {id:'plus-2-frost-dwarven-waraxe',name:'+2 Frost Dwarven Waraxe',category:'Weapons',critThreshold:19,critMultiplier:3,modifiers:[{type:'Attack roll',value:2},{type:'Damage roll',value:3}]},
+ {id:'composite-longbow-plus-3-strength-rating',name:'Composite Longbow (+3 Strength Rating)',category:'Weapons',modifiers:[]}
+];
+function isRoundWeapon(item){const category=String(item&&item.category||'').trim().toLowerCase();return category==='weapon'||category==='weapons'}
+function rebuildRoundWeaponCatalog(extraItems=[]){
+ const seen=new Set(),all=[...(Array.isArray(databaseItems)?databaseItems:[]),...(Array.isArray(defaultDatabaseItems)?defaultDatabaseItems:[]),...(Array.isArray(extraItems)?extraItems:[]),...builtInRoundWeapons];
+ roundWeaponCatalog=all.filter(item=>item&&item.name&&(isRoundWeapon(item)||builtInRoundWeapons.some(b=>String(b.id)===String(item.id)))).filter(item=>{const id=String(item.id||'');const name=String(item.name||'').trim().toLowerCase();const key=id||name;if(!key||seen.has(key))return false;seen.add(key);return true});
+ return roundWeaponCatalog
+}
+function getRoundWeaponItem(){
+ const id=String(roundWeaponId||currentAttackConfig().weaponId||localStorage.getItem('bax_round_weapon')||'');
+ return rebuildRoundWeaponCatalog().find(item=>String(item.id)===id||String(item.name||'').trim().toLowerCase()===id.trim().toLowerCase())||null
+}
+function renderRoundOptions(){
+ const sel=document.getElementById('roundWeaponSelect');if(!sel)return;
+ const c=currentAttackConfig();const catalog=rebuildRoundWeaponCatalog();
+ const saved=String(c.weaponId||roundWeaponId||localStorage.getItem('bax_round_weapon')||'');
+ const match=catalog.find(item=>String(item.id)===saved||String(item.name||'').trim().toLowerCase()===saved.trim().toLowerCase());
+ sel.innerHTML='<option value="">— Select weapon —</option>'+catalog.map(item=>'<option value="'+escapeHtml(item.id)+'">'+escapeHtml(item.name)+'</option>').join('');
+ sel.value=match?String(match.id):'';
+ roundWeaponId=match?String(match.id):'';
+ if(match){c.weaponId=roundWeaponId;try{localStorage.setItem('bax_round_weapon',roundWeaponId);saveAttackRounds()}catch(e){console.error('Could not save selected weapon:',e)}}
+ const status=document.getElementById('roundWeaponStatus');
+ if(status)status.textContent=catalog.length?catalog.length+' weapons available':'No weapons could be loaded.';
+ renderRoundMods();renderRoundCalc()
+}
+function onRoundWeaponChange(value){
+ const chosen=String(value||'');const c=currentAttackConfig();
+ roundWeaponId=chosen;c.weaponId=chosen;c.criticalConfirmed=false;
+ try{localStorage.setItem('bax_round_weapon',chosen);saveAttackRounds()}catch(e){console.error('Could not save selected weapon:',e)}
+ renderRoundCalc()
+}
+async function loadRoundWeaponCatalog(){
+ rebuildRoundWeaponCatalog();
+ renderRoundOptions();
+ try{
+  const response=await fetch(new URL('Databases/items.json?v=20261101',new URL('./',window.location.href)),{cache:'no-store'});
+  if(!response.ok)throw new Error('HTTP '+response.status);
+  const items=await response.json();
+  if(Array.isArray(items))rebuildRoundWeaponCatalog(items);
+ }catch(error){console.warn('Could not refresh Current Weapon list; using available local/default weapons.',error)}
+ renderRoundOptions()
+}
 renderAttackChoices();
 renderAttackEffectTiles();
 loadCurrentAttack();
+loadRoundWeaponCatalog();
 ['roundAttackBase','roundAttackFeats','roundDamageBase','roundDamageFeats','roundDamageOther','roundAttackRolled','roundDamageRolled'].forEach(id=>{const el=document.getElementById(id);if(el){el.addEventListener('input',persistCurrentAttackFromInputs);el.addEventListener('change',persistCurrentAttackFromInputs)}});const critPersist=document.getElementById('roundCriticalConfirmed');if(critPersist)critPersist.addEventListener('change',persistCurrentAttackFromInputs);window.addEventListener('pagehide',persistCurrentAttackFromInputs);window.addEventListener('beforeunload',persistCurrentAttackFromInputs);
 // Load the shared GitHub item and armour defaults into the local database on startup.
 loadDefaultEquipmentLibrary();
