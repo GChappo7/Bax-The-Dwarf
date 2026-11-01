@@ -357,6 +357,9 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <script>
 // Declare weapon selection before equipment startup callbacks can reference it.
 let roundWeaponId=localStorage.getItem("bax_round_weapon")||"";
+var attackEffectTiles=[];
+try{attackEffectTiles=JSON.parse(localStorage.getItem('bax_attackEffectTiles')||'[]')}catch(e){attackEffectTiles=[]}
+if(!Array.isArray(attackEffectTiles))attackEffectTiles=[];
 let roundWeaponCatalog=[];
 const builtInRoundWeapons=[
  {id:'plus-2-frost-dwarven-waraxe',name:'+2 Frost Dwarven Waraxe',category:'Weapons',critThreshold:19,critMultiplier:3,modifiers:[{type:'Attack roll',value:2},{type:'Damage roll',value:3}]},
@@ -480,7 +483,7 @@ document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
 // Do not cancel touchend events: iOS standalone mode can suppress the synthetic click after this handler. The viewport and touch-action CSS already prevent unwanted double-tap zoom.
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=57',{updateViaCache:'none'});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=58',{updateViaCache:'none'});
 
 // --- Reusable equipment item database ---
 const equipmentCategories=['Headgear','Lens / Goggles','Armour','Shield','Robe / Vest / Shirt','Bracers','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Weapons','Ioun Stones / Jewellery','Other'];
@@ -994,9 +997,7 @@ fetch('./Databases/effects.json').then(response=>{if(!response.ok)throw new Erro
  attackEffectDatabase=fallbackAttackEffectDatabase;
  renderAttackEffectTiles();
 });
-var attackEffectTiles=[];
-try{attackEffectTiles=JSON.parse(localStorage.getItem('bax_attackEffectTiles')||'[]')}catch(e){attackEffectTiles=[]}
-if(!Array.isArray(attackEffectTiles))attackEffectTiles=[];
+// attackEffectTiles is initialised at the top of the main script before any calculations run.
 function saveAttackEffectTiles(){try{localStorage.setItem('bax_attackEffectTiles',JSON.stringify(attackEffectTiles));return true}catch(e){console.error('Could not save effect tiles:',e);return false}}
 function toggleAttackTile(id){const t=attackEffectTiles.find(x=>String(x.id)===String(id));if(!t)return;t.enabled=!t.enabled;saveAttackEffectTiles();if(t.effectId==='haste')syncHasteExtraAttack(t.enabled);renderAttackEffectTiles();renderRoundCalc();updateArmourClass()}
 function addAttackEffectTile(){const select=document.getElementById('attackEffectPicker');if(!select||!select.value){const status=document.getElementById('attackEffectPickerStatus');if(status)status.textContent='Choose an effect from the list first.';return}const effect=attackEffectDatabase.find(e=>String(e.id)===String(select.value));if(!effect)return;if(attackEffectTiles.some(t=>String(t.effectId)===String(effect.id))){const status=document.getElementById('attackEffectPickerStatus');if(status)status.textContent=effect.name+' is already configured.';return}attackEffectTiles.push({id:'active-'+effect.id+'-'+Date.now(),effectId:effect.id,name:effect.name,description:effect.description,modifiers:(effect.modifiers||[]).map(m=>({...m})),visible:true,enabled:false});saveAttackEffectTiles();renderAttackEffectTiles();const status=document.getElementById('attackEffectPickerStatus');if(status)status.textContent=effect.name+' added. Tap its tile to activate it.';select.value=''}
