@@ -197,6 +197,45 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 #round .round-calc-card{padding:8px}
 @media(max-width:390px){#round .round-roll-row input{font-size:14px}.round-weapon-select{font-size:12px}}
 
+
+/* Action Round: consistent, centred card headings and modifier values. */
+#round .card>h2,
+#round .round-section-heading h2{
+  flex:1 1 auto;
+  min-width:0;
+  margin:0!important;
+  color:var(--gold)!important;
+  font-family:system-ui,-apple-system,Segoe UI,sans-serif!important;
+  font-size:13px!important;
+  font-weight:800!important;
+  line-height:1.2!important;
+  letter-spacing:.08em!important;
+  text-align:center!important;
+  text-transform:uppercase!important;
+}
+#round .round-section-heading{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:23px;
+}
+#round .round-section-heading .round-info-button{
+  position:absolute;
+  right:0;
+  top:50%;
+  transform:translateY(-50%);
+}
+#round .attack-adjust-row input{
+  color:var(--gold)!important;
+  text-align:center!important;
+  text-align-last:center!important;
+  font-weight:800!important;
+  font-variant-numeric:tabular-nums;
+  padding-left:0!important;
+  padding-right:0!important;
+}
+
 </style>
 </head>
 <body>
@@ -540,7 +579,7 @@ document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
 // Do not cancel touchend events: iOS standalone mode can suppress the synthetic click after this handler. The viewport and touch-action CSS already prevent unwanted double-tap zoom.
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=105',{updateViaCache:'none'});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=106',{updateViaCache:'none'});
 
 // --- Reusable equipment item database ---
 const equipmentCategories=['Headgear','Lens / Goggles','Armour','Shield','Robe / Vest / Shirt','Bracers','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Weapons','Ioun Stones / Jewellery','Other'];
