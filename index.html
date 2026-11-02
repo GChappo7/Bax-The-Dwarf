@@ -161,6 +161,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 #round .round-calc-total strong.placeholder{font-size:11px}
 #round .round-roll-row label{font-size:10px;margin-bottom:2px}
 #round .round-roll-row label{white-space:nowrap;font-size:10px;letter-spacing:-.2px}
+#round .round-roll-row label{text-align:center;width:100%}
+#round .round-roll-row input{text-align:center}
 #round .round-total-grid,#round .round-input-grid{column-gap:6px!important}
 #round .round-input-grid{margin-top:2px!important}
 #round .round-roll-row input{padding:3px 5px;font-size:13px;font-weight:500;min-height:29px;border-radius:6px}
@@ -531,7 +533,7 @@ document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
 // Do not cancel touchend events: iOS standalone mode can suppress the synthetic click after this handler. The viewport and touch-action CSS already prevent unwanted double-tap zoom.
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=101',{updateViaCache:'none'});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=102',{updateViaCache:'none'});
 
 // --- Reusable equipment item database ---
 const equipmentCategories=['Headgear','Lens / Goggles','Armour','Shield','Robe / Vest / Shirt','Bracers','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Weapons','Ioun Stones / Jewellery','Other'];
