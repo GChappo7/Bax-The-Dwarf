@@ -136,6 +136,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .active-items-table tbody tr:nth-child(even){background:#211a14}
 .active-items-empty{padding:6px 0;color:var(--muted);font-size:12px}
 
+.round-section-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}.round-section-heading h2{margin:0!important}.round-info-button{flex:0 0 23px;width:23px;height:23px;min-height:23px;padding:0;border:1px solid #8a7048;border-radius:50%;background:transparent;color:var(--gold);font-size:13px;font-weight:800;line-height:21px;text-align:center}.round-info-button[aria-expanded="true"]{background:#493821}.round-info-text{margin:8px 0 0!important;padding:8px 9px;border-left:2px solid var(--gold);border-radius:0 6px 6px 0;background:#1d1712;color:var(--muted);font-size:11px;line-height:1.4}.round-info-text[hidden]{display:none!important}
 /* Action Round: compact mobile layout */
 #round .card{padding:10px;margin-bottom:7px}
 #round .card h2{margin-bottom:6px;font-size:13px}
@@ -291,8 +292,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 
 <section id="round" class="tab">
 <div class="card"><h2>Active Effects</h2><div id="attackEffectTiles" class="attack-effect-tiles"><button type="button" class="attack-effect-tile" aria-pressed="false" onclick="toggleAttackEffectByKey('bard-song')">Bard Song<small style="display:block;font-weight:500;margin-top:3px">Inactive</small><small style="display:block;font-weight:500;margin-top:3px">+2 to Attack and Damage</small></button><button type="button" class="attack-effect-tile" aria-pressed="false" onclick="toggleAttackEffectByKey('haste')">Haste<small style="display:block;font-weight:500;margin-top:3px">Inactive</small><small style="display:block;font-weight:500;margin-top:3px">+1 Attack and one extra Main Attack</small></button></div></div>
-<div class="card"><h2>Choose Attack</h2>
-<p style="color:var(--muted);margin-top:0">Choose which attack in your sequence you are setting up. Each attack keeps its own weapon and modifiers.</p>
+<div class="card"><div class="round-section-heading"><h2>Choose Attack</h2><button type="button" class="round-info-button" aria-label="Show Choose Attack information" aria-expanded="false" aria-controls="chooseAttackInfo" onclick="toggleRoundInfo('chooseAttackInfo',this)">i</button></div>
+<p id="chooseAttackInfo" class="round-info-text" hidden>Choose which attack in your sequence you are setting up. Each attack keeps its own weapon and modifiers.</p>
 <div id="attackChoices" class="grid" style="grid-template-columns:repeat(3,minmax(0,1fr));gap:8px"></div>
 <div class="actions" style="margin-top:10px">
 <button type="button" onclick="addAttackSlot()">+ Add Attack</button>
@@ -300,8 +301,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </div>
 <p id="activeAttackHint" style="margin-bottom:0;color:var(--muted)">Editing Main Attack</p>
 </div>
-<div class="card"><h2>Rolls & Totals</h2>
-<p style="color:var(--muted);margin-top:0">Enter your dice results here. Totals update using your attack stats and active effects.</p>
+<div class="card"><div class="round-section-heading"><h2>Rolls &amp; Totals</h2><button type="button" class="round-info-button" aria-label="Show Rolls and Totals information" aria-expanded="false" aria-controls="rollsTotalsInfo" onclick="toggleRoundInfo('rollsTotalsInfo',this)">i</button></div>
+<p id="rollsTotalsInfo" class="round-info-text" hidden>Enter your dice results here. Totals update using your attack stats and active effects.</p>
 <div class="grid" style="grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
 <div class="round-roll-row"><label for="roundAttackRolled">D20 Roll</label><input id="roundAttackRolled" type="number" inputmode="numeric" min="1" max="20" placeholder="d20" oninput="updateRoundCalc('attackRolled',this.value)"></div>
 <div class="round-roll-row"><label for="roundDamageRolled">Damage Roll</label><input id="roundDamageRolled" type="number" inputmode="numeric" min="0" placeholder="Damage" oninput="updateRoundCalc('damageRolled',this.value)"></div>
@@ -1118,6 +1119,7 @@ function syncHasteExtraAttack(enabled){
  if(selectionChanged&&typeof loadCurrentAttack==='function')loadCurrentAttack();
  else renderAttackChoices();
 }
+function toggleRoundInfo(panelId,button){const panel=document.getElementById(panelId);if(!panel||!button)return;const show=panel.hidden;panel.hidden=!show;button.setAttribute('aria-expanded',String(show));button.setAttribute('aria-label',(show?'Hide ':'Show ')+(panelId==='chooseAttackInfo'?'Choose Attack':'Rolls and Totals')+' information')}
 function updateRoundCriticalConfirmed(checked){const c=loadedAttackConfig();c.criticalConfirmed=!!checked;saveAttackRounds();renderRoundCalc()}
 function attackLabel(index){const attack=attackRounds[index];if(attack&&attack.hasteGenerated)return 'Haste Extra Attack';if(index===0)return 'Main Attack';const normalIndex=attackRounds.slice(0,index).filter(c=>!c||!c.hasteGenerated).length;return 'Attack '+(normalIndex+1)}
 function selectAttack(n){n=Number(n);if(!Number.isInteger(n)||n<1||n>attackRounds.length)return;try{persistCurrentAttackFromInputs()}catch(e){console.error('Could not save previous attack settings:',e);try{saveCurrentAttack()}catch(ignore){}}activeAttack=n;try{localStorage.setItem('bax_active_attack',String(activeAttack))}catch(e){}try{loadCurrentAttack()}catch(e){console.error('Could not fully load attack settings:',e);renderAttackChoices();const h=document.getElementById('activeAttackHint');if(h)h.textContent='Editing '+attackLabel(activeAttack-1);try{renderRoundMods();renderRoundCalc()}catch(ignore){}}}
