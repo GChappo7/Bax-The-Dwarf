@@ -526,7 +526,7 @@ document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
 // Do not cancel touchend events: iOS standalone mode can suppress the synthetic click after this handler. The viewport and touch-action CSS already prevent unwanted double-tap zoom.
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=85',{updateViaCache:'none'});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=86',{updateViaCache:'none'});
 
 // --- Reusable equipment item database ---
 const equipmentCategories=['Headgear','Lens / Goggles','Armour','Shield','Robe / Vest / Shirt','Bracers','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Weapons','Ioun Stones / Jewellery','Other'];
@@ -1008,6 +1008,17 @@ attackRounds=attackRounds.map((c,i)=>{const legacy=Array.isArray(c.mods)?c.mods:
 if(!Array.isArray(attackRounds)||!attackRounds.length)attackRounds=[createAttackConfig(0)];
 attackRounds=attackRounds.map((c,i)=>({...createAttackConfig(i),...c,label:c.hasteGenerated?'Haste Extra Attack':(i===0?'Main Attack':'Attack '+(i+1)),weaponId:String(c.weaponId||''),attackMods:(Array.isArray(c.attackMods)?c.attackMods:[]).map(m=>({...m})),damageMods:(Array.isArray(c.damageMods)?c.damageMods:[]).map(m=>({...m}))}));
 if(attackRounds.length){attackRounds[0].hasteGenerated=false;attackRounds[0].label='Main Attack';}
+// Migration: Bard Song and Haste are global Active Effect tiles, not saved per-attack modifiers.
+// Remove legacy entries from every attack so they cannot remain in totals while their tiles are inactive.
+const legacyGlobalEffectNames=new Set(['bard song','bardic music','haste']);
+let removedLegacyEffectModifiers=false;
+attackRounds.forEach(c=>{
+ const beforeAttack=(c.attackMods||[]).length,beforeDamage=(c.damageMods||[]).length;
+ c.attackMods=(c.attackMods||[]).filter(m=>!legacyGlobalEffectNames.has(String(m.name||'').trim().toLowerCase()));
+ c.damageMods=(c.damageMods||[]).filter(m=>!legacyGlobalEffectNames.has(String(m.name||'').trim().toLowerCase()));
+ if(c.attackMods.length!==beforeAttack||c.damageMods.length!==beforeDamage)removedLegacyEffectModifiers=true;
+});
+if(removedLegacyEffectModifiers)console.info('Removed legacy per-attack Bard Song/Haste modifiers; these are now controlled only by Active Effects.');
 if(!Number.isInteger(activeAttack)||activeAttack<1||activeAttack>attackRounds.length)activeAttack=1;
 loadedAttackIndex=activeAttack;
 try{localStorage.setItem('bax_attack_rounds',JSON.stringify(attackRounds));localStorage.setItem('bax_active_attack',String(activeAttack))}catch(e){}
