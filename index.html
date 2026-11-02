@@ -290,7 +290,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </section>
 
 <section id="round" class="tab">
-<div class="card"><h2>Active Effects</h2><div id="attackEffectTiles" class="attack-effect-tiles"></div></div>
+<div class="card"><h2>Active Effects</h2><div id="attackEffectTiles" class="attack-effect-tiles"><button type="button" class="attack-effect-tile" aria-pressed="false" onclick="toggleAttackEffectByKey('bard-song')">Bard Song<small style="display:block;font-weight:500;margin-top:3px">Inactive</small><small style="display:block;font-weight:500;margin-top:3px">+2 to Attack and Damage</small></button><button type="button" class="attack-effect-tile" aria-pressed="false" onclick="toggleAttackEffectByKey('haste')">Haste<small style="display:block;font-weight:500;margin-top:3px">Inactive</small><small style="display:block;font-weight:500;margin-top:3px">+1 Attack and one extra Main Attack</small></button></div></div>
 <div class="card"><h2>Choose Attack</h2>
 <p style="color:var(--muted);margin-top:0">Choose which attack in your sequence you are setting up. Each attack keeps its own weapon and modifiers.</p>
 <div id="attackChoices" class="grid" style="grid-template-columns:repeat(3,minmax(0,1fr));gap:8px"></div>
@@ -520,7 +520,7 @@ document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
 // Do not cancel touchend events: iOS standalone mode can suppress the synthetic click after this handler. The viewport and touch-action CSS already prevent unwanted double-tap zoom.
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=86',{updateViaCache:'none'});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=89',{updateViaCache:'none'});
 
 // --- Reusable equipment item database ---
 const equipmentCategories=['Headgear','Lens / Goggles','Armour','Shield','Robe / Vest / Shirt','Bracers','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Weapons','Ioun Stones / Jewellery','Other'];
