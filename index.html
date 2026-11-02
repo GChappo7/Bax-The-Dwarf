@@ -146,10 +146,13 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 #round #attackChoices+.actions button{padding:6px 8px;font-size:11px;min-height:31px;flex:1}
 #round #activeAttackHint{font-size:11px;line-height:1.25;margin-top:4px}
 #round .card>p{font-size:11px;line-height:1.3;margin-bottom:6px}
+#round .round-total-grid{margin:0!important}
+#round .round-calc-total{padding:5px 0 8px;font-size:12px;text-align:center}
+#round .round-calc-total strong{display:block;font-size:25px;line-height:1.2;margin-top:3px}
 #round .round-roll-row{margin:0;padding:0;min-width:0}
-#round .round-roll-row label{display:block;font-size:11px;line-height:1.2;margin:0 0 3px;color:var(--muted)}
-#round .round-roll-row input{padding:6px 8px;font-size:15px;min-height:34px}
-#round .card:has(#roundAttackRolled)>.grid{gap:7px!important;margin:0}
+#round .round-roll-row label{display:block;font-size:12px;font-weight:700;line-height:1.2;margin:0 0 5px;color:var(--text)}
+#round .round-roll-row input{width:100%;box-sizing:border-box;padding:10px 8px;font-size:22px;font-weight:700;text-align:center;min-height:48px;border:1px solid #9a753d;border-radius:8px;background:#211912;color:var(--text)}
+#round .round-input-grid{margin-top:8px!important}
 #round #roundCriticalStatus{font-size:14px!important;font-weight:800;color:#ef4444;margin:8px 0 0!important;line-height:1.2;letter-spacing:.3px}
 #round #roundCriticalStatus:empty{display:none}
 #round .round-calc-total{padding:5px 0 0;font-size:12px}
@@ -301,15 +304,15 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </div>
 <div class="card"><div class="round-section-heading"><h2>Rolls &amp; Totals</h2><button type="button" class="round-info-button" aria-label="Show Rolls and Totals information" aria-expanded="false" aria-controls="rollsTotalsInfo" onclick="toggleRoundInfo('rollsTotalsInfo',this)">i</button></div>
 <p id="rollsTotalsInfo" class="round-info-text" hidden>Enter your dice results here. Totals update using your attack stats and active effects.</p>
-<div class="grid" style="grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+<div class="grid round-total-grid" style="grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+<div class="round-calc-total"><span>Attack Total</span><strong id="roundAttackResult">—</strong></div>
+<div class="round-calc-total"><span>Damage Total</span><strong id="roundDamageResult">—</strong></div>
+</div>
+<div class="grid round-input-grid" style="grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px">
 <div class="round-roll-row"><label for="roundAttackRolled">D20 Roll</label><input id="roundAttackRolled" type="number" inputmode="numeric" min="1" max="20" placeholder="d20" oninput="updateRoundCalc('attackRolled',this.value)"></div>
 <div class="round-roll-row"><label for="roundDamageRolled">Damage Roll</label><input id="roundDamageRolled" type="number" inputmode="numeric" min="0" placeholder="Damage" oninput="updateRoundCalc('damageRolled',this.value)"></div>
 </div>
 <p id="roundCriticalStatus" aria-live="polite"></p>
-<div class="grid" style="grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px">
-<div class="round-calc-total"><span>Attack Total</span><strong id="roundAttackResult">—</strong></div>
-<div class="round-calc-total"><span>Damage Total</span><strong id="roundDamageResult">—</strong></div>
-</div>
 </div>
 <div class="round-weapon-wrap">
 <select id="roundWeaponSelect" class="round-weapon-select" aria-label="Choose weapon" onchange="onRoundWeaponChange(this.value)"><option value="">— Select weapon —</option><option value="plus-2-frost-dwarven-waraxe">+2 Frost Dwarven Waraxe</option><option value="composite-longbow-plus-3-strength-rating">Composite Longbow (+3 Strength Rating)</option></select>
