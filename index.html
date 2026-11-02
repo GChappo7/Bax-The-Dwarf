@@ -400,6 +400,8 @@ let roundWeaponId=localStorage.getItem("bax_round_weapon")||"";
 var attackEffectTiles=[];
 try{attackEffectTiles=JSON.parse(localStorage.getItem('bax_attackEffectTiles')||'[]')}catch(e){attackEffectTiles=[]}
 if(!Array.isArray(attackEffectTiles))attackEffectTiles=[];
+// Haste is a built-in Active Effects tile: make it available automatically on every device.
+(function ensureBuiltInHasteTile(){let haste=attackEffectTiles.find(t=>t&& (t.effectId==='haste'||String(t.name||'').toLowerCase()==='haste'));if(!haste){haste={id:'active-haste',effectId:'haste',name:'Haste',description:'Haste grants +1 to attack rolls and one extra attack at your highest base attack bonus during a full attack. Movement is also increased.',modifiers:[{type:'Attack roll',value:1,label:'+1 Attack'},{type:'Extra main attack',value:1,label:'One extra attack during a full attack'}],visible:true,enabled:false};attackEffectTiles.push(haste)}else{haste.effectId='haste';haste.name='Haste';haste.description='Haste grants +1 to attack rolls and one extra attack at your highest base attack bonus during a full attack. Movement is also increased.';haste.modifiers=[{type:'Attack roll',value:1,label:'+1 Attack'},{type:'Extra main attack',value:1,label:'One extra attack during a full attack'}];haste.visible=true}try{localStorage.setItem('bax_attackEffectTiles',JSON.stringify(attackEffectTiles))}catch(e){console.error('Could not save built-in Haste tile:',e)}})();
 let roundWeaponCatalog=[];
 const builtInRoundWeapons=[
  {id:'plus-2-frost-dwarven-waraxe',name:'+2 Frost Dwarven Waraxe',category:'Weapons',critThreshold:19,critMultiplier:3,modifiers:[{type:'Attack roll',value:2},{type:'Damage roll',value:3}]},
@@ -523,7 +525,7 @@ document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
 // Do not cancel touchend events: iOS standalone mode can suppress the synthetic click after this handler. The viewport and touch-action CSS already prevent unwanted double-tap zoom.
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=68',{updateViaCache:'none'});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=69',{updateViaCache:'none'});
 
 // --- Reusable equipment item database ---
 const equipmentCategories=['Headgear','Lens / Goggles','Armour','Shield','Robe / Vest / Shirt','Bracers','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Weapons','Ioun Stones / Jewellery','Other'];
