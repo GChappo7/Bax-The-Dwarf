@@ -1,4 +1,4 @@
-const CACHE="bax-v90";
+const CACHE="bax-v91";
 const ASSETS=["./","./index.html","./manifest.json","./icon.svg","./Databases/effects.json","./Databases/items.json","./Databases/armour.json"];
 
 self.addEventListener("install",e=>{
