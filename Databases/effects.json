@@ -19,12 +19,17 @@
   {
     "id": "haste",
     "name": "Haste",
-    "description": "Whilst hasted, double movement and an extra main attack.",
+    "description": "Haste grants +1 to attack rolls and one extra attack at your highest base attack bonus during a full attack. Movement is also increased.",
     "modifiers": [
+      {
+        "type": "Attack roll",
+        "value": 1,
+        "label": "+1 Attack"
+      },
       {
         "type": "Extra main attack",
         "value": 1,
-        "label": "Duplicates Main Attack so there are two"
+        "label": "One extra attack during a full attack"
       }
     ]
   },
