@@ -172,6 +172,11 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 #round .attack-calc-cell>strong{min-height:22px;font-size:16px}
 #round .attack-calc-cell>input{max-width:46px;padding:2px 0;font-size:14px;font-weight:650;min-height:25px}
 #round .attack-adjust{width:27px;height:22px;font-size:15px;border-radius:5px}
+#round .attack-calc-cell:has(.attack-adjust-row){gap:2px;padding:3px 1px}
+#round .attack-calc-cell:has(.attack-adjust-row)>span{min-height:17px}
+#round .attack-adjust-row{display:flex;align-items:center;justify-content:center;gap:2px;width:100%;min-width:0}
+#round .attack-adjust-row .attack-adjust{flex:0 0 18px;width:18px;height:20px;padding:0;font-size:13px}
+#round .attack-adjust-row input{flex:1 1 auto;width:0;min-width:0;max-width:34px;height:20px;min-height:20px;padding:1px 0;font-size:13px}
 .round-weapon-wrap{margin:0 0 7px;padding:0 10px}
 .round-weapon-select{display:block;width:100%;min-height:38px;padding:7px 34px 7px 10px;border:1px solid #6a5234;border-radius:8px;background:#30251d;color:var(--text);font:600 13px system-ui,-apple-system,Segoe UI,sans-serif;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23d8ad55' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center}
 #round .modtable{font-size:11px}
@@ -333,17 +338,17 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </div>
 <div class="card attack-calc-card"><h2>Attack Roll</h2>
 <div class="attack-calc-grid">
-<div class="attack-calc-cell"><span>Base attack</span><button type="button" class="attack-adjust" aria-label="Increase base attack" onclick="adjustRoundAttackValue('roundAttackBase',1)">+</button><input id="roundAttackBase" type="number" inputmode="numeric" onchange="updateRoundCalc('attackBase',this.value)" aria-label="Attack base attack bonus"><button type="button" class="attack-adjust" aria-label="Decrease base attack" onclick="adjustRoundAttackValue('roundAttackBase',-1)">−</button></div>
+<div class="attack-calc-cell"><span>Base attack</span><div class="attack-adjust-row"><button type="button" class="attack-adjust" aria-label="Decrease base attack" onclick="adjustRoundAttackValue('roundAttackBase',-1)">−</button><input id="roundAttackBase" type="number" inputmode="numeric" onchange="updateRoundCalc('attackBase',this.value)" aria-label="Attack base attack bonus"><button type="button" class="attack-adjust" aria-label="Increase base attack" onclick="adjustRoundAttackValue('roundAttackBase',1)">+</button></div></div>
 <div class="attack-calc-cell"><span>STR bonus</span><strong id="roundAttackStr">—</strong></div>
-<div class="attack-calc-cell"><span>Feats</span><button type="button" class="attack-adjust" aria-label="Increase feats bonus" onclick="adjustRoundAttackValue('roundAttackFeats',1)">+</button><input id="roundAttackFeats" type="number" inputmode="numeric" onchange="updateRoundCalc('attackFeats',this.value)" aria-label="Attack feats bonus"><button type="button" class="attack-adjust" aria-label="Decrease feats bonus" onclick="adjustRoundAttackValue('roundAttackFeats',-1)">−</button></div>
+<div class="attack-calc-cell"><span>Feats</span><div class="attack-adjust-row"><button type="button" class="attack-adjust" aria-label="Decrease feats bonus" onclick="adjustRoundAttackValue('roundAttackFeats',-1)">−</button><input id="roundAttackFeats" type="number" inputmode="numeric" onchange="updateRoundCalc('attackFeats',this.value)" aria-label="Attack feats bonus"><button type="button" class="attack-adjust" aria-label="Increase feats bonus" onclick="adjustRoundAttackValue('roundAttackFeats',1)">+</button></div></div>
 <div class="attack-calc-cell"><span>Weapon Bonus</span><strong id="roundAttackWeapon">—</strong></div>
 </div>
 </div>
 <div class="card attack-calc-card"><h2>Damage Roll</h2>
 <div class="attack-calc-grid">
-<div class="attack-calc-cell"><span>Base damage</span><button type="button" class="attack-adjust" aria-label="Increase base damage" onclick="adjustRoundCalcValue('roundDamageBase',1,'damageBase')">+</button><input id="roundDamageBase" type="number" inputmode="numeric" onchange="updateRoundCalc('damageBase',this.value)" aria-label="Damage base bonus"><button type="button" class="attack-adjust" aria-label="Decrease base damage" onclick="adjustRoundCalcValue('roundDamageBase',-1,'damageBase')">−</button></div>
+<div class="attack-calc-cell"><span>Base damage</span><div class="attack-adjust-row"><button type="button" class="attack-adjust" aria-label="Decrease base damage" onclick="adjustRoundCalcValue('roundDamageBase',-1,'damageBase')">−</button><input id="roundDamageBase" type="number" inputmode="numeric" onchange="updateRoundCalc('damageBase',this.value)" aria-label="Damage base bonus"><button type="button" class="attack-adjust" aria-label="Increase base damage" onclick="adjustRoundCalcValue('roundDamageBase',1,'damageBase')">+</button></div></div>
 <div class="attack-calc-cell"><span>STR bonus</span><strong id="roundDamageStr">—</strong></div>
-<div class="attack-calc-cell"><span>Feats</span><button type="button" class="attack-adjust" aria-label="Increase damage feats" onclick="adjustRoundCalcValue('roundDamageFeats',1,'damageFeats')">+</button><input id="roundDamageFeats" type="number" inputmode="numeric" onchange="updateRoundCalc('damageFeats',this.value)" aria-label="Damage feats bonus"><button type="button" class="attack-adjust" aria-label="Decrease damage feats" onclick="adjustRoundCalcValue('roundDamageFeats',-1,'damageFeats')">−</button></div>
+<div class="attack-calc-cell"><span>Feats</span><div class="attack-adjust-row"><button type="button" class="attack-adjust" aria-label="Decrease damage feats" onclick="adjustRoundCalcValue('roundDamageFeats',-1,'damageFeats')">−</button><input id="roundDamageFeats" type="number" inputmode="numeric" onchange="updateRoundCalc('damageFeats',this.value)" aria-label="Damage feats bonus"><button type="button" class="attack-adjust" aria-label="Increase damage feats" onclick="adjustRoundCalcValue('roundDamageFeats',1,'damageFeats')">+</button></div></div>
 <div class="attack-calc-cell"><span>Weapon Bonus</span><strong id="roundDamageWeapon">—</strong></div>
 </div>
 <div class="round-calc-row" style="padding:4px 0 0;border-bottom:0"><span style="font-size:12px">Other damage</span><input id="roundDamageOther" type="number" inputmode="numeric" onchange="updateRoundCalc('damageOther',this.value)" aria-label="Other damage not multiplied on a critical"></div>
@@ -533,7 +538,7 @@ document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
 // Do not cancel touchend events: iOS standalone mode can suppress the synthetic click after this handler. The viewport and touch-action CSS already prevent unwanted double-tap zoom.
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=103',{updateViaCache:'none'});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=104',{updateViaCache:'none'});
 
 // --- Reusable equipment item database ---
 const equipmentCategories=['Headgear','Lens / Goggles','Armour','Shield','Robe / Vest / Shirt','Bracers','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Weapons','Ioun Stones / Jewellery','Other'];
