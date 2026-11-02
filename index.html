@@ -157,6 +157,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 #round #roundCriticalStatus{font-size:14px!important;font-weight:800;color:#ef4444;margin:8px 0 0!important;line-height:1.2;letter-spacing:.3px}
 #round #roundCriticalStatus:empty{display:none}
 #round .round-calc-total{padding:0 0 2px;font-size:20px;font-weight:750;line-height:1;text-align:center}
+#round .round-calc-total{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+#round .round-calc-total strong{display:block;font-size:36px;font-weight:900;line-height:1;font-variant-numeric:tabular-nums;text-align:center}
 #round .round-calc-total strong{font-size:34px;line-height:1;margin-top:-1px}
 #round .round-calc-total strong.placeholder{font-size:11px}
 #round .round-roll-row label{font-size:10px;margin-bottom:2px}
@@ -538,7 +540,7 @@ document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
 // Do not cancel touchend events: iOS standalone mode can suppress the synthetic click after this handler. The viewport and touch-action CSS already prevent unwanted double-tap zoom.
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=104',{updateViaCache:'none'});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=105',{updateViaCache:'none'});
 
 // --- Reusable equipment item database ---
 const equipmentCategories=['Headgear','Lens / Goggles','Armour','Shield','Robe / Vest / Shirt','Bracers','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Weapons','Ioun Stones / Jewellery','Other'];
