@@ -1079,7 +1079,7 @@ function renderAttackEffectTiles(){
  if(!box)return;
  box.innerHTML=attackEffectTiles.map(t=>{
   const enabled=t.enabled===true||t.enabled===1||t.enabled==='true';
-  return '<button type="button" class="attack-effect-tile '+(enabled?'enabled':'')+'" aria-pressed="'+enabled+'" onclick="toggleAttackEffectByKey(\\''+t.effectId+'\\')"><span>'+escapeHtml(t.name)+'</span><small>'+(enabled?'Active':'Inactive')+'</small></button>';
+  return '<button type="button" class="attack-effect-tile '+(enabled?'enabled':'')+'" aria-pressed="'+enabled+'" onclick="toggleAttackEffectByKey(\''+t.effectId+'\')"><span>'+escapeHtml(t.name)+'</span><small>'+(enabled?'Active':'Inactive')+'</small></button>';
  }).join('');
 }
 function activeAttackEffectTotal(type){const wanted=String(type||'').trim().toLowerCase();const isAttack=wanted==='attack roll',isDamage=wanted==='damage roll';return attackEffectTiles.filter(t=>t.enabled===true||t.enabled===1||t.enabled==='true').reduce((sum,t)=>{const effectKey=String(t.effectId||'').trim().toLowerCase(),nameKey=String(t.name||'').trim().toLowerCase();const isBard=effectKey==='bard-song'||effectKey==='bard song'||nameKey==='bard song';if(isBard)return sum+((isAttack||isDamage)?2:0);return sum+(t.modifiers||[]).filter(m=>String(m.type||'').trim().toLowerCase()===wanted).reduce((n,m)=>n+(Number(m.value)||0),0)},0)}
