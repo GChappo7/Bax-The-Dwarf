@@ -27,7 +27,26 @@ nav{position:fixed;bottom:0;left:0;right:0;background:#211912;border-top:1px sol
 .dice-launch b{font-size:22px}
 .dice-type-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0 18px}.die-choice{min-height:68px;padding:8px 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:#30251d;border:1px solid #51402f}.die-choice .die-glyph{font-size:23px;line-height:1.2}.die-choice.selected{border:2px solid var(--gold);background:#493821;box-shadow:0 0 0 1px #d8ad5533}.selected-die{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:190px;padding:18px;border:1px solid #5b4732;border-radius:14px;background:radial-gradient(ellipse at center,#493821 0%,#251d17 72%);margin-bottom:14px}.selected-die-shape{font-size:76px;line-height:1.05;color:var(--gold);font-weight:900;text-shadow:0 3px 0 #1a120c}.selected-die-label{font-size:13px;color:var(--muted);letter-spacing:.1em;font-weight:800;margin-top:8px}.dice-controls{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:end}.dice-controls label{display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:12px;font-weight:700}.dice-controls select{width:100%;padding:10px;border:1px solid #51402f;border-radius:8px;background:#17130f;color:var(--text);font:inherit}.roll-button{width:100%;margin-top:12px;background:#5a4226;border-color:var(--gold);color:#fff0cf;font-size:17px;padding:13px}.dice-result{margin-top:14px;padding:14px;border:1px solid #51402f;border-radius:10px;text-align:center;background:#1d1712}.dice-result-total{font-size:34px;font-weight:900;color:var(--gold)}.dice-result-detail{color:var(--muted);font-size:13px;margin-top:5px;overflow-wrap:anywhere}
 .badge{display:inline-block;background:#493a28;color:var(--gold);padding:4px 8px;border-radius:20px;font-size:12px;margin:3px}
-.item-form{display:flex;flex-direction:column;gap:12px}.item-form>label{display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:13px;font-weight:700}.item-form select,.modifier-row select{width:100%;background:#17130f;color:var(--text);border:1px solid #51402f;border-radius:8px;padding:10px;font:inherit}.modifier-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;padding:10px;background:var(--panel2);border:1px solid #443528;border-radius:9px;margin-bottom:8px}.modifier-row label{display:flex;flex-direction:column;gap:5px;color:var(--muted);font-size:11px;font-weight:700;min-width:0}.modifier-row input,.modifier-row select{min-width:0;padding:8px;font-size:13px}.modifier-row .modifier-wide{grid-column:1/-1}.db-item{background:var(--panel2);border:1px solid #443528;border-radius:10px;padding:12px;margin-bottom:10px}.db-item h3{margin:0 0 5px;color:var(--gold);font-size:16px}.db-item p{margin:5px 0;color:var(--muted);font-size:13px}.db-modifier{padding:7px 0;border-bottom:1px solid #443528;font-size:13px}.db-modifier:last-child{border-bottom:0}.category-toggle{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid #3a2e24}.category-toggle input{width:18px;height:18px;flex:0 0 auto;accent-color:var(--gold)}.db-item-actions{display:flex;justify-content:flex-end;margin-top:10px}.rarity-options{display:flex;flex-wrap:wrap;gap:8px}.rarity-options .category-toggle{flex:1 1 130px}
+.item-form{display:flex;flex-direction:column;gap:12px}.item-form>label{display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:13px;font-weight:700}.item-form select,.modifier-row select{width:100%;background:#17130f;color:var(--text);border:1px solid #51402f;border-radius:8px;padding:10px;font:inherit}.modifier-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;padding:10px;background:var(--panel2);border:1px solid #443528;border-radius:9px;margin-bottom:8px}.modifier-row label{display:flex;flex-direction:column;gap:5px;color:var(--muted);font-size:11px;font-weight:700;min-width:0}.modifier-row input,.modifier-row select{min-width:0;padding:8px;font-size:13px}.modifier-row .modifier-wide{grid-column:1/-1}.db-item{background:var(--panel2);border:1px solid #443528;border-radius:10px;padding:12px;margin-bottom:10px}.db-item h3{margin:0 0 5px;color:var(--gold);font-size:16px}.db-item p{margin:5px 0;color:var(--muted);font-size:13px}.db-modifier
+/* Compact, collapsed item cards grouped by item type. */
+.db-item-group{margin:0 0 12px}
+.db-item-group-heading{display:flex;align-items:center;justify-content:space-between;padding:8px 2px;margin:0 0 6px;border-bottom:1px solid #5b4732;color:var(--gold);font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase}
+.db-item-group-heading span{color:var(--muted);font-size:11px}
+.db-item{padding:0;margin:0 0 6px;border-radius:8px;overflow:hidden}
+.db-item-summary{display:flex;align-items:center;gap:6px;min-height:42px;padding:7px 9px;list-style:none;cursor:pointer}
+.db-item-summary::-webkit-details-marker{display:none}
+.db-item-title{flex:1;min-width:0;color:var(--gold);font-size:13px;font-weight:750;overflow-wrap:anywhere}
+.db-item-summary .badge{flex:0 0 auto;margin:0;padding:3px 6px;font-size:10px}
+.db-item-chevron{flex:0 0 auto;color:var(--muted);font-size:14px;transition:transform .15s ease}
+.db-item[open] .db-item-chevron{transform:rotate(180deg)}
+.db-item-content{padding:0 9px 9px;border-top:1px solid #443528}
+.db-item-content>p{margin:7px 0;font-size:12px}
+.db-item-content>.badge{margin:7px 4px 0 0}
+.db-item-content .db-modifier{padding:5px 0;font-size:12px}
+.db-item-content .db-modifier p{font-size:11px}
+.db-item-actions{margin-top:7px;gap:6px;flex-wrap:wrap}
+.db-item-actions button{padding:6px 8px;font-size:11px}
+{padding:7px 0;border-bottom:1px solid #443528;font-size:13px}.db-modifier:last-child{border-bottom:0}.category-toggle{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid #3a2e24}.category-toggle input{width:18px;height:18px;flex:0 0 auto;accent-color:var(--gold)}.db-item-actions{display:flex;justify-content:flex-end;margin-top:10px}.rarity-options{display:flex;flex-wrap:wrap;gap:8px}.rarity-options .category-toggle{flex:1 1 130px}
 .equipped-category{padding:10px 0;border-bottom:1px solid #3a2e24}.equipped-category:last-child{border-bottom:0}.equipped-category label{display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:12px;font-weight:800}.equipped-category select{width:100%;background:#17130f;color:var(--text);border:1px solid #51402f;border-radius:8px;padding:10px;font:inherit}.equipped-category .equipped-extra{display:flex;gap:8px;align-items:center;margin-top:7px}.equipped-category .equipped-extra button{font-size:12px;padding:6px 9px}
 .stat input{width:100%;text-align:center;background:transparent;border:none;color:var(--text);font-size:25px;font-weight:700;padding:0;font-family:inherit;line-height:1.2;height:auto;box-sizing:border-box;margin:0}
 .stat input:focus{outline:none}.alignment-tile{display:flex;flex-direction:column;justify-content:center;gap:4px;cursor:pointer}.alignment-tile select{width:100%;min-width:0;appearance:none;-webkit-appearance:none;background:transparent;border:0;color:var(--text);font:700 22px system-ui,-apple-system,Segoe UI,sans-serif;text-align:center;text-align-last:center;padding:3px 0;outline-offset:2px}.alignment-tile select option{background:var(--panel);color:var(--text)}
@@ -686,15 +705,33 @@ async function loadDefaultEquipmentLibrary(){
   renderGitHubDefaultItems();renderDatabaseItems();renderInventory();renderEquippedSelectors();updateArmourClass();if(typeof renderRoundOptions==='function')renderRoundOptions();
  }catch(error){console.warn('Equipment defaults unavailable',error);const message='Could not load GitHub defaults: '+(error&&error.message?error.message:'unknown error')+'. Check your connection and try Refresh.';if(status)status.textContent=message;if(defaultStatus)defaultStatus.textContent=message;const box=document.getElementById('dbDefaultItemsList');if(box)box.innerHTML='<p style="color:var(--muted)">Default items could not be loaded.</p>';if(typeof renderRoundOptions==='function')renderRoundOptions()}
 }
+function itemTypeGroup(item){
+ const type=String(item&&item.itemType||'').trim().toLowerCase();
+ if(type==='consumable'||type==='consumables')return 'Consumables';
+ if(type==='inventory'||type==='inventory item'||type==='inventory items')return 'Inventory Items';
+ if(type==='equipment')return 'Equipment';
+ const category=String(item&&item.category||'').trim().toLowerCase();
+ if(['potions','scrolls & wands','ammunition','food & drink'].includes(category))return 'Consumables';
+ if(typeof equipmentCategories!=='undefined'&&equipmentCategories.some(c=>String(c).toLowerCase()===category))return 'Equipment';
+ return 'Inventory Items';
+}
+function renderGroupedItemCards(items,renderCard){
+ const groups=['Equipment','Consumables','Inventory Items'];
+ return groups.map(group=>{
+  const matching=items.filter(item=>itemTypeGroup(item)===group);
+  if(!matching.length)return '';
+  return '<section class="db-item-group"><div class="db-item-group-heading"><strong>'+group+'</strong><span>'+matching.length+'</span></div>'+matching.map(renderCard).join('')+'</section>';
+ }).join('');
+}
 function renderGitHubDefaultItems(){
  const box=document.getElementById('dbDefaultItemsList');if(!box)return;
  if(!defaultDatabaseItems.length){box.innerHTML='<p style="color:var(--muted)">No default items were found in Databases/items.json or Databases/armour.json.</p>';return}
- box.innerHTML=defaultDatabaseItems.map(item=>{
+ box.innerHTML=renderGroupedItemCards(defaultDatabaseItems,item=>{
   const current=databaseItems.find(entry=>equipmentNameKey(entry.name)===equipmentNameKey(item.name));
   const modifiers=(item.modifiers||[]).map(m=>'<div class="db-modifier"><strong>'+escapeHtml(m.type)+(m.target?': '+escapeHtml(m.target):'')+'</strong>'+(m.value!==''&&m.value!==undefined?' — '+(Number(m.value)>0?'+':'')+escapeHtml(m.value):'')+(m.bonusType?' ('+escapeHtml(m.bonusType)+')':'')+(m.notes?'<p>Reminder: '+escapeHtml(m.notes)+'</p>':'')+'</div>').join('');
-  const safeName=JSON.stringify(String(item.name||'')).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
-  return '<div class="db-item"><h3>'+escapeHtml(item.name)+'</h3><span class="badge">'+escapeHtml(item.category||'Other')+'</span>'+((Array.isArray(item.rarity)&&item.rarity.length?item.rarity:['Standard']).map(r=>'<span class="badge">'+escapeHtml(r)+'</span>').join(''))+(item.description?'<p>'+escapeHtml(item.description)+'</p>':'')+(modifiers||'<p>No modifiers recorded.</p>')+'<div class="db-item-actions"><button type="button" onclick="restoreDefaultItem('+safeName+')">'+(current?'Restore Default to My Items':'Add to My Items')+'</button></div></div>';
- }).join('');
+  const safeName=JSON.stringify(String(item.name||'')).replace(/&/g,'&amp;').replace(/\"/g,'&quot;').replace(/</g,'&lt;');
+  return '<details class="db-item"><summary class="db-item-summary"><span class="db-item-title">'+escapeHtml(item.name)+'</span><span class="badge">'+escapeHtml(item.category||'Other')+'</span><span class="db-item-chevron" aria-hidden="true">▾</span></summary><div class="db-item-content">'+((Array.isArray(item.rarity)&&item.rarity.length?item.rarity:['Standard']).map(r=>'<span class="badge">'+escapeHtml(r)+'</span>').join(''))+(item.description?'<p>'+escapeHtml(item.description)+'</p>':'')+(modifiers||'<p>No modifiers recorded.</p>')+'<div class="db-item-actions"><button type="button" onclick="restoreDefaultItem('+safeName+')">'+(current?'Restore Default to My Items':'Add to My Items')+'</button></div></div></details>';
+ });
 }
 function restoreDefaultItem(name){
  const base=defaultDatabaseItems.find(item=>equipmentNameKey(item.name)===equipmentNameKey(name));if(!base)return;
@@ -760,11 +797,11 @@ function renderActiveItemsTable(){
 function renderDatabaseItems(){
  const box=document.getElementById('dbSavedItems');if(!box)return;
  if(!databaseItems.length){box.innerHTML='<p style="color:var(--muted);text-align:center;padding:12px 0">No items loaded yet. Check your connection or add a custom item.</p>'}
- else{box.innerHTML=databaseItems.slice().reverse().map(item=>{
+ else{box.innerHTML=renderGroupedItemCards(databaseItems.slice().reverse(),item=>{
   const hasDefault=defaultDatabaseItems.some(d=>equipmentNameKey(d.name)===equipmentNameKey(item.name)),id=String(item.id).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-  return '<div class="db-item"><h3>'+escapeHtml(item.name)+'</h3><span class="badge">'+escapeHtml(item.category)+'</span>'+((Array.isArray(item.rarity)&&item.rarity.length?item.rarity:['Standard']).map(rarity=>'<span class="badge">'+escapeHtml(rarity)+'</span>').join(''))+(item.description?'<p>'+escapeHtml(item.description)+'</p>':'')+((item.modifiers||[]).length?item.modifiers.map(m=>'<div class="db-modifier"><strong>'+escapeHtml(m.type)+': '+escapeHtml(m.target)+'</strong>'+(m.value!==''&&m.value!==undefined?' — '+(Number(m.value)>0?'+':'')+escapeHtml(m.value):'')+(m.bonusType?' ('+escapeHtml(m.bonusType)+')':'')+(m.notes?'<p>Reminder: '+escapeHtml(m.notes)+'</p>':'')+'</div>').join(''):'<p>No modifiers recorded.</p>')+'<div class="db-item-actions"><button onclick="editDatabaseItem(\''+id+'\')">Edit Item</button>'+(hasDefault?'<button onclick="restoreDefaultItem(\''+escapeHtml(item.name).replace(/'/g,"&#39;")+'\')">Reset to Default</button>':'')+'<button class="wpn-del" onclick="removeDatabaseItem(\''+id+'\')">Delete Item</button></div></div>';
- }).join('')}renderCategoryVisibility();
- // Keep the local item list independent from equipment-only panels.
+  return '<details class="db-item"><summary class="db-item-summary"><span class="db-item-title">'+escapeHtml(item.name)+'</span><span class="badge">'+escapeHtml(item.category||'Other')+'</span><span class="db-item-chevron" aria-hidden="true">▾</span></summary><div class="db-item-content">'+((Array.isArray(item.rarity)&&item.rarity.length?item.rarity:['Standard']).map(rarity=>'<span class="badge">'+escapeHtml(rarity)+'</span>').join(''))+(item.description?'<p>'+escapeHtml(item.description)+'</p>':'')+((item.modifiers||[]).length?item.modifiers.map(m=>'<div class="db-modifier"><strong>'+escapeHtml(m.type)+': '+escapeHtml(m.target)+'</strong>'+(m.value!==''&&m.value!==undefined?' — '+(Number(m.value)>0?'+':'')+escapeHtml(m.value):'')+(m.bonusType?' ('+escapeHtml(m.bonusType)+')':'')+(m.notes?'<p>Reminder: '+escapeHtml(m.notes)+'</p>':'')+'</div>').join(''):'<p>No modifiers recorded.</p>')+'<div class="db-item-actions"><button type="button" onclick="editDatabaseItem(\''+id+'\')">Edit Item</button>'+(hasDefault?'<button type="button" onclick="restoreDefaultItem(\''+escapeHtml(item.name).replace(/'/g,"&#39;")+'\')">Reset to Default</button>':'')+'<button type="button" class="wpn-del" onclick="removeDatabaseItem(\''+id+'\')">Delete Item</button></div></div></details>';
+ });}
+ renderCategoryVisibility();
  try{renderActiveItemsTable()}catch(e){console.error('Could not render active items table',e)}
  try{renderEquippedSelectors()}catch(e){console.error('Could not render equipped selectors',e)}
  try{if(typeof updateArmourClass==='function')updateArmourClass()}catch(e){console.error('Could not update armour class',e)}
