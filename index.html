@@ -29,9 +29,14 @@ nav{position:fixed;bottom:0;left:0;right:0;background:#211912;border-top:1px sol
 .badge{display:inline-block;background:#493a28;color:var(--gold);padding:4px 8px;border-radius:20px;font-size:12px;margin:3px}
 .item-form{display:flex;flex-direction:column;gap:12px}.item-form>label{display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:13px;font-weight:700}.item-form select,.modifier-row select{width:100%;background:#17130f;color:var(--text);border:1px solid #51402f;border-radius:8px;padding:10px;font:inherit}.modifier-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;padding:10px;background:var(--panel2);border:1px solid #443528;border-radius:9px;margin-bottom:8px}.modifier-row label{display:flex;flex-direction:column;gap:5px;color:var(--muted);font-size:11px;font-weight:700;min-width:0}.modifier-row input,.modifier-row select{min-width:0;padding:8px;font-size:13px}.modifier-row .modifier-wide{grid-column:1/-1}.db-item{background:var(--panel2);border:1px solid #443528;border-radius:10px;padding:12px;margin-bottom:10px}.db-item h3{margin:0 0 5px;color:var(--gold);font-size:16px}.db-item p{margin:5px 0;color:var(--muted);font-size:13px}.db-modifier
 /* Compact, collapsed item cards grouped by item type. */
-.db-item-group{margin:0 0 12px}
-.db-item-group-heading{display:flex;align-items:center;justify-content:space-between;padding:8px 2px;margin:0 0 6px;border-bottom:1px solid #5b4732;color:var(--gold);font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase}
-.db-item-group-heading span{color:var(--muted);font-size:11px}
+.db-item-group{margin:0 0 8px;border:1px solid #5b4732;border-radius:9px;overflow:hidden}
+.db-item-group-heading{display:flex;align-items:center;gap:8px;justify-content:space-between;padding:11px 10px;margin:0;color:var(--gold);font-size:13px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;list-style:none;cursor:pointer}
+.db-item-group-heading::-webkit-details-marker{display:none}
+.db-item-group-heading strong{flex:1}
+.db-item-group-heading span{color:var(--muted);font-size:11px;letter-spacing:0;text-transform:none;font-weight:600}
+.db-group-chevron{flex:0 0 auto;transition:transform .15s ease}
+.db-item-group[open]>.db-item-group-heading .db-group-chevron{transform:rotate(180deg)}
+.db-item-group-content{padding:0 7px 4px;border-top:1px solid #443528}
 .db-item{padding:0;margin:0 0 6px;border-radius:8px;overflow:hidden}
 .db-item-summary{display:flex;align-items:center;gap:6px;min-height:42px;padding:7px 9px;list-style:none;cursor:pointer}
 .db-item-summary::-webkit-details-marker{display:none}
@@ -720,7 +725,7 @@ function renderGroupedItemCards(items,renderCard){
  return groups.map(group=>{
   const matching=items.filter(item=>itemTypeGroup(item)===group);
   if(!matching.length)return '';
-  return '<section class="db-item-group"><div class="db-item-group-heading"><strong>'+group+'</strong><span>'+matching.length+'</span></div>'+matching.map(renderCard).join('')+'</section>';
+  return '<details class="db-item-group"><summary class="db-item-group-heading"><strong>'+group+'</strong><span>'+matching.length+' items</span><span class="db-group-chevron" aria-hidden="true">▾</span></summary><div class="db-item-group-content">'+matching.map(renderCard).join('')+'</div></details>';
  }).join('');
 }
 function renderGitHubDefaultItems(){
