@@ -160,6 +160,15 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .active-items-table th{color:var(--gold);background:var(--panel);position:sticky;top:0;border-bottom:1px solid #6b5437}
 .active-items-table tbody tr:nth-child(even){background:#211a14}
 .active-items-empty{padding:6px 0;color:var(--muted);font-size:12px}
+.active-items-group{border:1px solid #493a2b;border-radius:7px;margin:0 0 7px;overflow:hidden}
+.active-items-group-heading{display:flex;align-items:center;gap:8px;padding:7px 9px;cursor:pointer;list-style:none;background:#211a14;color:var(--gold);font-size:12px}
+.active-items-group-heading::-webkit-details-marker{display:none}
+.active-items-group-heading strong{font-weight:600}
+.active-items-group-heading span:nth-child(2){margin-left:auto;color:var(--muted);font-size:11px}
+.active-items-group-chevron{transition:transform .15s ease;color:var(--muted)}
+.active-items-group[open] .active-items-group-chevron{transform:rotate(180deg)}
+.active-items-group .active-items-table-wrap{border-top:1px solid #493a2b}
+
 
 .round-section-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}.round-section-heading h2{margin:0!important}.round-info-button{flex:0 0 23px;width:23px;height:23px;min-height:23px;padding:0;border:1px solid #8a7048;border-radius:50%;background:transparent;color:var(--gold);font-size:13px;font-weight:800;line-height:21px;text-align:center}.round-info-button[aria-expanded="true"]{background:#493821}.round-info-text{margin:8px 0 0!important;padding:8px 9px;border-left:2px solid var(--gold);border-radius:0 6px 6px 0;background:#1d1712;color:var(--muted);font-size:11px;line-height:1.4}.round-info-text[hidden]{display:none!important}
 /* Action Round: compact mobile layout */
@@ -796,8 +805,13 @@ function renderActiveItemsTable(){
   });
   return parts.length?[...new Set(parts)].join('; '):'—';
  };
- const rows=databaseItems.slice().sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''))).map(item=>'<tr><td>'+escapeHtml(item.name||'—')+'</td><td>'+escapeHtml(item.category||'Other')+'</td><td>'+escapeHtml(rarityText(item))+'</td><td>'+escapeHtml(fmt(sumType(item,'AC')))+'</td><td>'+escapeHtml(fmt(sumType(item,'Attack roll')))+'</td><td>'+escapeHtml(fmt(sumType(item,'Damage roll')))+'</td><td class="active-items-effects">'+escapeHtml(effectsText(item))+'</td></tr>').join('');
- box.innerHTML='<table class="active-items-table"><thead><tr><th>Item name</th><th>Category</th><th>Rarity</th><th>AC</th><th>Attack roll</th><th>Damage roll</th><th>Effects</th></tr></thead><tbody>'+rows+'</tbody></table>';
+ const headers='<thead><tr><th>Item name</th><th>Category</th><th>Rarity</th><th>AC</th><th>Attack roll</th><th>Damage roll</th><th>Effects</th></tr></thead>';
+ const categories=[...new Set(databaseItems.map(item=>String(item.category||'Other').trim()||'Other'))].sort((a,b)=>a.localeCompare(b));
+ box.innerHTML=categories.map(category=>{
+  const matching=databaseItems.filter(item=>(String(item.category||'Other').trim()||'Other')===category).sort((a,b)=>String(a.name||'').localeCompare(String(b.name||'')));
+  const rows=matching.map(item=>'<tr><td>'+escapeHtml(item.name||'—')+'</td><td>'+escapeHtml(item.category||'Other')+'</td><td>'+escapeHtml(rarityText(item))+'</td><td>'+escapeHtml(fmt(sumType(item,'AC')))+'</td><td>'+escapeHtml(fmt(sumType(item,'Attack roll')))+'</td><td>'+escapeHtml(fmt(sumType(item,'Damage roll')))+'</td><td class="active-items-effects">'+escapeHtml(effectsText(item))+'</td></tr>').join('');
+  return '<details class="active-items-group"><summary class="active-items-group-heading"><strong>'+escapeHtml(category)+'</strong><span>'+matching.length+' items</span><span class="active-items-group-chevron" aria-hidden="true">▾</span></summary><div class="active-items-table-wrap"><table class="active-items-table">'+headers+'<tbody>'+rows+'</tbody></table></div></details>';
+ }).join('');
 }
 function renderDatabaseItems(){
  const box=document.getElementById('dbSavedItems');if(!box)return;
