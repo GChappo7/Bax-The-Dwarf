@@ -613,7 +613,7 @@ document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
 // Do not cancel touchend events: iOS standalone mode can suppress the synthetic click after this handler. The viewport and touch-action CSS already prevent unwanted double-tap zoom.
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=124',{updateViaCache:'none'});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=125',{updateViaCache:'none'});
 
 // --- Reusable equipment item database ---
 const equipmentCategories=['Headgear','Lens / Goggles','Armour','Shield','Robe / Vest / Shirt','Bracers','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Weapons','Ioun Stones / Jewellery','Other'];
@@ -682,7 +682,7 @@ async function loadDefaultEquipmentLibrary(){
    const localWaraxe=databaseItems.find(item=>equipmentNameKey(item.name)==='+2 frost dwarven waraxe');
    if(localWaraxe&&Number(localWaraxe.critThreshold)===20)localWaraxe.critThreshold=19;
   saveDatabaseItems();if(status)status.textContent='GitHub defaults loaded. AC modifiers are refreshed from shared defaults; other local edits are kept.';if(defaultStatus)defaultStatus.textContent='Loaded '+defaultDatabaseItems.length+' default items from GitHub.';
-  renderGitHubDefaultItems();renderDatabaseItems();renderEquippedSelectors();updateArmourClass();if(typeof renderRoundOptions==='function')renderRoundOptions();
+  renderGitHubDefaultItems();renderDatabaseItems();renderInventory();renderEquippedSelectors();updateArmourClass();if(typeof renderRoundOptions==='function')renderRoundOptions();
  }catch(error){console.warn('Equipment defaults unavailable',error);const message='Could not load GitHub defaults: '+(error&&error.message?error.message:'unknown error')+'. Check your connection and try Refresh.';if(status)status.textContent=message;if(defaultStatus)defaultStatus.textContent=message;const box=document.getElementById('dbDefaultItemsList');if(box)box.innerHTML='<p style="color:var(--muted)">Default items could not be loaded.</p>';if(typeof renderRoundOptions==='function')renderRoundOptions()}
 }
 function renderGitHubDefaultItems(){
