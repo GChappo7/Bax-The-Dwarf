@@ -806,11 +806,11 @@ function renderActiveItemsTable(){
   return parts.length?[...new Set(parts)].join('; '):'—';
  };
  const headers='<thead><tr><th>Item name</th><th>Category</th><th>Rarity</th><th>AC</th><th>Attack roll</th><th>Damage roll</th><th>Effects</th></tr></thead>';
- const categories=[...new Set(databaseItems.map(item=>String(item.category||'Other').trim()||'Other'))].sort((a,b)=>a.localeCompare(b));
- box.innerHTML=categories.map(category=>{
-  const matching=databaseItems.filter(item=>(String(item.category||'Other').trim()||'Other')===category).sort((a,b)=>String(a.name||'').localeCompare(String(b.name||'')));
+ const groups=['Equipment','Consumables','Inventory Items'];
+ box.innerHTML=groups.map(group=>{
+  const matching=databaseItems.filter(item=>itemTypeGroup(item)===group).sort((a,b)=>String(a.name||'').localeCompare(String(b.name||'')));
   const rows=matching.map(item=>'<tr><td>'+escapeHtml(item.name||'—')+'</td><td>'+escapeHtml(item.category||'Other')+'</td><td>'+escapeHtml(rarityText(item))+'</td><td>'+escapeHtml(fmt(sumType(item,'AC')))+'</td><td>'+escapeHtml(fmt(sumType(item,'Attack roll')))+'</td><td>'+escapeHtml(fmt(sumType(item,'Damage roll')))+'</td><td class="active-items-effects">'+escapeHtml(effectsText(item))+'</td></tr>').join('');
-  return '<details class="active-items-group"><summary class="active-items-group-heading"><strong>'+escapeHtml(category)+'</strong><span>'+matching.length+' items</span><span class="active-items-group-chevron" aria-hidden="true">▾</span></summary><div class="active-items-table-wrap"><table class="active-items-table">'+headers+'<tbody>'+rows+'</tbody></table></div></details>';
+  return '<details class="active-items-group"><summary class="active-items-group-heading"><strong>'+escapeHtml(group)+'</strong><span>'+matching.length+' items</span><span class="active-items-group-chevron" aria-hidden="true">▾</span></summary><div class="active-items-table-wrap"><table class="active-items-table">'+headers+'<tbody>'+rows+'</tbody></table></div></details>';
  }).join('');
 }
 function renderDatabaseItems(){
