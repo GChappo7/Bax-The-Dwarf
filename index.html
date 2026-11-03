@@ -261,8 +261,10 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <button class="stat nav-tile" onclick="show('notes')"><b class="nav-tile-icon"><img src="assets/Ui/UI%20sprites/Notes.png" alt=""></b><span>NOTES</span></button>
 <button class="stat nav-tile dice-launch" onclick="show('dicePage')" aria-label="Open dice roller"><b class="nav-tile-icon"><img src="assets/Ui/UI%20sprites/Dice.png" alt=""></b><span>DICE</span></button>
 </div>
+<div class="grid dashboard-bottom-row">
 <div class="stat xp-tile"><span class="xp-title">EXPERIENCE</span><div class="xp-values"><label>Current XP<input id="xpCurrent" data-save="xpCurrent" type="number" min="0" value="0" inputmode="numeric"></label><label>Previous Level XP<input id="xpPrevious" data-save="xpPrevious" type="number" min="0" value="60000" inputmode="numeric"></label><label>Next Level XP<input id="xpNext" data-save="xpNext" type="number" min="0" value="" placeholder="Enter target" inputmode="numeric"></label></div><button type="button" id="levelUpButton" class="level-up-button" hidden onclick="confirmLevelUp()">🎉 Confirm Level Up</button></div>
 <div class="card"><h2>Character Details</h2><div class="row"><span>Social Class</span><b>43</b></div><div class="row"><span>PSI Ability</span><b>—</b></div></div>
+</div>
 </section>
 
 <section id="settings" class="tab">
@@ -600,7 +602,7 @@ document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
 // Do not cancel touchend events: iOS standalone mode can suppress the synthetic click after this handler. The viewport and touch-action CSS already prevent unwanted double-tap zoom.
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=120',{updateViaCache:'none'});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=121',{updateViaCache:'none'});
 
 // --- Reusable equipment item database ---
 const equipmentCategories=['Headgear','Lens / Goggles','Armour','Shield','Robe / Vest / Shirt','Bracers','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Weapons','Ioun Stones / Jewellery','Other'];
