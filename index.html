@@ -758,13 +758,18 @@ function renderActiveItemsTable(){
  box.innerHTML='<table class="active-items-table"><thead><tr><th>Item name</th><th>Category</th><th>Rarity</th><th>AC</th><th>Attack roll</th><th>Damage roll</th><th>Effects</th></tr></thead><tbody>'+rows+'</tbody></table>';
 }
 function renderDatabaseItems(){
- renderActiveItemsTable();renderEquippedSelectors();if(typeof updateArmourClass==='function')updateArmourClass();if(typeof renderAbilityScoreModifiers==='function')renderAbilityScoreModifiers();if(typeof renderRoundCalc==='function')renderRoundCalc();
  const box=document.getElementById('dbSavedItems');if(!box)return;
  if(!databaseItems.length){box.innerHTML='<p style="color:var(--muted);text-align:center;padding:12px 0">No items loaded yet. Check your connection or add a custom item.</p>'}
  else{box.innerHTML=databaseItems.slice().reverse().map(item=>{
   const hasDefault=defaultDatabaseItems.some(d=>equipmentNameKey(d.name)===equipmentNameKey(item.name)),id=String(item.id).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
   return '<div class="db-item"><h3>'+escapeHtml(item.name)+'</h3><span class="badge">'+escapeHtml(item.category)+'</span>'+((Array.isArray(item.rarity)&&item.rarity.length?item.rarity:['Standard']).map(rarity=>'<span class="badge">'+escapeHtml(rarity)+'</span>').join(''))+(item.description?'<p>'+escapeHtml(item.description)+'</p>':'')+((item.modifiers||[]).length?item.modifiers.map(m=>'<div class="db-modifier"><strong>'+escapeHtml(m.type)+': '+escapeHtml(m.target)+'</strong>'+(m.value!==''&&m.value!==undefined?' — '+(Number(m.value)>0?'+':'')+escapeHtml(m.value):'')+(m.bonusType?' ('+escapeHtml(m.bonusType)+')':'')+(m.notes?'<p>Reminder: '+escapeHtml(m.notes)+'</p>':'')+'</div>').join(''):'<p>No modifiers recorded.</p>')+'<div class="db-item-actions"><button onclick="editDatabaseItem(\''+id+'\')">Edit Item</button>'+(hasDefault?'<button onclick="restoreDefaultItem(\''+escapeHtml(item.name).replace(/'/g,"&#39;")+'\')">Reset to Default</button>':'')+'<button class="wpn-del" onclick="removeDatabaseItem(\''+id+'\')">Delete Item</button></div></div>';
- }).join('')}renderCategoryVisibility()
+ }).join('')}renderCategoryVisibility();
+ // Keep the local item list independent from equipment-only panels.
+ try{renderActiveItemsTable()}catch(e){console.error('Could not render active items table',e)}
+ try{renderEquippedSelectors()}catch(e){console.error('Could not render equipped selectors',e)}
+ try{if(typeof updateArmourClass==='function')updateArmourClass()}catch(e){console.error('Could not update armour class',e)}
+ try{if(typeof renderAbilityScoreModifiers==='function')renderAbilityScoreModifiers()}catch(e){console.error('Could not render ability modifiers',e)}
+ try{if(typeof renderRoundCalc==='function')renderRoundCalc()}catch(e){console.error('Could not render round calculations',e)}
 }
 function renderCategoryVisibility(){const box=document.getElementById('dbCategoryVisibility');if(!box)return;box.innerHTML=equipmentCategories.map(c=>'<label class="category-toggle"><input type="checkbox" data-category="'+escapeHtml(c)+'" '+(categoryVisibility[c]?'checked':'')+'><span>'+escapeHtml(c)+'</span></label>').join('')}
 function setCategoryVisibility(category,visible){if(!equipmentCategories.includes(category))return;categoryVisibility[category]=!!visible;try{localStorage.setItem('bax_itemCategoryVisibility',JSON.stringify(categoryVisibility))}catch(e){console.error('Could not save category visibility',e)}renderCategoryVisibility();renderEquippedSelectors()}
