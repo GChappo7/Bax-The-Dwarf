@@ -16,7 +16,8 @@
         "bonusType": "Armour + enhancement",
         "notes": "Combined total: +8 base full plate armour bonus and +2 magical enhancement bonus."
       }
-    ]
+    ],
+    "itemType": "Equipment"
   },
   {
     "id": "adamant-heavy-shield",
@@ -42,6 +43,7 @@
         "value": 3,
         "notes": "DR 3/− against physical damage; reminder only, not automatically subtracted."
       }
-    ]
+    ],
+    "itemType": "Equipment"
   }
 ]
