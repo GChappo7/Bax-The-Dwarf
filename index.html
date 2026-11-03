@@ -641,7 +641,7 @@ if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=127',
 
 // --- Reusable equipment item database ---
 const equipmentCategories=['Headgear','Lens / Goggles','Armour','Shield','Robe / Vest / Shirt','Bracers','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Weapons','Ioun Stones / Jewellery','Other'];
-function getDatabaseItemType(item){if(item&&['equipment','inventory','consumable'].includes(item.itemType))return item.itemType;return equipmentCategories.includes(item&&item.category)?'equipment':'inventory'}
+function getDatabaseItemType(item){const type=String(item&&item.itemType||'').trim().toLowerCase().replace(/[\\s-]+/g,'_');if(['equipment','inventory_item','inventory','consumable'].includes(type))return type==='inventory_item'?'inventory':type;return equipmentCategories.includes(item&&item.category)?'equipment':'inventory'}
 const inventoryCategories=['Potions','Scrolls & Wands','Ammunition','Adventuring Gear','Containers','Tools & Kits','Food & Drink','Miscellaneous','Other'];
 function updateDatabaseItemTypeFields(){const type=document.getElementById('dbItemType')?.value||'equipment',settings=document.getElementById('dbEquipmentSettings'),categorySelect=document.getElementById('dbItemCategory');if(settings)settings.style.display=type==='equipment'?'':'none';if(categorySelect){const categories=type==='equipment'?equipmentCategories:(type==='consumable'?['Potions','Scrolls & Wands','Ammunition','Food & Drink','Miscellaneous','Other']:inventoryCategories);const current=categorySelect.value;categorySelect.innerHTML=categories.map(category=>'<option value="'+escapeHtml(category)+'">'+escapeHtml(category)+'</option>').join('');categorySelect.value=categories.includes(current)?current:categories[0];}}
 const modifierTypes=['Ability score','AC','Saving throw','Skill','Attack roll','Damage roll','Damage reduction','Resistance','Movement speed','Granted ability','Penalty','Other'];
@@ -711,9 +711,9 @@ async function loadDefaultEquipmentLibrary(){
  }catch(error){console.warn('Equipment defaults unavailable',error);const message='Could not load GitHub defaults: '+(error&&error.message?error.message:'unknown error')+'. Check your connection and try Refresh.';if(status)status.textContent=message;if(defaultStatus)defaultStatus.textContent=message;const box=document.getElementById('dbDefaultItemsList');if(box)box.innerHTML='<p style="color:var(--muted)">Default items could not be loaded.</p>';if(typeof renderRoundOptions==='function')renderRoundOptions()}
 }
 function itemTypeGroup(item){
- const type=String(item&&item.itemType||'').trim().toLowerCase();
+ const type=String(item&&item.itemType||'').trim().toLowerCase().replace(/[\\s-]+/g,'_');
  if(type==='consumable'||type==='consumables')return 'Consumables';
- if(type==='inventory'||type==='inventory item'||type==='inventory items')return 'Inventory Items';
+ if(type==='inventory'||type==='inventory_item'||type==='inventory_items')return 'Inventory Items';
  if(type==='equipment')return 'Equipment';
  const category=String(item&&item.category||'').trim().toLowerCase();
  if(['potions','scrolls & wands','ammunition','food & drink'].includes(category))return 'Consumables';
