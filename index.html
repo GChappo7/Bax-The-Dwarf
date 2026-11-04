@@ -109,6 +109,27 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .ability-modifier-row strong{font-size:20px;color:var(--gold)}
 @media(min-width:520px){.ability-score-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .skills-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.character-section{padding:0;overflow:hidden}
+.character-section>.db-item-summary{min-height:48px;padding:12px 14px}
+.character-section[open]>.db-item-summary{border-bottom:1px solid #443528}
+.character-section-content{padding:10px 12px 13px}
+.skill-library-actions{display:flex;flex-direction:column;gap:6px;margin:8px 0}
+.skill-library-actions button{width:100%}
+.skill-library-actions span{font-size:11px;color:var(--muted)}
+.skill-add-label{display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:12px}
+.skill-add-label select,.character-skill-row input{box-sizing:border-box;width:100%;min-width:0;background:#17130f;color:var(--text);border:1px solid #51402f;border-radius:7px;padding:8px;font:inherit}
+.character-skill-row{padding:10px 0;border-bottom:1px solid #443528}
+.character-skill-head{display:flex;align-items:center;gap:8px}
+.character-skill-head strong{flex:1;color:var(--gold);font-size:13px}
+.character-skill-head small{font-size:10px;color:var(--muted)}
+.character-skill-values{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:8px}
+.character-skill-values label{display:flex;flex-direction:column;gap:4px;color:var(--muted);font-size:10px;text-align:center}
+.character-skill-values input{text-align:center;padding:6px 2px;font-weight:700}
+.character-skill-total{display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:7px;border-top:1px solid #443528;font-size:12px}
+.character-skill-total strong{color:var(--gold);font-size:18px}
+.character-skill-description{font-size:11px;color:var(--muted);margin:7px 0 0;line-height:1.4}
+.character-skill-remove{padding:5px 8px;font-size:11px}
+
 .round-calc-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border,#454b50)}
 .attack-calc-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin-top:8px}
 .attack-calc-cell{min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 2px;background:var(--panel2);border:1px solid var(--border,#454b50);border-radius:8px}
@@ -401,11 +422,35 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 
 <section id="feats" class="tab">
 <div class="card">
-<h2>Abilities &amp; Feats</h2>
-<p style="color:var(--muted);margin-top:0">Add your abilities, feats and maneuvers, then write out what each does and its benefits.</p>
-<div id="featsList"></div>
-<button onclick="addFeat()" style="margin-top:12px;width:100%">+ Add Feat</button>
+<h2>Feats, Abilities &amp; Skills</h2>
+<p style="color:var(--muted);margin-top:0">Choose the sections you want to view. Add entries from the shared databases to keep Bax's character sheet focused.</p>
 </div>
+<details class="card character-section" id="characterFeatsSection" open>
+<summary class="db-item-summary"><span class="db-item-title">Feats</span><span class="db-item-chevron" aria-hidden="true">▾</span></summary>
+<div class="character-section-content">
+<div id="featsList"></div>
+<button type="button" onclick="addFeat()" style="margin-top:12px;width:100%">+ Add Feat</button>
+</div>
+</details>
+<details class="card character-section" id="characterAbilitiesSection">
+<summary class="db-item-summary"><span class="db-item-title">Abilities</span><span class="db-item-chevron" aria-hidden="true">▾</span></summary>
+<div class="character-section-content">
+<p style="color:var(--muted);font-size:12px;margin-top:0">Class features, racial abilities, powers and special actions selected from your Powers Database.</p>
+<label class="skill-add-label">Choose from Powers Database<select id="characterAbilitySelect"><option value="">— Select an ability —</option></select></label>
+<button type="button" onclick="addCharacterAbility()" style="width:100%;margin:8px 0 12px">+ Add Ability</button>
+<div id="characterAbilitiesList"></div>
+</div>
+</details>
+<details class="card character-section" id="characterSkillsSection">
+<summary class="db-item-summary"><span class="db-item-title">Skills</span><span class="db-item-chevron" aria-hidden="true">▾</span></summary>
+<div class="character-section-content">
+<p style="color:var(--muted);font-size:12px;margin-top:0">Import the standard D&amp;D 3.5e skill list, then add the skills Bax has ranks in. Ability modifiers are calculated from your Ability Scores.</p>
+<div class="skill-library-actions"><button type="button" onclick="loadDefaultSkills()">Import / Refresh Skills Database</button><span id="skillLibraryStatus" aria-live="polite">Skills database not imported yet.</span></div>
+<label class="skill-add-label">Choose a skill<select id="characterSkillSelect"><option value="">— Import the database first —</option></select></label>
+<button type="button" onclick="addCharacterSkill()" style="width:100%;margin:8px 0 12px">+ Add Skill to Character</button>
+<div id="characterSkillsList"></div>
+</div>
+</details>
 </section>
 
 <section id="powerDatabase" class="tab">
@@ -1123,6 +1168,87 @@ const DEFAULT_FEATS=[
 let feats=[];
 try{feats=JSON.parse(localStorage.getItem('bax_feats')||'null')}catch(e){feats=null}
 if(!feats){feats=DEFAULT_FEATS.map((f,i)=>({id:Date.now()+i,name:f.name,desc:f.desc}))}
+
+// --- D&D 3.5e Skills Database and character skills ---
+let defaultSkillDatabase=[];
+let characterSkills=[];
+try{characterSkills=JSON.parse(localStorage.getItem('bax_characterSkills')||'[]')}catch(e){characterSkills=[]}
+if(!Array.isArray(characterSkills))characterSkills=[];
+function saveCharacterSkills(){localStorage.setItem('bax_characterSkills',JSON.stringify(characterSkills))}
+function skillAbilityModifier(ability){
+ if(!ability||ability==='None')return 0;
+ const key=({Strength:'str',Dexterity:'dex',Constitution:'con',Intelligence:'int',Wisdom:'wis',Charisma:'cha'})[ability];
+ if(!key)return 0;
+ const input=document.querySelector('[data-save="'+key+'"]');
+ const score=input&&input.value!==''?Number(input.value):Number(localStorage.getItem('bax_'+key));
+ return Number.isFinite(score)&&score>0?Math.floor((score-10)/2):0;
+}
+function characterClassSkillNames(){
+ const lists={
+  Fighter:['Climb','Craft','Handle Animal','Intimidate','Jump','Ride','Swim'],
+  Barbarian:['Climb','Craft','Handle Animal','Intimidate','Jump','Listen','Ride','Survival','Swim'],
+  Bard:['Appraise','Balance','Bluff','Climb','Concentration','Decipher Script','Diplomacy','Disguise','Escape Artist','Gather Information','Hide','Jump','Knowledge','Listen','Move Silently','Perform','Profession','Sense Motive','Sleight of Hand','Speak Language','Spellcraft','Swim','Tumble','Use Magic Device'],
+  Cleric:['Concentration','Craft','Diplomacy','Heal','Knowledge','Profession','Spellcraft'],
+  Druid:['Concentration','Craft','Diplomacy','Handle Animal','Heal','Knowledge','Listen','Profession','Ride','Spellcraft','Spot','Survival','Swim'],
+  Monk:['Balance','Climb','Concentration','Craft','Diplomacy','Escape Artist','Hide','Jump','Knowledge','Listen','Move Silently','Perform','Profession',' Sense Motive','Spot','Swim','Tumble'],
+  Paladin:['Concentration','Craft','Diplomacy','Handle Animal','Heal','Knowledge','Profession','Ride','Sense Motive'],
+  Ranger:['Climb','Concentration','Craft','Handle Animal','Heal','Hide','Jump','Knowledge','Listen','Move Silently',' ride','Search','Spot','Survival','Swim','Use Rope'],
+  Rogue:['Appraise','Balance','Bluff','Climb','Craft','Decipher Script','Diplomacy','Disable Device','Disguise','Escape Artist','Forgery','Gather Information','Hide','Intimidate','Jump','Listen','Move Silently','Open Lock','Perform','Profession','Search','Sense Motive','Sleight of Hand','Spot','Swim','Tumble','Use Magic Device','Use Rope'],
+  Sorcerer:['Bluff','Concentration','Craft','Knowledge','Profession','Spellcraft'],
+  Wizard:['Concentration','Craft','Decipher Script','Knowledge','Profession','Spellcraft']
+ };
+ return new Set((lists[document.getElementById('characterClass')?.value]||lists.Fighter).map(x=>x.trim().toLowerCase()));
+}
+function renderCharacterSkillOptions(){
+ const select=document.getElementById('characterSkillSelect');if(!select)return;
+ const selected=new Set(characterSkills.map(x=>String(x.databaseId)));
+ select.innerHTML='<option value="">— Select a skill —</option>'+defaultSkillDatabase.filter(x=>!selected.has(String(x.id))).map(x=>'<option value="'+escapeHtml(x.id)+'">'+escapeHtml(x.name)+(x.trainedOnly?' · Trained only':'')+'</option>').join('');
+}
+async function loadDefaultSkills(){
+ const status=document.getElementById('skillLibraryStatus');if(status)status.textContent='Loading skills database…';
+ try{
+  const url=new URL('Databases/skills.json?v=20261104',new URL('./',window.location.href));
+  const response=await fetch(url,{cache:'no-store'});if(!response.ok)throw new Error('HTTP '+response.status);
+  const data=await response.json();if(!data||!Array.isArray(data.skills)||!data.skills.length)throw new Error('Invalid skills database');
+  defaultSkillDatabase=data.skills;
+  defaultSkillDatabase.forEach(base=>{
+   const existing=characterSkills.find(x=>String(x.databaseId)===String(base.id));
+   if(existing){existing.name=base.name;existing.ability=base.ability;existing.trainedOnly=!!base.trainedOnly;existing.armorCheck=!!base.armorCheck;existing.description=base.description}
+  });
+  saveCharacterSkills();renderCharacterSkillOptions();renderCharacterSkills();
+  if(status)status.textContent='Loaded '+defaultSkillDatabase.length+' standard D&D 3.5e skills. Your character entries and ranks have been kept.';
+ }catch(error){if(status)status.textContent='Could not load skills database: '+(error.message||'unknown error')+'. Check your connection and try again.'}
+}
+function addCharacterSkill(){
+ const id=document.getElementById('characterSkillSelect')?.value;
+ const skill=defaultSkillDatabase.find(x=>String(x.id)===String(id));if(!skill)return;
+ if(characterSkills.some(x=>String(x.databaseId)===String(skill.id)))return;
+ characterSkills.push({id:'character-'+skill.id,databaseId:skill.id,name:skill.name,ability:skill.ability,trainedOnly:!!skill.trainedOnly,armorCheck:!!skill.armorCheck,description:skill.description,ranks:0,misc:0});
+ saveCharacterSkills();renderCharacterSkills();renderCharacterSkillOptions();
+}
+function updateCharacterSkill(id,key,value){
+ const skill=characterSkills.find(x=>String(x.id)===String(id));if(!skill)return;
+ skill[key]=key==='ranks'?Math.max(0,Number(value)||0):Number(value)||0;
+ saveCharacterSkills();renderCharacterSkills();
+}
+function removeCharacterSkill(id){characterSkills=characterSkills.filter(x=>String(x.id)!==String(id));saveCharacterSkills();renderCharacterSkills();renderCharacterSkillOptions()}
+function renderCharacterSkills(){
+ const box=document.getElementById('characterSkillsList');if(!box)return;
+ if(!characterSkills.length){box.innerHTML='<p style="color:var(--muted);text-align:center;padding:10px 0">No skills added yet. Import the database and select the skills Bax uses.</p>';renderCharacterSkillOptions();return}
+ const classSkills=characterClassSkillNames();
+ box.innerHTML=characterSkills.map(skill=>{
+  const ranks=Math.max(0,Number(skill.ranks)||0),ability=skillAbilityModifier(skill.ability),misc=Number(skill.misc)||0;
+  const classSkill=classSkills.has(String(skill.name||'').replace(/\s*\([^)]*\)$/,'').toLowerCase());
+  const total=skill.ability==='None'?ranks+misc:ranks+ability+misc;
+  const cap=classSkill?Number(document.getElementById('level')?.value||1)+3:(Number(document.getElementById('level')?.value||1)+3)/2;
+  return '<div class="character-skill-row"><div class="character-skill-head"><strong>'+escapeHtml(skill.name)+'</strong><small>'+(classSkill?'Class skill':'Cross-class')+(skill.trainedOnly?' · Trained only':'')+(skill.armorCheck?' · Armour check penalty':'')+'</small><button type="button" class="wpn-del character-skill-remove" aria-label="Remove '+escapeHtml(skill.name)+'" onclick="removeCharacterSkill(\''+escapeHtml(skill.id)+'\')">✕</button></div><div class="character-skill-values"><label>Ranks<input type="number" min="0" step="0.5" inputmode="decimal" value="'+ranks+'" onchange="updateCharacterSkill(\''+escapeHtml(skill.id)+'\',\'ranks\',this.value)"></label><label>Ability ('+escapeHtml(skill.ability==='None'?'—':skill.ability.slice(0,3))+')<input type="text" readonly value="'+(skill.ability==='None'?'—':(ability>=0?'+':'')+ability)+'"></label><label>Misc. bonus<input type="number" step="1" inputmode="numeric" value="'+misc+'" onchange="updateCharacterSkill(\''+escapeHtml(skill.id)+'\',\'misc\',this.value)"></label><label>Max ranks<input type="text" readonly value="'+cap+'"></label></div><div class="character-skill-total"><span>Skill check modifier</span><strong>'+(total>=0?'+':'')+total+'</strong></div><p class="character-skill-description">'+escapeHtml(skill.description||'')+'</p></div>'
+ }).join('');
+ renderCharacterSkillOptions();
+}
+document.querySelectorAll('[data-save="str"],[data-save="dex"],[data-save="con"],[data-save="int"],[data-save="wis"],[data-save="cha"]').forEach(el=>el.addEventListener('input',renderCharacterSkills));
+document.getElementById('characterClass')?.addEventListener('change',renderCharacterSkills);
+document.getElementById('level')?.addEventListener('input',renderCharacterSkills);
+
 function saveFeats(){localStorage.setItem('bax_feats',JSON.stringify(feats))}
 function addFeat(){feats.push({id:Date.now(),name:'New Feat',desc:''});saveFeats();renderFeats()}
 function removeFeat(id){feats=feats.filter(f=>f.id!==id);saveFeats();renderFeats()}
@@ -1318,13 +1444,15 @@ function editPowerEntry(id){const p=powerDatabase.find(x=>String(x.id)===String(
 function deletePowerEntry(id){if(!confirm('Delete this entry from the Powers, Feats & Abilities Database? Character copies will remain as saved.'))return;powerDatabase=powerDatabase.filter(p=>String(p.id)!==String(id));savePowerDatabase();renderPowerDatabase();renderCharacterPowers()}
 function saveFeatFromPowerDatabase(id){const p=powerDatabase.find(x=>String(x.id)===String(id));if(!p){alert('Could not find that database entry.');return}const key=normalizeFeatName(p.name);const existing=feats.find(f=>normalizeFeatName(f.name)===key);if(existing){alert(p.name+' is already saved in your Feats tile.');show('feats');return}feats.push({id:Date.now()+Math.random(),name:p.name,desc:(p.description||'')+(p.source?'\n\nSource: '+p.source:'')});saveFeats();renderFeats();alert(p.name+' has been saved to your Feats tile.');show('feats')}
 function renderPowerDatabase(){const box=document.getElementById('powerDatabaseList'),select=document.getElementById('characterPowerSelect');if(box)box.innerHTML=powerDatabase.length?powerDatabase.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(p=>'<details class="db-item"><summary class="db-item-summary"><span class="db-item-title">'+escapeHtml(p.name)+'</span><span class="badge">'+escapeHtml(p.type||'Other')+'</span><span class="db-item-chevron" aria-hidden="true">▾</span></summary><div class="db-item-content">'+(p.source?'<span class="badge">'+escapeHtml(p.source)+'</span>':'')+'<p>'+escapeHtml(p.action||'Passive')+' · '+(Number(p.maxUses)>0?Number(p.maxUses)+' uses / '+escapeHtml(p.reset||'manual'):'Unlimited uses')+'</p>'+(p.description?'<p class="db-item-description">'+escapeHtml(p.description)+'</p>':'')+((p.effects||[]).length?p.effects.map(e=>'<div class="db-modifier"><strong>'+escapeHtml(e.type)+': '+(Number(e.value)>0?'+':'')+Number(e.value||0)+'</strong>'+(e.notes?'<p>'+escapeHtml(e.notes)+'</p>':'')+'</div>').join(''):'<p>No automatic effects.</p>')+'<div class="db-item-actions"><button type="button" onclick="saveFeatFromPowerDatabase(\''+p.id+'\')">Save to Feats tile</button><button type="button" onclick="editPowerEntry(\''+p.id+'\')">Edit</button><button type="button" class="wpn-del" onclick="deletePowerEntry(\''+p.id+'\')">Delete</button></div></div></details>').join(''):'<p style="color:var(--muted);text-align:center;padding:10px 0">No entries yet. Create your first entry above.</p>';if(select){const current=select.value;select.innerHTML='<option value="">— Select an entry —</option>'+powerDatabase.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(p=>'<option value="'+escapeHtml(p.id)+'">'+escapeHtml(p.name)+' ('+escapeHtml(p.type||'Other')+')</option>').join('');if(powerDatabase.some(p=>String(p.id)===String(current)))select.value=current}}
+function addCharacterAbility(){const select=document.getElementById('characterAbilitySelect');if(!select||!select.value){alert('Choose an ability from the database first.');return}document.getElementById('characterPowerSelect').value=select.value;addCharacterPower();select.value='';renderCharacterAbilityOptions()}
+function renderCharacterAbilityOptions(){const select=document.getElementById('characterAbilitySelect');if(!select)return;const owned=new Set(characterPowers.map(p=>String(p.databaseId)));select.innerHTML='<option value="">— Select an ability —</option>'+powerDatabase.filter(p=>String(p.type||'Other').toLowerCase()!=='feat'&&!owned.has(String(p.id))).sort((a,b)=>a.name.localeCompare(b.name)).map(p=>'<option value="'+escapeHtml(p.id)+'">'+escapeHtml(p.name)+' · '+escapeHtml(p.type||'Other')+'</option>').join('')}
 function addCharacterPower(){const p=powerDatabase.find(x=>String(x.id)===String(document.getElementById('characterPowerSelect').value));if(!p){alert('Choose an entry from the database first.');return}const existing=characterPowers.find(x=>String(x.databaseId)===String(p.id));if(existing){alert('That entry is already on your character list.');return}characterPowers.push({id:Date.now()+Math.random(),databaseId:p.id,name:p.name,type:p.type,source:p.source,description:p.description,action:p.action,maxUses:Number(p.maxUses)||0,usesRemaining:Number(p.maxUses)||0,reset:p.reset,effects:(p.effects||[]).map(e=>({...e})),enabled:false});saveCharacterPowers();renderCharacterPowers()}
 function updateCharacterPower(id,field,value){const p=characterPowers.find(x=>String(x.id)===String(id));if(!p)return;p[field]=field==='usesRemaining'?Math.max(0,Math.min(Number(p.maxUses)||0,Math.floor(Number(value)||0))):value;saveCharacterPowers();renderCharacterPowers();if(typeof renderRoundCalc==='function')renderRoundCalc();if(typeof updateArmourClass==='function')updateArmourClass()}
 function resetCharacterPowerUses(id){const p=characterPowers.find(x=>String(x.id)===String(id));if(!p)return;p.usesRemaining=Number(p.maxUses)||0;saveCharacterPowers();renderCharacterPowers();if(typeof renderRoundCalc==='function')renderRoundCalc();if(typeof updateArmourClass==='function')updateArmourClass()}
 function removeCharacterPower(id){characterPowers=characterPowers.filter(p=>String(p.id)!==String(id));saveCharacterPowers();renderCharacterPowers();if(typeof renderRoundCalc==='function')renderRoundCalc();if(typeof updateArmourClass==='function')updateArmourClass()}
-function renderCharacterPowers(){const box=document.getElementById('characterPowersList');if(!box)return;if(!characterPowers.length){box.innerHTML='<p style="color:var(--muted);text-align:center;padding:10px 0">No entries added to Bax yet.</p>';return}box.innerHTML=characterPowers.map(p=>{const db=powerDatabase.find(x=>String(x.id)===String(p.databaseId));const max=Number(p.maxUses)||0;const remaining=Number(p.usesRemaining)||0;const description=db?.description||p.description||'';return '<details class="db-item character-power-item"><summary class="db-item-summary"><span class="db-item-title">'+escapeHtml(db?.name||p.name)+'</span><span class="badge">'+escapeHtml(db?.type||p.type||'Other')+'</span><span class="db-item-chevron" aria-hidden="true">▾</span></summary><div class="db-item-content"><div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px"><span class="badge">'+escapeHtml(db?.action||p.action||'Passive')+'</span>'+(db?.source||p.source?'<span class="badge">'+escapeHtml(db?.source||p.source)+'</span>':'')+'</div>'+(description?'<p class="db-item-description">'+escapeHtml(description)+'</p>':'')+'<button class="wpn-del" type="button" onclick="removeCharacterPower(\''+p.id+'\')">Remove</button><label class="category-toggle"><input type="checkbox" '+(p.enabled?'checked':'')+' onchange="updateCharacterPower(\''+p.id+'\',\'enabled\',this.checked)"><span>Enable automatic effects</span></label>'+(max>0?'<div style="display:flex;align-items:flex-end;gap:8px;margin-top:8px"><label style="flex:1;color:var(--muted);font-size:12px">Uses remaining / '+max+'<input type="number" min="0" max="'+max+'" value="'+remaining+'" onchange="updateCharacterPower(\''+p.id+'\',\'usesRemaining\',this.value)"></label><button type="button" onclick="resetCharacterPowerUses(\''+p.id+'\')">Reset '+escapeHtml(p.reset||'manual')+'</button></div>':'<p style="color:var(--muted);font-size:12px;margin:6px 0">Unlimited uses</p>')+((db?.effects||p.effects||[]).length?'<p style="font-size:12px;color:var(--muted);margin:8px 0 0">Effects: '+(db?.effects||p.effects||[]).map(e=>escapeHtml(e.type)+' '+(Number(e.value)>0?'+':'')+Number(e.value||0)+(e.notes?' ('+escapeHtml(e.notes)+')':'')).join('; ')+'</p>':'')+'</div></details>'}).join('')}
+function renderCharacterPowers(){const box=document.getElementById('characterAbilitiesList')||document.getElementById('characterPowersList');if(!box)return;const visiblePowers=characterPowers.filter(p=>String(powerDatabase.find(x=>String(x.id)===String(p.databaseId))?.type||p.type||'Other').toLowerCase()!=='feat');if(!visiblePowers.length){box.innerHTML='<p style="color:var(--muted);text-align:center;padding:10px 0">No entries added to Bax yet.</p>';return}box.innerHTML=visiblePowers.map(p=>{const db=powerDatabase.find(x=>String(x.id)===String(p.databaseId));const max=Number(p.maxUses)||0;const remaining=Number(p.usesRemaining)||0;const description=db?.description||p.description||'';return '<details class="db-item character-power-item"><summary class="db-item-summary"><span class="db-item-title">'+escapeHtml(db?.name||p.name)+'</span><span class="badge">'+escapeHtml(db?.type||p.type||'Other')+'</span><span class="db-item-chevron" aria-hidden="true">▾</span></summary><div class="db-item-content"><div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px"><span class="badge">'+escapeHtml(db?.action||p.action||'Passive')+'</span>'+(db?.source||p.source?'<span class="badge">'+escapeHtml(db?.source||p.source)+'</span>':'')+'</div>'+(description?'<p class="db-item-description">'+escapeHtml(description)+'</p>':'')+'<button class="wpn-del" type="button" onclick="removeCharacterPower(\''+p.id+'\')">Remove</button><label class="category-toggle"><input type="checkbox" '+(p.enabled?'checked':'')+' onchange="updateCharacterPower(\''+p.id+'\',\'enabled\',this.checked)"><span>Enable automatic effects</span></label>'+(max>0?'<div style="display:flex;align-items:flex-end;gap:8px;margin-top:8px"><label style="flex:1;color:var(--muted);font-size:12px">Uses remaining / '+max+'<input type="number" min="0" max="'+max+'" value="'+remaining+'" onchange="updateCharacterPower(\''+p.id+'\',\'usesRemaining\',this.value)"></label><button type="button" onclick="resetCharacterPowerUses(\''+p.id+'\')">Reset '+escapeHtml(p.reset||'manual')+'</button></div>':'<p style="color:var(--muted);font-size:12px;margin:6px 0">Unlimited uses</p>')+((db?.effects||p.effects||[]).length?'<p style="font-size:12px;color:var(--muted);margin:8px 0 0">Effects: '+(db?.effects||p.effects||[]).map(e=>escapeHtml(e.type)+' '+(Number(e.value)>0?'+':'')+Number(e.value||0)+(e.notes?' ('+escapeHtml(e.notes)+')':'')).join('; ')+'</p>':'')+'</div></details>'}).join('')}
 function activePowerEffects(type){return (Array.isArray(characterPowers)?characterPowers:[]).reduce((sum,p)=>{if(!p.enabled)return sum;const db=powerDatabase.find(x=>String(x.id)===String(p.databaseId));const powerName=String(db?.name||p.name||'').trim().toLowerCase();if(powerName==='bard song'||powerName==='haste')return sum;const effects=db?.effects||p.effects||[];if(Number(p.maxUses)>0&&Number(p.usesRemaining)<=0)return sum;return sum+effects.filter(e=>String(e.type||'').trim().toLowerCase()===String(type||'').trim().toLowerCase()).reduce((subtotal,e)=>subtotal+(Number(e.value)||0),0)},0)}
-renderPowerEffectsEditor();renderPowerDatabase();renderCharacterPowers();
+renderPowerEffectsEditor();renderPowerDatabase();renderCharacterPowers();renderCharacterAbilityOptions();renderCharacterSkills();
 
 // --- Current Round ---
 activeAttack=Number(localStorage.getItem('bax_active_attack')||1);
