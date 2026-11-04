@@ -632,22 +632,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 
 
 
-<div class="card"><h2>Situational Feats</h2>
-<p style="color:var(--muted);margin-top:0">These actions are separate from your normal attacks and do not change their bonuses.</p>
-<div class="db-item"><h3>Close-Quarters Fighting</h3>
-<p>Trigger when an opponent attempts to grapple Bax. If you still have an attack of opportunity available, use this action to make the attack of opportunity with +2 on the attack roll. If it deals damage, add that damage as a bonus on the opposed grapple check to avoid being grappled.</p>
-<button type="button" style="width:100%" onclick="triggerCloseQuartersAoO()">Opponent attempts to grapple Bax — use attack of opportunity</button>
-<div id="closeQuartersAoOPanel" style="display:none;margin-top:12px;padding:12px;border:1px solid var(--border);border-radius:10px">
-<strong>Close-Quarters Fighting: Attack of Opportunity</strong>
-<p style="color:var(--muted);font-size:13px">Separate roll. Includes the feat's +2 attack bonus; normal attack slots are unchanged.</p>
-<div class="round-calc-row"><span>Base attack</span><strong id="cqBaseAttack">—</strong></div>
-<div class="round-calc-row"><span>STR bonus</span><strong id="cqStrBonus">—</strong></div>
-<div class="round-calc-row"><span>Weapon bonus</span><strong id="cqWeaponBonus">—</strong></div>
-<div class="round-calc-row"><span>Close-Quarters Fighting</span><strong>+2</strong></div>
-<label for="cqD20Roll">Attack of opportunity — D20 roll<input id="cqD20Roll" type="number" min="1" max="20" inputmode="numeric" placeholder="Enter d20 roll" oninput="renderCloseQuartersAoO()"></label>
-<div class="round-calc-total" style="margin-top:10px"><span>Attack Total</span><strong id="cqAttackTotal">Enter your d20 roll</strong></div>
-<button type="button" style="width:100%;margin-top:10px" onclick="clearCloseQuartersAoO()">Finish / dismiss action</button>
-</div></div></div>
 </section>
 
 <section id="dicePage" class="tab">
