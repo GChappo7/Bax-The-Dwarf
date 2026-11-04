@@ -398,11 +398,11 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .dashboard-bottom-row{align-items:start;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
 .dashboard-bottom-row>.xp-tile:not(.character-details-tile){align-self:start;min-width:0;padding:9px 8px}
 .dashboard-bottom-row>.xp-tile:not(.character-details-tile) .xp-title{padding-bottom:6px;margin-bottom:7px;border-bottom:1px solid #51402f;letter-spacing:.09em!important}
-.dashboard-bottom-row>.xp-tile:not(.character-details-tile) .xp-values{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;align-items:start}
-.dashboard-bottom-row>.xp-tile:not(.character-details-tile) .xp-values label{min-width:0;gap:3px;font-size:8px;line-height:1.15;text-align:center;overflow-wrap:anywhere}
-.dashboard-bottom-row>.xp-tile:not(.character-details-tile) .xp-values input{min-width:0;padding:5px 2px;font-size:12px}
+.dashboard-bottom-row>.xp-tile:not(.character-details-tile) .xp-values{display:flex;flex-direction:column;gap:3px;align-items:stretch}
+.dashboard-bottom-row>.xp-tile:not(.character-details-tile) .xp-values label{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);align-items:center;gap:5px;min-width:0;font-size:9px;line-height:1.1;text-align:left}
+.dashboard-bottom-row>.xp-tile:not(.character-details-tile) .xp-values input{min-width:0;padding:3px 4px;font-size:12px}
 .dashboard-bottom-row>.xp-tile:not(.character-details-tile) .level-up-button{margin-top:7px;padding:6px 3px;font-size:10px}
-@media(max-width:390px){.dashboard-bottom-row{gap:6px}.dashboard-bottom-row>.xp-tile:not(.character-details-tile){padding:8px 5px}.dashboard-bottom-row>.xp-tile:not(.character-details-tile) .xp-values label{font-size:7px}.dashboard-bottom-row>.xp-tile:not(.character-details-tile) .xp-values input{font-size:11px}}
+@media(max-width:390px){.dashboard-bottom-row{gap:6px}.dashboard-bottom-row>.xp-tile:not(.character-details-tile){padding:8px 5px}.dashboard-bottom-row>.xp-tile:not(.character-details-tile) .xp-values label{font-size:8px}.dashboard-bottom-row>.xp-tile:not(.character-details-tile) .xp-values input{font-size:11px}}
 </style>
 </head>
 <body>
