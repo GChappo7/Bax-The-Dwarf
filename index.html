@@ -77,7 +77,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .feat-row{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 6px;padding:12px;background:var(--panel2);border:1px solid #443528;border-radius:8px;text-align:left}
 .feat-row-name{min-width:0;color:var(--gold);font-size:14px;font-weight:750;overflow-wrap:anywhere}
 .feat-row-hint{flex:0 0 auto;color:var(--muted);font-size:11px;font-weight:600}
-#characterFeatDialog{width:min(560px,calc(100% - 28px));max-height:82dvh;margin:auto;padding:0;overflow:auto;background:var(--panel);color:var(--text);border:1px solid #806638;border-radius:13px}
+.saving-throw-circle{appearance:none;-webkit-appearance:none;margin:0;padding:0;font:inherit;cursor:pointer;touch-action:manipulation}.saving-throw-circle:focus-visible{outline:2px solid var(--gold);outline-offset:3px}#savingThrowDialog{width:min(520px,calc(100% - 28px));max-height:82dvh;margin:auto;padding:0;overflow:auto;background:var(--panel);color:var(--text);border:1px solid #806638;border-radius:13px}#savingThrowDialog::backdrop{background:rgba(0,0,0,.72)}#savingThrowDialogBody{padding:13px}.save-breakdown-total{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;background:var(--panel2);border:1px solid #806638;border-radius:9px;color:var(--muted);font-size:13px}.save-breakdown-total strong{font-size:24px;color:var(--gold)}.save-breakdown-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 2px;border-bottom:1px solid #443528;font-size:13px}.save-breakdown-row>span{display:flex;flex-direction:column;gap:2px}.save-breakdown-row small{font-size:11px;color:var(--muted)}.save-breakdown-row>strong{color:var(--gold);white-space:nowrap}.save-breakdown-equation{margin-top:12px;padding:10px;background:rgba(0,0,0,.18);border-radius:8px;text-align:center;color:var(--gold);font-size:12px;font-weight:800;overflow-wrap:anywhere}#characterFeatDialog{width:min(560px,calc(100% - 28px));max-height:82dvh;margin:auto;padding:0;overflow:auto;background:var(--panel);color:var(--text);border:1px solid #806638;border-radius:13px}
 #characterFeatDialog::backdrop{background:rgba(0,0,0,.72)}
 .feat-dialog-header{position:sticky;top:0;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px;background:#211912;border-bottom:1px solid #51402f}
 .feat-dialog-header h2{margin:0;color:var(--gold);font-size:17px}
@@ -430,7 +430,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <div class="ability-score-row"><div class="ability-score-box"><label for="ability_dex">D</label><input id="ability_dex" data-save="dex" type="number" inputmode="numeric" aria-label="Base Dexterity score" placeholder="—"><span class="ability-score-bonus" id="bonus_dex" hidden></span></div><div class="ability-modifier-row"><strong id="modifier_dex">—</strong></div></div>
 <div class="ability-score-row"><div class="ability-score-box"><label for="ability_con">Con</label><input id="ability_con" data-save="con" type="number" inputmode="numeric" aria-label="Base Constitution score" placeholder="—"><span class="ability-score-bonus" id="bonus_con" hidden></span></div><div class="ability-modifier-row"><strong id="modifier_con">—</strong></div></div>
 <div class="ability-score-row"><div class="ability-score-box"><label for="ability_cha">Cha</label><input id="ability_cha" data-save="cha" type="number" inputmode="numeric" aria-label="Base Charisma score" placeholder="—"><span class="ability-score-bonus" id="bonus_cha" hidden></span></div><div class="ability-modifier-row"><strong id="modifier_cha">—</strong></div></div>
-<div class="ability-score-row"><div class="ability-score-box"><label for="ability_com">Com</label><input id="ability_com" data-save="com" type="number" inputmode="numeric" aria-label="Base Comeliness score" placeholder="—"><span class="ability-score-bonus" id="bonus_com" hidden></span></div><div class="ability-modifier-row"><strong id="modifier_com">—</strong></div></div></div></div><div class="saving-throw-list" aria-label="Saving throws"><div class="saving-throw-entry"><div class="saving-throw-circle" title="Fortitude: Constitution-based"><span>FORT</span><strong id="save_fort">—</strong></div><small class="saving-throw-note" id="save_note_fort" hidden></small></div><div class="saving-throw-entry"><div class="saving-throw-circle" title="Reflex: Dexterity-based"><span>REF</span><strong id="save_ref">—</strong></div><small class="saving-throw-note" id="save_note_ref" hidden></small></div><div class="saving-throw-entry"><div class="saving-throw-circle" title="Will: Wisdom-based"><span>WILL</span><strong id="save_will">—</strong></div><small class="saving-throw-note" id="save_note_will" hidden></small></div></div></div></div>
+<div class="ability-score-row"><div class="ability-score-box"><label for="ability_com">Com</label><input id="ability_com" data-save="com" type="number" inputmode="numeric" aria-label="Base Comeliness score" placeholder="—"><span class="ability-score-bonus" id="bonus_com" hidden></span></div><div class="ability-modifier-row"><strong id="modifier_com">—</strong></div></div></div></div><div class="saving-throw-list" aria-label="Saving throws"><div class="saving-throw-entry"><button type="button" class="saving-throw-circle" title="View Fortitude calculation" aria-label="View Fortitude saving throw calculation" onclick="openSavingThrowDialog('fort')"><span>FORT</span><strong id="save_fort">—</strong></button><small class="saving-throw-note" id="save_note_fort" hidden></small></div><div class="saving-throw-entry"><button type="button" class="saving-throw-circle" title="View Reflex calculation" aria-label="View Reflex saving throw calculation" onclick="openSavingThrowDialog('ref')"><span>REF</span><strong id="save_ref">—</strong></button><small class="saving-throw-note" id="save_note_ref" hidden></small></div><div class="saving-throw-entry"><button type="button" class="saving-throw-circle" title="View Will calculation" aria-label="View Will saving throw calculation" onclick="openSavingThrowDialog('will')"><span>WILL</span><strong id="save_will">—</strong></button><small class="saving-throw-note" id="save_note_will" hidden></small></div></div></div></div>
 </section>
 
 <section id="weapons" class="tab">
@@ -475,6 +475,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </details>
 </section>
 
+<dialog id="savingThrowDialog" aria-labelledby="savingThrowDialogTitle"><div class="feat-dialog-header"><h2 id="savingThrowDialogTitle">Saving throw</h2><button type="button" aria-label="Close saving throw details" onclick="closeSavingThrowDialog()">×</button></div><div id="savingThrowDialogBody"></div></dialog>
 <dialog id="characterFeatDialog" aria-labelledby="characterFeatDialogTitle">
  <div class="feat-dialog-header"><h2 id="characterFeatDialogTitle">Feat details</h2><button type="button" aria-label="Close feat details" onclick="closeCharacterFeat()">×</button></div>
  <div id="characterFeatDialogBody"></div>
@@ -731,44 +732,38 @@ function effectiveAbilityScore(key,baseScore){
   const base=Number(baseScore);
   return Number.isFinite(base)?base+equippedAbilityBonus(key):null;
 }
+var savingThrowBreakdowns={};
 function renderSavingThrows(){
-  const level=Math.max(1,Math.floor(Number(localStorage.getItem('bax_level')||document.getElementById('headerLevel')?.textContent||1)));
-  const characterClass=String(document.getElementById('characterClass')?.value||'Fighter').toLowerCase();
-  const goodSaves={
-    barbarian:['fort'],bard:['ref','will'],cleric:['fort','will'],druid:['fort','will'],
-    fighter:['fort'],monk:['fort','ref','will'],paladin:['fort','will'],
-    ranger:['fort','ref'],rogue:['ref'],sorcerer:['will'],wizard:['will']
-  };
-  const good=goodSaves[characterClass]||[];
-  const base=type=>good.includes(type)?2+Math.floor(level/2):Math.floor(level/3);
-  const ability=key=>{const input=document.querySelector('[data-save="'+key+'"]');if(!input||input.value.trim()==='')return 0;return Math.floor((effectiveAbilityScore(key,input.value)-10)/2)};
-  const equipmentBonus=type=>{
-    let total=0;
-    try{equipmentCategories.forEach(category=>getEquippedIds(category).forEach(id=>{const item=databaseItems.find(x=>String(x.id)===String(id));(item?.modifiers||[]).filter(m=>String(m.type||'').toLowerCase()==='saving throw'&&(m.target==='All saving throws'||m.target===({fort:'Fortitude',ref:'Reflex',will:'Will'}[type]))&&m.value!==''&&Number.isFinite(Number(m.value))).forEach(m=>total+=Number(m.value))}))}catch(e){}
-    return total;
-  };
-  let featBonuses={fort:0,ref:0,will:0};
-  try{const saved=JSON.parse(localStorage.getItem('bax_feats')||'[]');if(Array.isArray(saved))saved.forEach(f=>{const name=String(f.name||'').toLowerCase();if(name==='great fortitude')featBonuses.fort+=2;if(name==='lightning reflexes')featBonuses.ref+=2;if(name==='iron will')featBonuses.will+=2})}catch(e){}
-  let racial={poison:false,spells:false};
-  try{
-    const selected=Array.isArray(characterPowers)?characterPowers:[];
-    selected.forEach(entry=>{
-      const db=Array.isArray(powerDatabase)?powerDatabase.find(item=>String(item.id)===String(entry.databaseId))||{}:{};
-      const name=String(db.name||entry.name||'').toLowerCase();
-      const description=String(db.description||entry.description||'').toLowerCase();
-      if(name.includes('poison')||description.includes('saving throws against poison'))racial.poison=true;
-      if(name.includes('spell resistance')||name.includes('spell resistance')||description.includes('saving throws against spells and spell-like effects'))racial.spells=true;
-    });
-  }catch(e){}
-  [['fort','con'],['ref','dex'],['will','wis']].forEach(([type,key])=>{
-    const out=document.getElementById('save_'+type);if(!out)return;
-    const value=base(type)+ability(key)+equipmentBonus(type)+featBonuses[type];
-    out.textContent=(value>0?'+':'')+value;
-    out.title=({fort:'Fortitude (Constitution)',ref:'Reflex (Dexterity)',will:'Will (Wisdom)'})[type]+' save: '+base(type)+' base + '+ability(key)+' ability + '+equipmentBonus(type)+' equipment + '+featBonuses[type]+' feat';
-    const note=document.getElementById('save_note_'+type);
-    if(note){const text=type==='fort'&&racial.poison?'+2 Poison':type==='will'&&racial.spells?'+2 Spells':'';note.textContent=text;note.hidden=!text}
-  });
+ const level=Math.max(1,Math.floor(Number(localStorage.getItem('bax_level')||document.getElementById('headerLevel')?.textContent||1)));
+ const className=String(document.getElementById('characterClass')?.value||'Fighter'),cls=className.toLowerCase();
+ const goodSaves={barbarian:['fort'],bard:['ref','will'],cleric:['fort','will'],druid:['fort','will'],fighter:['fort'],monk:['fort','ref','will'],paladin:['fort','will'],ranger:['fort','ref'],rogue:['ref'],sorcerer:['will'],wizard:['will']};
+ const good=goodSaves[cls]||[],base=t=>good.includes(t)?2+Math.floor(level/2):Math.floor(level/3);
+ const keys={fort:'con',ref:'dex',will:'wis'},abilityNames={fort:'Constitution',ref:'Dexterity',will:'Wisdom'},names={fort:'Fortitude',ref:'Reflex',will:'Will'};
+ const abilityInfo=k=>{const input=document.querySelector('[data-save="'+k+'"]'),raw=input&&input.value.trim()!==''?Number(input.value):null,gear=equippedAbilityBonus(k),effective=raw===null?null:raw+gear,mod=effective===null?0:Math.floor((effective-10)/2);return {raw,gear,effective,mod}};
+ const equipmentInfo=t=>{const rows=[];try{equipmentCategories.forEach(c=>getEquippedIds(c).forEach(id=>{const item=databaseItems.find(x=>String(x.id)===String(id));if(!item)return;(item.modifiers||[]).filter(m=>String(m.type||'').toLowerCase()==='saving throw'&&(m.target==='All saving throws'||m.target===({fort:'Fortitude',ref:'Reflex',will:'Will'}[t]))&&m.value!==''&&Number.isFinite(Number(m.value))).forEach(m=>rows.push({name:item.name||'Equipped item',value:Number(m.value),target:m.target}))}))}catch(e){}return rows};
+ const featInfo={fort:[],ref:[],will:[]};
+ try{const saved=JSON.parse(localStorage.getItem('bax_feats')||'[]');if(Array.isArray(saved))saved.forEach(f=>{const n=String(f.name||'').toLowerCase();if(n==='great fortitude')featInfo.fort.push({name:f.name,value:2});if(n==='lightning reflexes')featInfo.ref.push({name:f.name,value:2});if(n==='iron will')featInfo.will.push({name:f.name,value:2})})}catch(e){}
+ let racial={poison:false,spells:false};
+ try{(Array.isArray(characterPowers)?characterPowers:[]).forEach(p=>{const db=Array.isArray(powerDatabase)?powerDatabase.find(x=>String(x.id)===String(p.databaseId))||{}:{},n=String(db.name||p.name||'').toLowerCase(),d=String(db.description||p.description||'').toLowerCase();if(n.includes('poison')||d.includes('saving throws against poison'))racial.poison=true;if(n.includes('spell resistance')||d.includes('saving throws against spells and spell-like effects'))racial.spells=true})}catch(e){}
+ [['fort','con'],['ref','dex'],['will','wis']].forEach(([t,k])=>{const out=document.getElementById('save_'+t);if(!out)return;const ab=abilityInfo(k),baseValue=base(t),gear=equipmentInfo(t),gearTotal=gear.reduce((n,x)=>n+x.value,0),feats=featInfo[t],featTotal=feats.reduce((n,x)=>n+x.value,0),total=baseValue+ab.mod+gearTotal+featTotal;out.textContent=(total>0?'+':'')+total;const conditional=t==='fort'&&racial.poison?'+2 Poison':t==='will'&&racial.spells?'+2 Spells':'';const note=document.getElementById('save_note_'+t);if(note){note.textContent=conditional;note.hidden=!conditional}savingThrowBreakdowns[t]={type:t,name:names[t],className,level,good:good.includes(t),base:baseValue,abilityName:abilityNames[t],ability:ab,equipment:gear,feats,total,conditional:t==='fort'&&racial.poison?'+2 racial bonus against poison':t==='will'&&racial.spells?'+2 racial bonus against spells and spell-like effects':''};out.title=names[t]+' saving throw: '+baseValue+' base + '+ab.mod+' ability + '+gearTotal+' equipment + '+featTotal+' feats'});
 }
+function openSavingThrowDialog(type){
+ renderSavingThrows();const d=savingThrowBreakdowns[type],dialog=document.getElementById('savingThrowDialog'),body=document.getElementById('savingThrowDialogBody'),title=document.getElementById('savingThrowDialogTitle');if(!d||!dialog||!body||!title)return;
+ const esc=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+ const row=(label,value,detail)=>'<div class="save-breakdown-row"><span>'+esc(label)+(detail?'<small>'+esc(detail)+'</small>':'')+'</span><strong>'+esc(value)+'</strong></div>';
+ const signed=n=>(n>0?'+':'')+n,ab=d.ability;
+ let html='<div class="save-breakdown-total"><span>Calculated '+esc(d.name)+' save</span><strong>'+esc(signed(d.total))+'</strong></div><div class="feat-dialog-section"><h3>Calculation</h3>';
+ html+=row(d.className+' base save - Level '+d.level,signed(d.base),d.good?'Good save progression':'Poor save progression');
+ html+=row(d.abilityName+' modifier',signed(ab.mod),ab.raw===null?'No ability score entered':'Score '+ab.raw+(ab.gear?' '+signed(ab.gear)+' from equipped items':'')+' = '+ab.effective+'; floor(('+ab.effective+' - 10) / 2)');
+ d.equipment.forEach(x=>html+=row(x.name,signed(x.value),'Equipment - '+x.target));
+ d.feats.forEach(x=>html+=row(x.name,signed(x.value),'Feat bonus'));
+ if(!d.equipment.length)html+=row('Equipment saving throw bonuses','+0','No applicable equipped bonuses');
+ if(!d.feats.length)html+=row('Saving throw feat bonuses','+0','No applicable feat bonuses');
+ html+='</div><div class="save-breakdown-equation">'+[d.base,ab.mod,...d.equipment.map(x=>x.value),...d.feats.map(x=>x.value)].map(n=>n<0?'- '+Math.abs(n):'+ '+n).join('  ')+' = '+d.total+'</div>';
+ if(d.conditional)html+='<div class="feat-dialog-section"><h3>Conditional racial bonus</h3><p>'+esc(d.conditional)+'. Not included in the normal total; apply only to the relevant saving throw.</p></div>';
+ body.innerHTML=html;title.textContent=d.name+' saving throw';if(dialog.showModal)dialog.showModal();else dialog.setAttribute('open','');
+}
+function closeSavingThrowDialog(){const d=document.getElementById('savingThrowDialog');if(d?.open)d.close();else d?.removeAttribute('open')}
 function renderAbilityScoreModifiers(){
   [['str','ability_str'],['int','ability_int'],['wis','ability_wis'],['dex','ability_dex'],['con','ability_con'],['cha','ability_cha'],['com','ability_com']].forEach(([key,id])=>{
     const input=document.getElementById(id),out=document.getElementById('modifier_'+key),bonusOut=document.getElementById('bonus_'+key);
