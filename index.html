@@ -120,9 +120,9 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .ability-score-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .ability-score-list{display:flex;flex-direction:column;gap:7px;width:max-content;max-width:100%;padding:0;border:0;border-radius:0;background:transparent;box-sizing:border-box}
 .ability-score-row{display:grid;grid-template-columns:66px 34px;align-items:center;gap:8px;min-height:66px}
-.ability-score-box{position:relative;width:66px;height:66px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;padding:15px 4px 4px;background:var(--panel2);border:1px solid #806638;border-radius:9px}
-.ability-score-box>label{position:absolute;top:4px;left:5px;right:25px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:9px;font-weight:800;color:var(--gold)}
-.ability-score-box>input{width:100%;min-width:0;height:34px;box-sizing:border-box;text-align:center;font-size:21px;font-weight:800;color:var(--gold);padding:2px;background:transparent;border:0;outline-offset:1px}
+.ability-score-box{position:relative;width:66px;height:66px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;padding:0;background:var(--panel2);border:1px solid #806638;border-radius:9px}
+.ability-score-box>label{position:absolute;top:4px;left:5px;right:25px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;font-weight:800;color:var(--gold);line-height:1.1}
+.ability-score-box>input{position:absolute;inset:0;width:100%;min-width:0;height:100%;box-sizing:border-box;text-align:center;font-size:22px;font-weight:800;line-height:64px;color:var(--gold);padding:0;background:transparent;border:0;border-radius:9px;outline-offset:1px}
 .ability-score-bonus{position:absolute;top:3px;right:3px;min-width:18px;height:18px;display:flex;align-items:center;justify-content:center;padding:0 2px;box-sizing:border-box;border:1px solid #b18b45;border-radius:4px;background:#382b1c;color:#f0c66d;font-size:10px;font-weight:800;line-height:1}
 .ability-score-bonus[hidden]{display:none}
 .ability-modifier-row{display:flex;align-items:center;justify-content:center;min-width:0}
