@@ -1300,7 +1300,7 @@ function featSections(description){
 function toggleFeatEdit(id){const panel=document.getElementById('feat-edit-'+id);if(panel)panel.hidden=!panel.hidden}
 function renderFeats(){
   const list=document.getElementById('featsList');
-  if(!feats.length){list.innerHTML='<p style="color:var(--muted);text-align:center;padding:10px 0">No feats yet — add one above.</p>';return}
+  if(!feats.length){list.innerHTML='<p style="color:var(--muted);text-align:center;padding:10px 0">No feats added yet — to add a feat, use the Powers Database.</p>';return}
   list.innerHTML=feats.map(f=>{
     const d=featSections(f.desc),safeId=Number(f.id);
     const hasDetail=!!(d.prerequisites||d.effect||d.source);
