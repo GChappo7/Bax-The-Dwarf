@@ -754,7 +754,7 @@ function getCharacterLanguages(){try{const saved=JSON.parse(localStorage.getItem
 function renderCharacterLanguages(){
  const box=document.getElementById('characterLanguagesOptions');if(!box)return;
  const selected=getCharacterLanguages();
- const summary=document.querySelector('#characterLanguagesPicker summary');if(summary)summary.textContent='Edit languages';
+ const summary=document.querySelector('#characterLanguagesPicker summary');if(summary)summary.textContent='Languages';
  const selectedList=document.getElementById('characterLanguagesSelected');if(selectedList)selectedList.innerHTML=selected.length?selected.map(name=>'<li>'+name+'</li>').join(''):'<li>None selected</li>';
  box.innerHTML=DND35_LANGUAGES.map(name=>'<label><input type="checkbox" value="'+name.replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'" '+(selected.includes(name)?'checked':'')+' onchange="updateCharacterLanguages()"><span>'+name+'</span></label>').join('');
 }
