@@ -414,6 +414,11 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .dashboard-combat-stat>span{color:var(--muted)}
 .dashboard-combat-stat>strong{min-width:0;color:var(--gold);font-size:10px;text-align:right;overflow-wrap:anywhere}
 .dashboard-languages-stat{grid-column:auto}
+.dashboard-languages-button{min-width:0;padding:0;border:0;background:transparent;color:var(--gold);font:inherit;font-weight:700;text-align:right;cursor:pointer;text-decoration:underline;text-decoration-color:rgba(201,164,91,.45);text-underline-offset:3px}
+#dashboardLanguagesDialog{width:min(420px,calc(100% - 28px));max-height:80dvh;margin:auto;padding:0;overflow:auto;background:var(--panel);color:var(--text);border:1px solid #806638;border-radius:13px}
+#dashboardLanguagesDialog::backdrop{background:rgba(0,0,0,.72)}
+#dashboardLanguagesDialogBody{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:13px}
+.dashboard-language-dialog-item{padding:8px;background:var(--panel2);border:1px solid #443528;border-radius:7px;color:var(--gold);font-size:12px}
 @media(max-width:390px){.dashboard-bottom-row{gap:6px}.dashboard-bottom-row>.character-details-tile{gap:6px 0;padding:8px 6px}.dashboard-bottom-row>.character-details-tile>.character-details-main{padding-right:6px}.dashboard-bottom-row>.character-details-tile>.dashboard-combat-summary{padding-left:6px}.dashboard-bottom-row>.xp-tile:not(.character-details-tile){padding:8px 5px}.dashboard-bottom-row>.xp-tile:not(.character-details-tile) .xp-values label{font-size:8px}.dashboard-bottom-row>.xp-tile:not(.character-details-tile) .xp-values input{font-size:11px}.dashboard-combat-stat{font-size:8px}.dashboard-combat-stat>strong{font-size:9px}}
 </style>
 </head>
@@ -446,7 +451,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <div class="dashboard-combat-stat"><span>Movement speed</span><strong id="dashboardMovementSpeed">20 ft</strong></div>
 <div class="dashboard-combat-stat"><span>Initiative</span><strong id="dashboardInitiative">+7</strong></div>
 <div class="dashboard-combat-stat"><span>Armour penalty</span><strong id="dashboardArmourPenalty">0</strong></div>
-<div class="dashboard-combat-stat dashboard-languages-stat"><span>Languages</span><strong id="dashboardLanguages">Dwarven, Common, +3 languages</strong></div>
+<div class="dashboard-combat-stat dashboard-languages-stat"><span>Languages</span><button type="button" id="dashboardLanguages" class="dashboard-languages-button" onclick="openDashboardLanguages()">Dwarven, 6 more</button></div>
 </div>
 </div>
 <div class="stat xp-tile dashboard-info-tile"><span class="xp-title">EXPERIENCE</span><div class="xp-values"><label>Previous Level XP<input id="xpPrevious" data-save="xpPrevious" type="number" min="0" value="60000" inputmode="numeric"></label><label>Current XP<input id="xpCurrent" data-save="xpCurrent" type="number" min="0" value="0" inputmode="numeric"></label><label>Next Level XP<input id="xpNext" data-save="xpNext" type="number" min="0" value="" placeholder="Enter target" inputmode="numeric"></label></div><button type="button" id="levelUpButton" class="level-up-button" hidden onclick="confirmLevelUp()">🎉 Confirm Level Up</button></div>
@@ -512,6 +517,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </details>
 </section>
 
+<dialog id="dashboardLanguagesDialog" aria-labelledby="dashboardLanguagesDialogTitle"><div class="feat-dialog-header"><h2 id="dashboardLanguagesDialogTitle">Languages</h2><button type="button" aria-label="Close languages" onclick="closeDashboardLanguages()">×</button></div><div id="dashboardLanguagesDialogBody"></div></dialog>
 <dialog id="savingThrowDialog" aria-labelledby="savingThrowDialogTitle"><div class="feat-dialog-header"><h2 id="savingThrowDialogTitle">Saving throw</h2><button type="button" aria-label="Close saving throw details" onclick="closeSavingThrowDialog()">×</button></div><div id="savingThrowDialogBody"></div></dialog>
 <dialog id="characterFeatDialog" aria-labelledby="characterFeatDialogTitle">
  <div class="feat-dialog-header"><h2 id="characterFeatDialogTitle">Feat details</h2><button type="button" aria-label="Close feat details" onclick="closeCharacterFeat()">×</button></div>
@@ -783,8 +789,16 @@ function updateDashboardCombatSummary(){
  const init=initiative===null?'7':initiative;
  set('dashboardInitiative',Number(init)>0?'+'+init:String(init));
  set('dashboardArmourPenalty',penalty===null?'0':penalty);
- set('dashboardLanguages',languages.length?languages.join(', '):'None selected');
+ const first=languages[0]||'None selected';
+ set('dashboardLanguages',languages.length>1?first+', '+(languages.length-1)+' more':first);
 }
+function openDashboardLanguages(){
+ const dialog=document.getElementById('dashboardLanguagesDialog'),body=document.getElementById('dashboardLanguagesDialogBody');if(!dialog||!body)return;
+ const selected=getCharacterLanguages();
+ body.innerHTML=selected.length?selected.map(name=>'<div class="dashboard-language-dialog-item">'+name.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div>').join(''):'<div class="dashboard-language-dialog-item">No languages selected</div>';
+ if(!dialog.open)dialog.showModal();
+}
+function closeDashboardLanguages(){const dialog=document.getElementById('dashboardLanguagesDialog');if(dialog?.open)dialog.close()}
 function renderCharacterLanguages(){
  const box=document.getElementById('characterLanguagesOptions');if(!box)return;
  const selected=getCharacterLanguages();
