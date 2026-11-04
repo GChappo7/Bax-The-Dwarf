@@ -394,23 +394,24 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 
 /* Notebook usability refinements */
 .notes-toolbar{display:flex;align-items:center;gap:10px;margin:0 0 12px}.notes-search-wrap{display:flex;align-items:center;gap:8px;flex:1;min-width:0;padding:0 11px;border:1px solid #51402e;border-radius:9px;background:rgba(0,0,0,.18);color:var(--muted)}.notes-search-wrap>span{font-size:20px;line-height:1}.notes-search-wrap input{width:100%;min-width:0;padding:10px 0;border:0;outline:0;background:transparent;color:var(--text);font:inherit;font-size:13px}.notes-search-wrap input::placeholder{color:var(--muted)}.notes-total{flex:0 0 auto;color:var(--muted);font-size:10px;white-space:nowrap}.notes-section summary{gap:8px}.notes-section-chevron{color:var(--gold);font-size:22px;line-height:1;transition:transform .15s}.notes-section[open] .notes-section-chevron{transform:rotate(90deg)}.notes-summary-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:3px}.notes-section-preview{overflow:hidden;color:var(--muted);font-size:10px;font-weight:400;text-overflow:ellipsis;white-space:nowrap}.notes-title-label{display:block;margin-top:10px;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.08em}.notes-title-edit{display:block;margin:5px 0 2px}.notes-field{margin-top:12px}.notes-field-top{display:flex;align-items:center;justify-content:space-between;margin:0 0 5px;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.08em}.notes-field-remove{position:static;min-width:24px;width:24px;height:24px;font-size:16px}.notes-field textarea{min-height:112px;padding:10px;resize:vertical}.notes-section-actions{padding-top:3px}.notes-section-actions .notes-add-field{background:#4b3925;border-color:#8e6d37;color:#f6e5c2}.notes-empty{padding:25px 18px;border:1px dashed #675137;border-radius:12px;text-align:center;background:rgba(37,29,23,.65)}.notes-empty-icon{margin-bottom:7px;color:var(--gold);font-size:28px}.notes-empty strong{color:var(--gold);font-size:14px}.notes-empty p{max-width:270px;margin:7px auto 14px;color:var(--muted);font-size:12px;line-height:1.5}.notes-empty button{padding:8px 13px;font-size:12px}.notes-no-results{padding:20px}.notes-section-count{font-size:9px}@media(max-width:380px){.notes-section-preview{max-width:185px}.notes-total{font-size:9px}}
-/* A single Character Details panel forms an L around the Experience tile. */
-.dashboard-bottom-row{display:grid;align-items:stretch;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto auto;column-gap:0;row-gap:8px}
-.dashboard-bottom-row>.character-details-tile{grid-column:1 / -1;grid-row:1 / span 2;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto auto;align-items:start;gap:8px 0;min-width:0;padding:9px 8px;position:relative}
-.dashboard-bottom-row>.character-details-tile>.character-details-main{grid-column:1;grid-row:1 / span 2;min-width:0;padding-right:8px;padding-bottom:54px}
+/* Character Details fills the left column; Experience and Languages stack on the right. */
+.dashboard-bottom-row{display:grid;align-items:stretch;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto minmax(110px,1fr);column-gap:8px;row-gap:8px}
+.dashboard-bottom-row>.character-details-tile{grid-column:1;grid-row:1 / span 2;align-self:stretch;min-width:0;margin:0;padding:9px 8px}
+.dashboard-bottom-row>.character-details-tile>.character-details-main{min-width:0;padding:0}
 .dashboard-bottom-row>.character-details-tile>.character-details-main>.xp-title{display:block;margin-bottom:7px;padding-bottom:6px;border-bottom:1px solid #51402f;letter-spacing:.09em!important}
 .dashboard-bottom-row>.character-details-tile>.character-details-main>.xp-values{display:flex;flex-direction:column;gap:5px;align-items:stretch}
 .dashboard-bottom-row>.character-details-tile>.character-details-main>.xp-values label{min-width:0}
 .dashboard-bottom-row>.character-details-tile>.character-details-main>.dashboard-combat-summary{display:grid;grid-template-columns:minmax(0,1fr);gap:0;margin-top:7px;padding:7px 0 0;border-top:1px solid rgba(129,101,69,.35);min-width:0}
-.dashboard-bottom-row>.character-details-tile>.character-languages-row{position:absolute;right:8px;bottom:9px;width:calc(50% - 8px);display:flex;flex-direction:column;gap:3px;min-width:0;margin:0;padding:8px 0 0 8px;border-top:1px solid rgba(129,101,69,.35);border-left:1px solid rgba(129,101,69,.25);font-size:9px;line-height:1.3}
-.dashboard-bottom-row>.character-details-tile>.character-languages-row>span{color:var(--muted)}
-.dashboard-bottom-row>.character-details-tile>.character-languages-row>strong{color:var(--gold);font-size:10px;font-weight:650;overflow-wrap:anywhere;white-space:normal}
-.dashboard-bottom-row>.xp-tile:not(.character-details-tile){grid-column:2;grid-row:1;align-self:start;z-index:1;min-width:0;margin:0 0 0 8px;padding:9px 8px;box-shadow:0 0 0 4px var(--bg)}
-.dashboard-bottom-row>.xp-tile:not(.character-details-tile) .xp-title{padding-bottom:6px;margin-bottom:7px;border-bottom:1px solid #51402f;letter-spacing:.09em!important}
-.dashboard-bottom-row>.xp-tile:not(.character-details-tile) .xp-values{display:flex;flex-direction:column;gap:3px;align-items:stretch}
-.dashboard-bottom-row>.xp-tile:not(.character-details-tile) .xp-values label{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);align-items:center;gap:5px;min-width:0;font-size:9px;line-height:1.1;text-align:left}
-.dashboard-bottom-row>.xp-tile:not(.character-details-tile) .xp-values input{min-width:0;padding:3px 4px;font-size:12px}
-.dashboard-bottom-row>.xp-tile:not(.character-details-tile) .level-up-button{margin-top:7px;padding:6px 3px;font-size:10px}
+.dashboard-bottom-row>.experience-tile{grid-column:2;grid-row:1;align-self:start;min-width:0;margin:0;padding:9px 8px}
+.dashboard-bottom-row>.experience-tile .xp-title{padding-bottom:6px;margin-bottom:7px;border-bottom:1px solid #51402f;letter-spacing:.09em!important}
+.dashboard-bottom-row>.experience-tile .xp-values{display:flex;flex-direction:column;gap:3px;align-items:stretch}
+.dashboard-bottom-row>.experience-tile .xp-values label{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);align-items:center;gap:5px;min-width:0;font-size:9px;line-height:1.1;text-align:left}
+.dashboard-bottom-row>.experience-tile .xp-values input{min-width:0;padding:3px 4px;font-size:12px}
+.dashboard-bottom-row>.experience-tile .level-up-button{margin-top:7px;padding:6px 3px;font-size:10px}
+.dashboard-bottom-row>.languages-tile{grid-column:2;grid-row:2;display:flex;flex-direction:column;align-self:stretch;justify-content:flex-start;min-width:0;margin:0;padding:9px 8px}
+.dashboard-bottom-row>.languages-tile>.xp-title{padding-bottom:6px;margin-bottom:7px;border-bottom:1px solid #51402f;letter-spacing:.09em!important}
+.dashboard-bottom-row>.languages-tile>.character-languages-row{display:flex;flex-direction:column;gap:5px;min-width:0;margin:0;padding:0;font-size:9px;line-height:1.3}
+.dashboard-bottom-row>.languages-tile>.character-languages-row>strong{color:var(--gold);font-size:11px;font-weight:650;overflow-wrap:anywhere;white-space:normal}
 .dashboard-combat-summary{display:grid;grid-template-columns:minmax(0,1fr);gap:0;margin-top:0;padding-top:0;border-top:0}
 .dashboard-combat-summary-title{display:none}
 .dashboard-combat-stat{display:flex;justify-content:space-between;align-items:flex-start;gap:5px;min-width:0;padding:5px 0;border-bottom:1px solid rgba(129,101,69,.22);font-size:9px;line-height:1.2}
@@ -423,7 +424,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 #dashboardLanguagesDialog::backdrop{background:rgba(0,0,0,.72)}
 #dashboardLanguagesDialogBody{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:13px}
 .dashboard-language-dialog-item{padding:8px;background:var(--panel2);border:1px solid #443528;border-radius:7px;color:var(--gold);font-size:12px}
-@media(max-width:390px){.dashboard-bottom-row{gap:6px}.dashboard-bottom-row>.character-details-tile{gap:6px 0;padding:8px 6px}.dashboard-bottom-row>.character-details-tile>.character-details-main{padding-right:6px}.dashboard-bottom-row>.xp-tile:not(.character-details-tile){padding:8px 5px}.dashboard-bottom-row>.xp-tile:not(.character-details-tile) .xp-values label{font-size:8px}.dashboard-bottom-row>.xp-tile:not(.character-details-tile) .xp-values input{font-size:11px}.dashboard-combat-stat{font-size:8px}.dashboard-combat-stat>strong{font-size:9px}}
+@media(max-width:390px){.dashboard-bottom-row{gap:6px;column-gap:6px}.dashboard-bottom-row>.character-details-tile{padding:8px 6px}.dashboard-bottom-row>.experience-tile,.dashboard-bottom-row>.languages-tile{padding:8px 5px}.dashboard-bottom-row>.experience-tile .xp-values label{font-size:8px}.dashboard-bottom-row>.experience-tile .xp-values input{font-size:11px}.dashboard-combat-stat{font-size:8px}.dashboard-combat-stat>strong{font-size:9px}}
 </style>
 </head>
 <body>
@@ -457,8 +458,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <div class="dashboard-combat-stat"><span>Armour penalty</span><strong id="dashboardArmourPenalty">0</strong></div>
 </div>
 </div>
-<div class="character-languages-row"><span>Languages</span><strong id="dashboardLanguages">Common, Dwarven</strong></div>
-<div class="stat xp-tile dashboard-info-tile"><span class="xp-title">EXPERIENCE</span><div class="xp-values"><label>Previous Level XP<input id="xpPrevious" data-save="xpPrevious" type="number" min="0" value="60000" inputmode="numeric"></label><label>Current XP<input id="xpCurrent" data-save="xpCurrent" type="number" min="0" value="0" inputmode="numeric"></label><label>Next Level XP<input id="xpNext" data-save="xpNext" type="number" min="0" value="" placeholder="Enter target" inputmode="numeric"></label></div><button type="button" id="levelUpButton" class="level-up-button" hidden onclick="confirmLevelUp()">🎉 Confirm Level Up</button></div>
+<div class="stat xp-tile dashboard-info-tile experience-tile"><span class="xp-title">EXPERIENCE</span><div class="xp-values"><label>Previous Level XP<input id="xpPrevious" data-save="xpPrevious" type="number" min="0" value="60000" inputmode="numeric"></label><label>Current XP<input id="xpCurrent" data-save="xpCurrent" type="number" min="0" value="0" inputmode="numeric"></label><label>Next Level XP<input id="xpNext" data-save="xpNext" type="number" min="0" value="" placeholder="Enter target" inputmode="numeric"></label></div><button type="button" id="levelUpButton" class="level-up-button" hidden onclick="confirmLevelUp()">🎉 Confirm Level Up</button></div>
+<div class="stat xp-tile dashboard-info-tile languages-tile"><span class="xp-title">LANGUAGES</span><div class="character-languages-row"><strong id="dashboardLanguages">Common, Dwarven</strong></div></div>
 
 </div>
 </section>
