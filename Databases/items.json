@@ -862,7 +862,7 @@
     "rarity": [
       "Standard"
     ],
-    "description": "1 gp; 4 lb. when full (empty weight negligible in this entry). Holds enough water for one Medium creature's daily needs.",
+    "description": "1 gp; 4 lb. when full (1 lb. empty). Holds enough water for one Medium creature's daily needs.",
     "modifiers": [],
     "itemType": "Inventory"
   },
@@ -926,7 +926,7 @@
     "name": "Handy Haversack",
     "category": "Containers",
     "rarity": [
-      "Standard"
+      "Magic"
     ],
     "description": "2,000 gp; 5 lb. Wondrous item. Its extradimensional storage keeps contents organised and makes retrieving an item stored in it a move action that does not provoke attacks of opportunity. The central compartment holds 8 cubic feet (up to 80 lb.); each side pouch holds 2 cubic feet (up to 20 lb.).",
     "modifiers": [],
@@ -1120,17 +1120,6 @@
     "itemType": "Inventory"
   },
   {
-    "id": "waterskin-full",
-    "name": "Waterskin (Full)",
-    "category": "Containers",
-    "rarity": [
-      "Standard"
-    ],
-    "description": "1 gp; 4 lb. Filled waterskin; contents provide drinking water for one Medium creature for one day.",
-    "modifiers": [],
-    "itemType": "Inventory"
-  },
-  {
     "id": "soap",
     "name": "Soap (1 lb.)",
     "category": "Adventuring Gear",
@@ -1215,17 +1204,6 @@
       "Standard"
     ],
     "description": "1 gp; 1/2 lb. Protects maps, papers or scrolls from damage.",
-    "modifiers": [],
-    "itemType": "Inventory"
-  },
-  {
-    "id": "waterskin-empty",
-    "name": "Waterskin (Empty)",
-    "category": "Containers",
-    "rarity": [
-      "Standard"
-    ],
-    "description": "1 gp; 1 lb. Empty leather container for carrying water.",
     "modifiers": [],
     "itemType": "Inventory"
   }
