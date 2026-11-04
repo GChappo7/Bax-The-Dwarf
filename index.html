@@ -391,6 +391,9 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 
 /* Campaign notebook */
 .notes-page-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px;padding:2px 0}.notes-page-heading h2{margin:0;color:var(--gold);font-size:19px}.notes-page-heading p{margin:4px 0 0;color:var(--muted);font-size:11px;line-height:1.35}.notes-add-section{flex:0 0 auto;padding:9px 12px;font-size:12px;font-weight:700;white-space:nowrap}.notes-sections{display:flex;flex-direction:column;gap:8px}.notes-section{margin:0!important;padding:0!important;overflow:hidden;border:1px solid #51402e;border-radius:10px;background:var(--panel)}.notes-section summary{list-style:none;display:flex;align-items:center;gap:9px;min-height:48px;padding:11px 12px;cursor:pointer;font-size:14px;font-weight:750;color:var(--text)}.notes-section summary::-webkit-details-marker{display:none}.notes-section summary:before{content:'›';color:var(--gold);font-size:22px;line-height:1;transform:rotate(0);transition:transform .15s}.notes-section[open] summary:before{transform:rotate(90deg)}.notes-section-title{min-width:0;flex:1;overflow-wrap:anywhere}.notes-section-count{color:var(--muted);font-size:10px;font-weight:500;white-space:nowrap}.notes-section-body{padding:0 12px 12px;border-top:1px solid rgba(216,173,85,.18)}.notes-title-edit{width:100%;margin:10px 0;padding:8px 9px;border:1px solid #51402e;border-radius:7px;background:rgba(0,0,0,.2);color:var(--gold);font:inherit;font-size:13px;font-weight:700}.notes-field{position:relative;margin:9px 0 0}.notes-field textarea{display:block;width:100%;min-height:100px;resize:vertical;padding:10px;border:1px solid #51402e;border-radius:8px;background:rgba(0,0,0,.2);color:var(--text);font:inherit;font-size:13px;line-height:1.45}.notes-field textarea::placeholder{color:var(--muted)}.notes-field-remove{position:absolute;right:7px;top:7px;min-width:26px;width:26px;height:26px;padding:0;border-radius:6px;font-size:15px;line-height:1;background:#3a2922}.notes-field textarea{padding-right:38px}.notes-section-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:10px}.notes-section-actions button{padding:7px 10px;font-size:11px}.notes-section-actions .notes-delete-section{margin-left:auto;color:#e4a19a;border-color:#75433d}@media(max-width:380px){.notes-page-heading h2{font-size:17px}.notes-add-section{padding:8px 9px;font-size:11px}.notes-section summary{padding:10px;font-size:13px}}
+
+/* Notebook usability refinements */
+.notes-toolbar{display:flex;align-items:center;gap:10px;margin:0 0 12px}.notes-search-wrap{display:flex;align-items:center;gap:8px;flex:1;min-width:0;padding:0 11px;border:1px solid #51402e;border-radius:9px;background:rgba(0,0,0,.18);color:var(--muted)}.notes-search-wrap>span{font-size:20px;line-height:1}.notes-search-wrap input{width:100%;min-width:0;padding:10px 0;border:0;outline:0;background:transparent;color:var(--text);font:inherit;font-size:13px}.notes-search-wrap input::placeholder{color:var(--muted)}.notes-total{flex:0 0 auto;color:var(--muted);font-size:10px;white-space:nowrap}.notes-section summary{gap:8px}.notes-section-chevron{color:var(--gold);font-size:22px;line-height:1;transition:transform .15s}.notes-section[open] .notes-section-chevron{transform:rotate(90deg)}.notes-summary-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:3px}.notes-section-preview{overflow:hidden;color:var(--muted);font-size:10px;font-weight:400;text-overflow:ellipsis;white-space:nowrap}.notes-title-label{display:block;margin-top:10px;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.08em}.notes-title-edit{display:block;margin:5px 0 2px}.notes-field{margin-top:12px}.notes-field-top{display:flex;align-items:center;justify-content:space-between;margin:0 0 5px;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.08em}.notes-field-remove{position:static;min-width:24px;width:24px;height:24px;font-size:16px}.notes-field textarea{min-height:112px;padding:10px;resize:vertical}.notes-section-actions{padding-top:3px}.notes-section-actions .notes-add-field{background:#4b3925;border-color:#8e6d37;color:#f6e5c2}.notes-empty{padding:25px 18px;border:1px dashed #675137;border-radius:12px;text-align:center;background:rgba(37,29,23,.65)}.notes-empty-icon{margin-bottom:7px;color:var(--gold);font-size:28px}.notes-empty strong{color:var(--gold);font-size:14px}.notes-empty p{max-width:270px;margin:7px auto 14px;color:var(--muted);font-size:12px;line-height:1.5}.notes-empty button{padding:8px 13px;font-size:12px}.notes-no-results{padding:20px}.notes-section-count{font-size:9px}@media(max-width:380px){.notes-section-preview{max-width:185px}.notes-total{font-size:9px}}
 </style>
 </head>
 <body>
@@ -655,7 +658,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </div></section>
 
 <section id="notes" class="tab">
-<div class="notes-page-heading"><div><h2>Campaign Notebook</h2><p>Keep your sessions, characters, locations and reminders organised.</p></div><button type="button" class="notes-add-section" onclick="addNoteSection()">＋ New Note</button></div>
+<div class="notes-page-heading"><div><h2>Campaign Notebook</h2><p>Your own space for sessions, people, places and plans.</p></div><button type="button" class="notes-add-section" onclick="addNoteSection()">＋ New Note</button></div>
+<div class="notes-toolbar"><label class="notes-search-wrap"><span>⌕</span><input id="notesSearch" type="search" placeholder="Search your notebook…" autocomplete="off"></label><span id="notesCount" class="notes-total"></span></div>
 <div id="notesSections" class="notes-sections"></div>
 </section>
 </main>
@@ -1914,35 +1918,111 @@ window.addEventListener("error",function(event){const status=document.getElement
 </script>
 
 <script>
-/* Titled, expandable campaign notes. Existing Notes and Custom Items are migrated once. */
+/* Campaign notebook: searchable titled notes with independent autosaving writing blocks. */
 (function(){
   const storageKey='bax_note_sections';
   let sections=[];
-  function makeId(){return 'n'+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+  let activeFocus=null;
+  const makeId=()=> 'n'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+  const getRoot=()=>document.getElementById('notesSections');
+  const getSearch=()=>document.getElementById('notesSearch');
   function save(){try{localStorage.setItem(storageKey,JSON.stringify(sections))}catch(e){console.error('Could not save notes',e)}}
   function load(){
-    try{const saved=JSON.parse(localStorage.getItem(storageKey)||'null');if(Array.isArray(saved)){sections=saved.map(section=>({id:String(section.id||makeId()),title:String(section.title||'Untitled Note'),fields:Array.isArray(section.fields)?section.fields.map(field=>({id:String(field.id||makeId()),text:String(field.text||'')})):[{id:makeId(),text:String(section.text||'')}]}));return}}catch(e){}
+    try{
+      const saved=JSON.parse(localStorage.getItem(storageKey)||'null');
+      if(Array.isArray(saved)){
+        sections=saved.map(section=>({id:String(section.id||makeId()),title:String(section.title||''),fields:Array.isArray(section.fields)?section.fields.map(field=>({id:String(field.id||makeId()),text:String(field.text||'')})):[{id:makeId(),text:String(section.text||'')}]}));
+        return;
+      }
+    }catch(e){}
     const oldNotes=localStorage.getItem('bax_notes')||'';
     const oldItems=localStorage.getItem('bax_items')||'';
     if(oldNotes.trim())sections.push({id:makeId(),title:'General Notes',fields:[{id:makeId(),text:oldNotes}]});
     if(oldItems.trim())sections.push({id:makeId(),title:'Custom Items',fields:[{id:makeId(),text:oldItems}]});
     save();
   }
-  function render(){
-    const root=document.getElementById('notesSections');if(!root)return;
-    if(!sections.length){root.innerHTML='<div class="card"><p style="margin:0;color:var(--muted);font-size:13px;text-align:center">No notes yet. Select <strong>＋ New Note</strong> to create your first section.</p></div>';return}
-    root.innerHTML=sections.map(section=>{
-      const id=escapeHtml(section.id),title=escapeHtml(section.title);
-      const fields=section.fields.map((field,index)=>'<div class="notes-field"><textarea aria-label="Text field '+(index+1)+'" placeholder="Write your notes here…" oninput="updateNoteField(\''+id+'\',\''+escapeHtml(field.id)+'\',this.value)">'+escapeHtml(field.text)+'</textarea><button type="button" class="notes-field-remove" aria-label="Remove text field" title="Remove text field" onclick="removeNoteField(\''+id+'\',\''+escapeHtml(field.id)+'\')">×</button></div>').join('');
-      return '<details class="card notes-section"><summary><span class="notes-section-title">'+(title||'Untitled Note')+'</span><span class="notes-section-count">'+section.fields.length+' field'+(section.fields.length===1?'':'s')+'</span></summary><div class="notes-section-body"><input class="notes-title-edit" aria-label="Note title" maxlength="100" value="'+title+'" placeholder="Give this note a title" oninput="updateNoteTitle(\''+id+'\',this.value,this)">'+fields+'<div class="notes-section-actions"><button type="button" onclick="addNoteField(\''+id+'\')">＋ Add text field</button><button type="button" class="notes-delete-section" onclick="deleteNoteSection(\''+id+'\')">Delete note</button></div></div></details>';
-    }).join('');
+  function expandedIds(){
+    return Array.from(getRoot()?.querySelectorAll('.notes-section[open]')||[]).map(el=>el.dataset.sectionId);
   }
-  window.addNoteSection=function(){sections.push({id:makeId(),title:'New Note',fields:[{id:makeId(),text:''}]});save();render()};
-  window.updateNoteTitle=function(id,value,input){const section=sections.find(item=>item.id===id);if(!section)return;section.title=value;save();const summary=input.closest('.notes-section')?.querySelector('.notes-section-title');if(summary)summary.textContent=value.trim()||'Untitled Note'};
-  window.addNoteField=function(id){const section=sections.find(item=>item.id===id);if(!section)return;section.fields.push({id:makeId(),text:''});save();render();const rows=document.querySelectorAll('.notes-section');rows.forEach(row=>{if(row.querySelector('.notes-title-edit')?.getAttribute('oninput')?.includes(id))row.open=true});};
-  window.updateNoteField=function(sectionId,fieldId,value){const section=sections.find(item=>item.id===sectionId);const field=section?.fields.find(item=>item.id===fieldId);if(field){field.text=value;save()}};
-  window.removeNoteField=function(sectionId,fieldId){const section=sections.find(item=>item.id===sectionId);if(!section)return;section.fields=section.fields.filter(field=>field.id!==fieldId);if(!section.fields.length)section.fields.push({id:makeId(),text:''});save();render()};
-  window.deleteNoteSection=function(id){if(!confirm('Delete this note and all of its text fields?'))return;sections=sections.filter(section=>section.id!==id);save();render()};
+  function matchesSearch(section,query){
+    if(!query)return true;
+    return (section.title+' '+section.fields.map(f=>f.text).join(' ')).toLocaleLowerCase().includes(query);
+  }
+  function render(options={}){
+    const root=getRoot();if(!root)return;
+    const openIds=new Set(options.openId?[...expandedIds(),options.openId]:expandedIds());
+    const query=String(getSearch()?.value||'').trim().toLocaleLowerCase();
+    const visible=sections.filter(section=>matchesSearch(section,query));
+    const count=document.getElementById('notesCount');
+    if(count)count.textContent=sections.length+' note'+(sections.length===1?'':'s');
+    if(!sections.length){
+      root.innerHTML='<div class="notes-empty"><div class="notes-empty-icon">✎</div><strong>Your notebook starts here</strong><p>Create a note for a game session, NPC, quest, location or anything you want to remember.</p><button type="button" onclick="addNoteSection()">＋ Create your first note</button></div>';
+      return;
+    }
+    if(!visible.length){
+      root.innerHTML='<div class="notes-empty notes-no-results"><strong>No matching notes</strong><p>Try another search term.</p><button type="button" onclick="clearNotesSearch()">Clear search</button></div>';
+      return;
+    }
+    root.innerHTML=visible.map(section=>{
+      const id=escapeHtml(section.id),title=escapeHtml(section.title);
+      const firstText=section.fields.map(f=>String(f.text||'').trim()).find(Boolean)||'';
+      const preview=firstText.replace(/\\s+/g,' ').slice(0,90);
+      const fields=section.fields.map((field,index)=>'<div class="notes-field" data-field-id="'+escapeHtml(field.id)+'"><div class="notes-field-top"><span>ENTRY '+(index+1)+'</span><button type="button" class="notes-field-remove" data-remove-field="'+escapeHtml(field.id)+'" aria-label="Remove entry" title="Remove entry">×</button></div><textarea data-note-field="'+escapeHtml(field.id)+'" aria-label="Entry '+(index+1)+'" placeholder="Start writing…">'+escapeHtml(field.text)+'</textarea></div>').join('');
+      return '<details class="card notes-section" data-section-id="'+id+'" '+(openIds.has(section.id)?'open':'')+'><summary><span class="notes-section-chevron">›</span><span class="notes-summary-copy"><span class="notes-section-title">'+(title||'Untitled note')+'</span><span class="notes-section-preview">'+(preview?escapeHtml(preview):'No entries yet')+'</span></span><span class="notes-section-count">'+section.fields.length+' '+(section.fields.length===1?'entry':'entries')+'</span></summary><div class="notes-section-body"><label class="notes-title-label">NOTE TITLE<input class="notes-title-edit" data-note-title="'+id+'" maxlength="100" value="'+title+'" placeholder="e.g. Session 1, Important NPCs, Quests"></label><div class="notes-writing-blocks">'+fields+'</div><div class="notes-section-actions"><button type="button" class="notes-add-field" data-add-field="'+id+'">＋ Add writing block</button><button type="button" class="notes-delete-section" data-delete-section="'+id+'">Delete note</button></div></div></details>';
+    }).join('');
+    if(options.focus){
+      const selector=options.focus==='title'?'[data-note-title="'+options.focusId+'"]':'[data-note-field="'+options.focusId+'"]';
+      const target=root.querySelector(selector);
+      if(target){target.focus();if(options.focus==='field')target.scrollIntoView({block:'nearest',behavior:'smooth'})}
+    }
+  }
+  window.addNoteSection=function(){
+    const section={id:makeId(),title:'',fields:[{id:makeId(),text:''}]};
+    sections.unshift(section);save();render({openId:section.id,focus:'title',focusId:section.id});
+  };
+  window.updateNoteTitle=function(id,value){
+    const section=sections.find(item=>item.id===id);if(!section)return;
+    section.title=value;save();
+    const row=getRoot()?.querySelector('[data-section-id="'+id+'"]');
+    const label=row?.querySelector('.notes-section-title');
+    if(label)label.textContent=value.trim()||'Untitled note';
+  };
+  window.updateNoteField=function(sectionId,fieldId,value){
+    const section=sections.find(item=>item.id===sectionId);
+    const field=section?.fields.find(item=>item.id===fieldId);
+    if(field){field.text=value;save()}
+  };
+  window.addNoteField=function(id){
+    const section=sections.find(item=>item.id===id);if(!section)return;
+    const field={id:makeId(),text:''};section.fields.push(field);save();
+    render({openId:id,focus:'field',focusId:field.id});
+  };
+  window.removeNoteField=function(sectionId,fieldId){
+    const section=sections.find(item=>item.id===sectionId);if(!section)return;
+    if(section.fields.length===1){section.fields[0].text='';}
+    else section.fields=section.fields.filter(field=>field.id!==fieldId);
+    save();render({openId:sectionId});
+  };
+  window.deleteNoteSection=function(id){
+    if(!confirm('Delete this note and all of its writing blocks?'))return;
+    sections=sections.filter(section=>section.id!==id);save();render();
+  };
+  window.clearNotesSearch=function(){const input=getSearch();if(input)input.value='';render()};
+  document.addEventListener('input',event=>{
+    const title=event.target.closest('[data-note-title]');
+    if(title){updateNoteTitle(title.dataset.noteTitle,title.value);return}
+    const field=event.target.closest('[data-note-field]');
+    if(field){const row=field.closest('[data-section-id]');if(row)updateNoteField(row.dataset.sectionId,field.dataset.noteField,field.value);return}
+    if(event.target.id==='notesSearch')render();
+  });
+  document.addEventListener('click',event=>{
+    const add=event.target.closest('[data-add-field]');
+    if(add){addNoteField(add.dataset.addField);return}
+    const remove=event.target.closest('[data-remove-field]');
+    if(remove){const row=remove.closest('[data-section-id]');if(row)removeNoteField(row.dataset.sectionId,remove.dataset.removeField);return}
+    const del=event.target.closest('[data-delete-section]');
+    if(del)deleteNoteSection(del.dataset.deleteSection);
+  });
   load();render();
 })();
 </script>
