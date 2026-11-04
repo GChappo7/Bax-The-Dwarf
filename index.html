@@ -445,8 +445,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <summary class="db-item-summary"><span class="db-item-title">Skills</span><span class="db-item-chevron" aria-hidden="true">▾</span></summary>
 <div class="character-section-content">
 <p style="color:var(--muted);font-size:12px;margin-top:0">Choose the skills Bax has ranks in. Import or refresh the standard D&amp;D 3.5e skill list from the Powers Database. Ability modifiers are calculated from your Ability Scores.</p>
-<label class="skill-add-label">Choose a skill<select id="characterSkillSelect"><option value="">— Import the database first —</option></select></label>
-<button type="button" onclick="addCharacterSkill()" style="width:100%;margin:8px 0 12px">+ Add Skill to Character</button>
+
 <div id="characterSkillsList"></div>
 </div>
 </details>
@@ -454,11 +453,39 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 
 <section id="powerDatabase" class="tab">
  <div class="card">
-  <details class="card character-section" id="skillsDatabaseImportSection">
-   <summary class="db-item-summary"><span class="db-item-title">Import Skills Database</span><span class="db-item-chevron" aria-hidden="true">▾</span></summary>
+  <details class="card character-section" id="importFeatsAbilitiesSkills">
+   <summary class="db-item-summary"><span class="db-item-title">Import Feats, Abilities &amp; Skills</span><span class="db-item-chevron" aria-hidden="true">▾</span></summary>
    <div class="character-section-content">
-    <p style="color:var(--muted);font-size:12px;margin-top:0">Load or refresh the standard D&amp;D 3.5e skills available to add from the character Skills section.</p>
-    <div class="skill-library-actions"><button type="button" onclick="loadDefaultSkills()">Import / Refresh Skills Database</button><span id="skillLibraryStatus" aria-live="polite">Skills database not imported yet.</span></div>
+    <details class="character-section">
+     <summary class="db-item-summary"><span class="db-item-title">Import Feats</span><span class="db-item-chevron" aria-hidden="true">▾</span></summary>
+     <div class="character-section-content">
+      <p style="color:var(--muted);font-size:12px;margin-top:0">Import the standard fighter-oriented D&amp;D 3.5e feat catalogue. Existing entries are retained and duplicates are skipped.</p>
+      <button type="button" onclick="importFighterFeatCatalog()">Import Fighter Feat Catalogue</button>
+      <p id="fighterFeatImportStatus" style="color:var(--muted);font-size:12px"></p>
+     </div>
+    </details>
+    <details class="character-section" id="importSpecialAbilitiesSection">
+     <summary class="db-item-summary"><span class="db-item-title">Import Special Abilities</span><span class="db-item-chevron" aria-hidden="true">▾</span></summary>
+     <div class="character-section-content">
+      <p style="color:var(--muted);font-size:12px;margin-top:0">Import standard dwarf racial traits such as Darkvision, Stonecunning and Stability into the Powers Database. Existing entries and character selections are preserved.</p>
+      <button type="button" onclick="importDwarfSpecialAbilities()">Import Dwarf Special Abilities</button>
+      <p id="specialAbilitiesImportStatus" style="color:var(--muted);font-size:12px"></p>
+     </div>
+    </details>
+    <details class="character-section" id="skillsDatabaseImportSection">
+     <summary class="db-item-summary"><span class="db-item-title">Import Skills</span><span class="db-item-chevron" aria-hidden="true">▾</span></summary>
+     <div class="character-section-content">
+      <p style="color:var(--muted);font-size:12px;margin-top:0">Load or refresh the standard D&amp;D 3.5e skills available to add to the character.</p>
+      <div class="skill-library-actions"><button type="button" onclick="loadDefaultSkills()">Import Skills Database</button><span id="skillLibraryStatus" aria-live="polite">Skills database not imported yet.</span></div>
+     </div>
+    </details>
+   </div>
+  </details>
+  <details class="card character-section" id="addCharacterSkillsSection">
+   <summary class="db-item-summary"><span class="db-item-title">Add Skills to Character</span><span class="db-item-chevron" aria-hidden="true">▾</span></summary>
+   <div class="character-section-content">
+    <label class="skill-add-label">Choose a skill<select id="characterSkillSelect"><option value="">— Import the database first —</option></select></label>
+    <button type="button" onclick="addCharacterSkill()" style="width:100%;margin:8px 0 12px">+ Add Skill to Character</button>
    </div>
   </details>
   <div class="db-info-heading"><h2>Powers, Feats &amp; Abilities Database</h2><div class="tile-info"><button type="button" class="tile-info-button" aria-label="Show description" aria-expanded="false" aria-controls="dbInfoPowerDatabase" onclick="toggleTileInfo(this)">i</button><div id="dbInfoPowerDatabase" class="tile-info-content" hidden>Create reusable feats, class features, racial abilities, powers and special actions. Entries save locally on this device.</div></div></div>
@@ -477,7 +504,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   </div></details>
  </div>
  <div class="card"><div class="db-info-heading"><h2>My Powers, Feats &amp; Abilities</h2><div class="tile-info"><button type="button" class="tile-info-button" aria-label="Show description" aria-expanded="false" aria-controls="dbInfoMyPowers" onclick="toggleTileInfo(this)">i</button><div id="dbInfoMyPowers" class="tile-info-content" hidden>Add saved entries to Bax's list, enable effects, track uses and reset them when appropriate.</div></div></div><label style="display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:13px">Choose from database<select id="characterPowerSelect"><option value="">— Select an entry —</option></select></label><button type="button" onclick="addCharacterPower()" style="width:100%;margin:10px 0 12px">+ Add to Character</button><div id="characterPowersList"></div></div>
- <div class="card"><div class="db-info-heading"><h2>Fighter Feat Catalogue</h2><div class="tile-info"><button type="button" class="tile-info-button" aria-label="Show description" aria-expanded="false" aria-controls="dbInfoFighterCatalogue" onclick="toggleTileInfo(this)">i</button><div id="dbInfoFighterCatalogue" class="tile-info-content" hidden>Import a deduplicated D&amp;D 3.5e fighter-oriented catalogue. Descriptions are concise summaries; situational and weapon-specific rules remain manual so they do not incorrectly alter every attack.</div></div></div><button type="button" onclick="importFighterFeatCatalog()">Import Fighter Feat Catalogue</button><p id="fighterFeatImportStatus" style="color:var(--muted);font-size:12px"></p></div>
+
  <details class="card character-section" id="savedPowerDatabaseEntries">
    <summary class="db-item-summary"><span class="db-item-title">Saved Database Entries</span><span class="db-item-chevron" aria-hidden="true">▾</span></summary>
    <div class="character-section-content"><div id="powerDatabaseList"></div></div>
@@ -1380,6 +1407,21 @@ const fighterFeatCatalog = [
 ["Weapon Specialization (expanded-source note)","Fighter level 4; Weapon Focus with chosen weapon; proficiency with that weapon","Alternate-source reference for the standard weapon-specific +2 damage feat. Use the standard Weapon Specialization entry to avoid duplicates.","Complete Warrior",true,[]]
 ];
 function normalizeFeatName(name){return String(name||'').toLowerCase().split('').filter(ch=>(ch>='a'&&ch<='z')||(ch>='0'&&ch<='9')||ch===' ').join('').trim().replaceAll('  ',' ')}
+const dwarfSpecialAbilityCatalog=[
+ ["Darkvision","Dwarf","Dwarves can see in the dark out to 60 feet. Darkvision is black and white only."],
+ ["Stonecunning","Dwarf","A dwarf gains a +2 racial bonus on checks to notice unusual stonework, including sliding walls, stone traps, new construction, unsafe stone surfaces and hidden doors in stone walls or floors. Coming within 10 feet of unusual stonework allows a check as though actively searching."],
+ ["Stability","Dwarf","A dwarf gains a +4 bonus on ability checks made to resist being bull rushed or tripped while standing firmly on the ground."],
+ ["Weapon Familiarity","Dwarf","Dwarves treat dwarven waraxes and dwarven urgroshes as martial weapons rather than exotic weapons."],
+ ["Dwarven Combat Training","Dwarf","Dwarves gain a +4 dodge bonus to AC against monsters of the giant type. Conditions that remove a Dexterity bonus to AC also remove this dodge bonus."],
+ ["Dwarven Poison Resistance","Dwarf","Dwarves gain a +2 racial bonus on saving throws against poison."],
+ ["Dwarven Spell Resistance","Dwarf","Dwarves gain a +2 racial bonus on saving throws against spells and spell-like effects."]
+];
+function importDwarfSpecialAbilities(){
+ const existing=new Set(powerDatabase.map(p=>normalizeFeatName(p.name)));let added=0,skipped=0;
+ dwarfSpecialAbilityCatalog.forEach(([name,source,description])=>{const key=normalizeFeatName(name);if(existing.has(key)){skipped++;return}powerDatabase.push({id:'dwarf-racial-'+key.replaceAll(' ','-'),name,type:'Racial Ability',source:'D&D 3.5e · '+source,description,action:'Passive',maxUses:0,reset:'manual',effects:[]});existing.add(key);added++});
+ savePowerDatabase();renderPowerDatabase();const status=document.getElementById('specialAbilitiesImportStatus');if(status)status.textContent='Imported '+added+' new racial abilities; skipped '+skipped+' existing entries.';
+ alert('Dwarf special abilities import complete. Added '+added+' new entries; skipped '+skipped+' existing names.');
+}
 function importFighterFeatCatalog(){
  const existing=new Set(powerDatabase.map(p=>normalizeFeatName(p.name)));
  let added=0,skipped=0;
