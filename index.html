@@ -296,7 +296,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .inventory-group-backpack{grid-area:backpack;background:rgba(91,112,69,.20);border-color:rgba(137,164,105,.55)}
 .inventory-group-potions{grid-area:potions;background:rgba(112,65,105,.22);border-color:rgba(177,112,165,.58)}
 .inventory-group-special{grid-area:special;background:rgba(67,91,125,.23);border-color:rgba(112,145,190,.58)}
-.inventory-group-spare{grid-area:spare;grid-row:3;grid-column:1 / -1;order:4;align-self:end;background:rgba(133,99,54,.20);border-color:rgba(190,147,83,.58);padding:5px 9px}
+.inventory-group-spare{grid-area:spare;position:fixed;left:8px;right:8px;bottom:68px;z-index:9;align-self:end;background:rgba(42,31,21,.97);border-color:rgba(190,147,83,.75);padding:5px 9px;box-shadow:0 -3px 12px rgba(0,0,0,.35)}
+#inventoryList{padding-bottom:62px}
 .inventory-group-spare h3{margin:0;font-size:13px}
 .inventory-spare-open{display:flex;width:100%;align-items:center;justify-content:space-between;gap:8px;padding:2px 0;border:0;background:transparent;color:var(--text);text-align:left;font:inherit;cursor:pointer}
 .inventory-spare-open small{font-size:10px;color:var(--muted)}
@@ -327,6 +328,9 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .inventory-dialog-search{display:block;width:100%;box-sizing:border-box;margin:0 0 10px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:rgba(0,0,0,.18);color:var(--text);font:inherit;font-size:14px}
 .inventory-dialog-search::placeholder{color:var(--muted)}
 .inventory-dialog-close{width:32px;height:32px;min-width:32px;padding:0;font-size:22px;line-height:1}
+.inventory-item-dialog-description{font-size:13px;line-height:1.45;margin:2px 0 16px;white-space:normal;overflow-wrap:anywhere}
+.inventory-item-dialog-move{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+.inventory-item-dialog-move select{flex:1;min-width:0;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:rgba(0,0,0,.18);color:var(--text);font:inherit}
 .inventory-dialog-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--border)}
 .inventory-dialog-item:last-child{border-bottom:0}
 .inventory-dialog-item span{min-width:0;overflow-wrap:anywhere;font-size:13px}
@@ -931,16 +935,16 @@ function isDatabaseItemEquipped(dbItem){
 }
 function getInventorySection(item,dbItem){
  const source=dbItem||item||{},category=String(source.category||'').trim().toLowerCase(),name=String(source.name||item?.name||'').trim().toLowerCase();
- if(category==='potions')return 'potions';
  if(getDatabaseItemType(source)==='equipment')return 'spare';
- if(item?.inventorySection&&['backpack','special'].includes(item.inventorySection))return item.inventorySection;
+ if(item?.inventorySection&&['backpack','potions','special'].includes(item.inventorySection))return item.inventorySection;
+ if(category==='potions')return 'potions';
  const rarity=Array.isArray(source.rarity)?source.rarity.map(value=>String(value).toLowerCase()):String(source.rarity||'').toLowerCase().split(/[;,|+]/).map(value=>value.trim());
  if(['book','books','tome','tomes'].includes(category)||name.includes('book')||name.includes('tome')||rarity.some(value=>['magic','magical','artifact'].includes(value)))return 'special';
  return 'backpack';
 }
 function setInventorySection(id,section){
  const item=inventoryItems.find(entry=>String(entry.id)===String(id));
- if(!item||!['backpack','special'].includes(section))return;
+ if(!item||!['backpack','potions','special'].includes(section))return;
  item.inventorySection=section;saveInventory();renderInventory();
 }
 function renderInventory(){
@@ -977,13 +981,9 @@ function renderInventory(){
    const description=document.createElement('div');description.className='inventory-item-description';
    const descriptionText=item.notes||dbItem?.description||'No description available.';
    description.innerHTML=renderTileInfo(descriptionText);card.appendChild(description);
-   title.addEventListener('click',()=>{const expanded=card.classList.toggle('expanded');title.setAttribute('aria-expanded',String(expanded))});
-   if(section.id==='backpack'||section.id==='special'){
-    const moveLabel=document.createElement('label');moveLabel.className='inventory-move-label';moveLabel.textContent='Move to ';
-    const moveSelect=document.createElement('select');moveSelect.setAttribute('aria-label','Move '+name);
-    [['backpack','Backpack'],['special','Special Items']].forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;option.selected=value===section.id;moveSelect.appendChild(option)});
-    moveSelect.addEventListener('change',()=>setInventorySection(item.id,moveSelect.value));moveLabel.appendChild(moveSelect);controls.appendChild(moveLabel);
-   }
+   const openDetails=()=>openInventoryItemDialog(item.id);
+   title.addEventListener('click',openDetails);
+   card.addEventListener('click',event=>{if(!event.target.closest('button,select,label'))openDetails()});
    group.appendChild(card);
   });
   const addWrap=document.createElement('div');addWrap.className='inventory-add-wrap';
@@ -991,6 +991,27 @@ function renderInventory(){
   addButton.addEventListener('click',()=>openInventoryAddDialog(section.id,section.title));addWrap.appendChild(addButton);group.appendChild(addWrap);
   list.appendChild(group);
  });
+}
+function closeInventoryItemDialog(){
+ const dialog=document.getElementById('inventoryItemDialog');if(dialog)dialog.remove();
+}
+function openInventoryItemDialog(itemId){
+ const item=inventoryItems.find(entry=>String(entry.id)===String(itemId));if(!item)return;
+ const dbItem=item.databaseItemId!=null?databaseItems.find(entry=>String(entry.id)===String(item.databaseItemId)):null;
+ const name=dbItem?.name||item.name||'Unnamed Item';
+ closeInventoryItemDialog();closeInventoryAddDialog();
+ const overlay=document.createElement('div');overlay.id='inventoryItemDialog';overlay.className='inventory-dialog-overlay';
+ overlay.addEventListener('click',event=>{if(event.target===overlay)closeInventoryItemDialog()});
+ const dialog=document.createElement('div');dialog.className='inventory-dialog';dialog.setAttribute('role','dialog');dialog.setAttribute('aria-modal','true');dialog.setAttribute('aria-label',name);
+ const top=document.createElement('div');top.className='inventory-dialog-header';
+ const heading=document.createElement('h3');heading.textContent=name;top.appendChild(heading);
+ const close=document.createElement('button');close.type='button';close.className='inventory-dialog-close';close.textContent='×';close.setAttribute('aria-label','Close');close.addEventListener('click',closeInventoryItemDialog);top.appendChild(close);dialog.appendChild(top);
+ const description=document.createElement('div');description.className='inventory-item-dialog-description';description.innerHTML=renderTileInfo(item.notes||dbItem?.description||'No description available.');dialog.appendChild(description);
+ const moveLabel=document.createElement('label');moveLabel.className='inventory-item-dialog-move';moveLabel.textContent='Move to ';
+ const moveSelect=document.createElement('select');moveSelect.setAttribute('aria-label','Move '+name+' to');
+ [['backpack','Backpack'],['potions','Potions'],['special','Special Items']].forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;option.selected=getInventorySection(item,dbItem)===value;moveSelect.appendChild(option)});
+ moveSelect.addEventListener('change',()=>{setInventorySection(item.id,moveSelect.value);closeInventoryItemDialog()});
+ moveLabel.appendChild(moveSelect);dialog.appendChild(moveLabel);overlay.appendChild(dialog);document.body.appendChild(overlay);
 }
 function closeInventoryAddDialog(){
  const dialog=document.getElementById('inventoryAddDialog');if(dialog)dialog.remove();
