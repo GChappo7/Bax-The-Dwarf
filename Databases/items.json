@@ -1206,5 +1206,25 @@
     "description": "1 gp; 1/2 lb. Protects maps, papers or scrolls from damage.",
     "modifiers": [],
     "itemType": "Inventory"
+  },
+  {
+    "id": "amulet-of-natural-armour-plus-1",
+    "name": "Amulet of Natural Armour +1",
+    "category": "Amulet/Medallion",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Grants a +1 enhancement bonus to the wearer's natural armour bonus, increasing AC. Natural armour enhancement bonuses do not stack with other enhancement bonuses to natural armour.",
+    "modifiers": [
+      {
+        "id": "seed-amulet-natural-armour-ac",
+        "type": "AC",
+        "target": "AC",
+        "value": 1,
+        "bonusType": "Natural Armour",
+        "notes": "+1 enhancement bonus to natural armour; does not stack with another enhancement bonus to natural armour."
+      }
+    ],
+    "itemType": "Equipment"
   }
 ]
