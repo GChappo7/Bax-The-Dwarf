@@ -425,11 +425,10 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <h2>Feats, Abilities &amp; Skills</h2>
 <p style="color:var(--muted);margin-top:0">Choose the sections you want to view. Add entries from the shared databases to keep Bax's character sheet focused.</p>
 </div>
-<details class="card character-section" id="characterFeatsSection" open>
+<details class="card character-section" id="characterFeatsSection">
 <summary class="db-item-summary"><span class="db-item-title">Feats</span><span class="db-item-chevron" aria-hidden="true">▾</span></summary>
 <div class="character-section-content">
 <div id="featsList"></div>
-<button type="button" onclick="addFeat()" style="margin-top:12px;width:100%">+ Add Feat</button>
 </div>
 </details>
 <details class="card character-section" id="characterAbilitiesSection">
@@ -1279,7 +1278,7 @@ document.getElementById('characterClass')?.addEventListener('change',renderChara
 document.getElementById('level')?.addEventListener('input',renderCharacterSkills);
 
 function saveFeats(){localStorage.setItem('bax_feats',JSON.stringify(feats))}
-function addFeat(){feats.push({id:Date.now(),name:'New Feat',desc:''});saveFeats();renderFeats()}
+
 function removeFeat(id){feats=feats.filter(f=>f.id!==id);saveFeats();renderFeats()}
 function updateFeatName(id,value){const f=feats.find(f=>f.id===id);if(!f)return;f.name=value;saveFeats()}
 function updateFeatDesc(id,value){const f=feats.find(f=>f.id===id);if(!f)return;f.desc=value;saveFeats()}
