@@ -126,7 +126,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .ability-score-bonus{position:absolute;top:3px;right:3px;min-width:18px;height:18px;display:flex;align-items:center;justify-content:center;padding:0 2px;box-sizing:border-box;border:1px solid #b18b45;border-radius:4px;background:#382b1c;color:#f0c66d;font-size:10px;font-weight:800;line-height:1}
 .ability-score-bonus[hidden]{display:none}
 .ability-modifier-row{display:flex;align-items:center;justify-content:center;min-width:0}
-.ability-modifier-row strong{font-size:22px;color:var(--gold)}
+.ability-modifier-row strong{font-size:22px;color:var(--gold)}.ability-modifier-row strong.modifier-positive{color:#65c879}.ability-modifier-row strong.modifier-negative{color:#e36b6b}.ability-modifier-row strong.modifier-zero{color:var(--gold)}
 @media(min-width:520px){.ability-score-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .skills-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .character-section{padding:0;overflow:hidden}
@@ -737,9 +737,12 @@ function renderAbilityScoreModifiers(){
     if(!input||!out)return;
     const raw=input.value.trim(),bonus=equippedAbilityBonus(key);
     if(bonusOut){bonusOut.textContent=(bonus>0?'+':'')+bonus;bonusOut.hidden=!bonus}
-    if(raw===''){out.textContent='—';return}
+    if(raw===''){out.textContent='—';out.classList.remove('modifier-positive','modifier-negative');out.classList.add('modifier-zero');return}
     const score=effectiveAbilityScore(key,raw),mod=Math.floor((score-10)/2);
     out.textContent=(mod>0?'+':'')+mod;
+    out.classList.toggle('modifier-positive',mod>0);
+    out.classList.toggle('modifier-negative',mod<0);
+    out.classList.toggle('modifier-zero',mod===0);
   });
 }
 document.querySelectorAll('#stats [data-save]').forEach(el=>el.addEventListener('input',()=>{renderAbilityScoreModifiers();if(typeof renderRoundCalc==='function')renderRoundCalc();if(typeof updateArmourClass==='function')updateArmourClass()}));
