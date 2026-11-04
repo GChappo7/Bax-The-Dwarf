@@ -753,7 +753,7 @@ document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
 // Do not cancel touchend events: iOS standalone mode can suppress the synthetic click after this handler. The viewport and touch-action CSS already prevent unwanted double-tap zoom.
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=127',{updateViaCache:'none'});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=128',{updateViaCache:'none'});
 
 // --- Reusable equipment item database ---
 const equipmentCategories=['Headgear','Lens / Goggles','Armour','Shield','Robe / Vest / Shirt','Bracers','Cloak','Rings','Gloves','Amulet / Medallion','Necklace','Periapt / Phylactery','Broach / Scarab','Belt','Boots','Weapons','Ioun Stones / Jewellery','Other'];
@@ -798,7 +798,7 @@ function equipmentNameKey(name){return String(name||'').trim().toLowerCase().rep
 async function loadDefaultEquipmentLibrary(){
  const status=document.getElementById('dbLibraryStatus'),defaultStatus=document.getElementById('dbDefaultItemsStatus');
  try{
-  const baseUrl=new URL('./',window.location.href);const version='20261102';const responses=await Promise.all([fetch(new URL('Databases/items.json?v='+version,baseUrl),{cache:'no-store'}),fetch(new URL('Databases/armour.json?v='+version,baseUrl),{cache:'no-store'})]);if(responses.some(r=>!r.ok))throw new Error('HTTP '+responses.filter(r=>!r.ok).map(r=>r.status+' '+r.url).join('; '));
+  const baseUrl=new URL('./',window.location.href);const version='20261104';const responses=await Promise.all([fetch(new URL('Databases/items.json?v='+version,baseUrl),{cache:'no-store'}),fetch(new URL('Databases/armour.json?v='+version,baseUrl),{cache:'no-store'})]);if(responses.some(r=>!r.ok))throw new Error('HTTP '+responses.filter(r=>!r.ok).map(r=>r.status+' '+r.url).join('; '));
   const [items,armour]=await Promise.all(responses.map(r=>r.json()));if(!Array.isArray(items)||!Array.isArray(armour))throw new Error('Invalid default library format');
   const seen=new Set();defaultDatabaseItems=[...items,...armour].filter(item=>{const key=equipmentNameKey(item&&item.name);if(!key||seen.has(key))return false;seen.add(key);return true});
   const deleted=new Set(deletedDatabaseItemNames.map(equipmentNameKey));
