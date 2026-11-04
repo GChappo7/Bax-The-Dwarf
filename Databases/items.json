@@ -184,12 +184,12 @@
   },
   {
     "id": "composite-longbow-plus-3-strength-rating",
-    "name": "Composite Longbow (+3 Strength Rating)",
+    "name": "Composite Longbow (+4 Strength Rating)",
     "category": "Weapons",
     "rarity": [
       "Standard"
     ],
-    "description": "Composite longbow with a +3 Strength rating. This is the bow’s rated Strength bonus, not a +3 magical enhancement; it can apply up to +3 Strength bonus to damage.",
+    "description": "Composite longbow with a +4 Strength rating. This is the bow’s rated Strength bonus, not a +4 magical enhancement; it can apply up to +4 Strength bonus to damage.",
     "critThreshold": 20,
     "critMultiplier": 3,
     "modifiers": [],
