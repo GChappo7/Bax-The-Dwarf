@@ -290,10 +290,12 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .db-info-heading{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:8px;row-gap:6px;margin-bottom:8px;min-width:0}.db-info-heading h2{margin:0;min-width:0;overflow-wrap:anywhere}.db-info-heading>.tile-info{display:contents}.db-info-heading>.tile-info>.tile-info-button{grid-column:2;grid-row:1;justify-self:end}.db-info-heading>.tile-info>.tile-info-content{grid-column:1 / -1;grid-row:2;width:100%;min-width:0;box-sizing:border-box;white-space:normal;overflow-wrap:anywhere}.db-modifier-heading{justify-content:flex-start;margin:16px 0 8px}.db-modifier-heading h2{margin:0}
 .power-create-details{border:1px solid #443528;border-radius:9px;overflow:hidden;margin-top:8px}.power-create-details>.db-item-summary{padding:10px;background:var(--panel2);cursor:pointer}.power-create-form{padding:10px}.character-power-item{margin-bottom:8px}.character-power-item .db-item-content{padding-top:8px}.character-power-item .db-item-description{margin:4px 0 10px}.db-item-description{white-space:normal;overflow-wrap:anywhere}
 
-.inventory-sections{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:start}
+.inventory-sections{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"backpack potions" ". special";gap:12px;align-items:start}
 .inventory-group{min-width:0;border:1px solid var(--border);border-radius:12px;padding:10px;background:rgba(0,0,0,.08)}
 .inventory-group h3{font-size:15px;margin:0 0 9px;color:var(--gold,#d4af62)}
-.inventory-group-special{grid-column:1/-1}
+.inventory-group-backpack{grid-area:backpack}
+.inventory-group-potions{grid-area:potions}
+.inventory-group-special{grid-area:special}
 .inventory-item{margin:0 0 8px;padding:9px!important}
 .inventory-item:last-child{margin-bottom:0}
 .inventory-item .feat-head{display:flex;flex-direction:column;align-items:stretch;gap:7px}
