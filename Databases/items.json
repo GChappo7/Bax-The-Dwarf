@@ -194,5 +194,621 @@
     "critMultiplier": 3,
     "modifiers": [],
     "itemType": "Equipment"
+  },
+  {
+    "id": "potion-cure-light-wounds",
+    "name": "Potion of Cure Light Wounds",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Heals 1d8+1 hit points. Caster level 1. Market price: 50 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-endure-elements",
+    "name": "Potion of Endure Elements",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Protects the drinker from hot or cold environmental conditions. Caster level 1. Market price: 50 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-hide-from-animals",
+    "name": "Potion of Hide from Animals",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Animals cannot perceive the drinker unless they actively search or detect the drinker. Caster level 1. Market price: 50 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-hide-from-undead",
+    "name": "Potion of Hide from Undead",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Undead creatures have difficulty detecting the drinker. Caster level 1. Market price: 50 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-jump",
+    "name": "Potion of Jump",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Grants a +10 enhancement bonus on Jump checks. Caster level 1. Market price: 50 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-mage-armour",
+    "name": "Potion of Mage Armour",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Grants a +4 armour bonus to AC. Caster level 1. Market price: 50 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-magic-fang",
+    "name": "Potion of Magic Fang",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "One natural weapon gains a +1 enhancement bonus on attack and damage rolls. Caster level 1. Market price: 50 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-pass-without-trace",
+    "name": "Potion of Pass without Trace",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "The drinker leaves no tracks and cannot be tracked by mundane means. Caster level 1. Market price: 50 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-protection-from-chaos",
+    "name": "Potion of Protection from Chaos",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Grants +2 deflection AC and +2 resistance on saves against chaotic creatures, and blocks mental control and summoned creatures as the spell. Caster level 1. Market price: 50 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-protection-from-evil",
+    "name": "Potion of Protection from Evil",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Grants +2 deflection AC and +2 resistance on saves against evil creatures, and blocks mental control and summoned creatures as the spell. Caster level 1. Market price: 50 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-protection-from-good",
+    "name": "Potion of Protection from Good",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Grants +2 deflection AC and +2 resistance on saves against good creatures, and blocks mental control and summoned creatures as the spell. Caster level 1. Market price: 50 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-protection-from-law",
+    "name": "Potion of Protection from Law",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Grants +2 deflection AC and +2 resistance on saves against lawful creatures, and blocks mental control and summoned creatures as the spell. Caster level 1. Market price: 50 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-remove-fear",
+    "name": "Potion of Remove Fear",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Suppresses fear effects and grants a +4 morale bonus on saves against fear for 10 minutes. Caster level 1. Market price: 50 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-sanctuary",
+    "name": "Potion of Sanctuary",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Opponents must make a Will save to attack the drinker; ends if the drinker attacks. Caster level 1. Market price: 50 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-shield-of-faith-plus-2",
+    "name": "Potion of Shield of Faith +2",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Grants a +2 deflection bonus to AC. Caster level 3. Market price: 50 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-enlarge-person",
+    "name": "Potion of Enlarge Person",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Increases the drinker one size category, granting the spell's size, Strength, Dexterity, attack, AC and reach changes. Caster level 1. Market price: 250 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-reduce-person",
+    "name": "Potion of Reduce Person",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Reduces the drinker one size category, granting the spell's size, Strength, Dexterity, attack, AC and reach changes. Caster level 1. Market price: 250 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-aid",
+    "name": "Potion of Aid",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Grants 1d8 temporary hit points and a +1 morale bonus on attack rolls and saves against fear. Caster level 3. Market price: 300 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-barkskin-plus-2",
+    "name": "Potion of Barkskin +2",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Grants a +2 enhancement bonus to natural armour. Caster level 3. Market price: 300 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-bears-endurance",
+    "name": "Potion of Bear's Endurance",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Grants a +4 enhancement bonus to Constitution. Caster level 3. Market price: 300 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-blur",
+    "name": "Potion of Blur",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Attacks against the drinker have a 20% miss chance. Caster level 3. Market price: 300 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-bulls-strength",
+    "name": "Potion of Bull's Strength",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Grants a +4 enhancement bonus to Strength. Caster level 3. Market price: 300 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-cats-grace",
+    "name": "Potion of Cat's Grace",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Grants a +4 enhancement bonus to Dexterity. Caster level 3. Market price: 300 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-cure-moderate-wounds",
+    "name": "Potion of Cure Moderate Wounds",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Heals 2d8+3 hit points. Caster level 3. Market price: 300 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-darkvision",
+    "name": "Potion of Darkvision",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Grants darkvision out to 60 feet. Caster level 3. Market price: 300 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-delay-poison",
+    "name": "Potion of Delay Poison",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Temporarily suppresses the effects of poison for 3 hours. Caster level 3. Market price: 300 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-eagles-splendour",
+    "name": "Potion of Eagle's Splendour",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Grants a +4 enhancement bonus to Charisma. Caster level 3. Market price: 300 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-foxs-cunning",
+    "name": "Potion of Fox's Cunning",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Grants a +4 enhancement bonus to Intelligence. Caster level 3. Market price: 300 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-invisibility",
+    "name": "Potion of Invisibility",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Makes the drinker invisible until the spell ends or the drinker attacks. Caster level 3. Market price: 300 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-lesser-restoration",
+    "name": "Potion of Lesser Restoration",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Dispels magical ability penalties or repairs 1d4 points of temporary ability damage to one ability score. Caster level 3. Market price: 300 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-levitate",
+    "name": "Potion of Levitate",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Allows the drinker to move up or down through the air; horizontal movement requires pushing or pulling against a surface. Caster level 3. Market price: 300 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-misdirection",
+    "name": "Potion of Misdirection",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Misleads divination spells that detect the drinker's alignment, creature type or similar information. Caster level 3. Market price: 300 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-owls-wisdom",
+    "name": "Potion of Owl's Wisdom",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Grants a +4 enhancement bonus to Wisdom. Caster level 3. Market price: 300 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-protection-from-arrows",
+    "name": "Potion of Protection from Arrows",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Grants damage reduction 10/magic against ranged weapon attacks, up to 10 points per caster level (maximum 100). Caster level 3. Market price: 300 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-remove-paralysis",
+    "name": "Potion of Remove Paralysis",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Frees the drinker from paralysis, slow effects and related conditions as the spell. Caster level 3. Market price: 300 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-resist-energy-10",
+    "name": "Potion of Resist Energy (10)",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Choose acid, cold, electricity, fire or sonic when created; grants resistance 10 to that energy type. Caster level 3. Market price: 300 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-shield-of-faith-plus-3",
+    "name": "Potion of Shield of Faith +3",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Grants a +3 deflection bonus to AC. Caster level 6. Market price: 300 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-spider-climb",
+    "name": "Potion of Spider Climb",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Grants the ability to climb and travel on vertical surfaces and ceilings. Caster level 3. Market price: 300 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-undetectable-alignment",
+    "name": "Potion of Undetectable Alignment",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Conceals the drinker's alignment from divination effects. Caster level 3. Market price: 300 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-cure-serious-wounds",
+    "name": "Potion of Cure Serious Wounds",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Heals 3d8+5 hit points. Caster level 5. Market price: 750 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-displacement",
+    "name": "Potion of Displacement",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Attacks against the drinker have a 50% miss chance. Caster level 5. Market price: 750 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-fly",
+    "name": "Potion of Fly",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Grants a fly speed of 60 feet with good manoeuvrability. Caster level 5. Market price: 750 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-gaseous-form",
+    "name": "Potion of Gaseous Form",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Transforms the drinker into a gaseous form with the spell's movement and defensive properties. Caster level 5. Market price: 750 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-haste",
+    "name": "Potion of Haste",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Grants the haste spell's extra attack, speed increase, attack bonus and AC bonus for 5 rounds. Caster level 5. Market price: 750 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-heroism",
+    "name": "Potion of Heroism",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Grants a +2 morale bonus on attack rolls, saves and skill checks. Caster level 5. Market price: 750 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-neutralize-poison",
+    "name": "Potion of Neutralize Poison",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Detoxifies the drinker, removing poison and protecting against further poison for 10 minutes. Caster level 5. Market price: 750 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-nondetection",
+    "name": "Potion of Nondetection",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Makes the drinker difficult to detect with divination spells. Caster level 5. Market price: 750 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-protection-from-energy",
+    "name": "Potion of Protection from Energy",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Choose acid, cold, electricity, fire or sonic when created; absorbs 60 points of damage from that energy type. Caster level 5. Market price: 750 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-rage",
+    "name": "Potion of Rage",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Grants the drinker the effects of rage for 5 rounds. Caster level 5. Market price: 750 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-remove-blindness-deafness",
+    "name": "Potion of Remove Blindness/Deafness",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Cures blindness or deafness. Caster level 5. Market price: 750 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-remove-curse",
+    "name": "Potion of Remove Curse",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Frees the drinker from curses as the spell. Caster level 5. Market price: 750 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-remove-disease",
+    "name": "Potion of Remove Disease",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Cures all diseases affecting the drinker. Caster level 5. Market price: 750 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-tongues",
+    "name": "Potion of Tongues",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Allows the drinker to speak and understand any language. Caster level 5. Market price: 750 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-water-breathing",
+    "name": "Potion of Water Breathing",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Allows the drinker to breathe underwater. Caster level 5. Market price: 750 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-water-walk",
+    "name": "Potion of Water Walk",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Allows the drinker to walk on liquid surfaces. Caster level 5. Market price: 750 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
+  },
+  {
+    "id": "potion-good-hope",
+    "name": "Potion of Good Hope",
+    "category": "Potions",
+    "rarity": [
+      "Magic"
+    ],
+    "description": "Grants a +2 morale bonus on attack rolls, damage rolls, saves and skill checks. Caster level 7. Market price: 1,050 gp.",
+    "modifiers": [],
+    "itemType": "Consumable"
   }
 ]
