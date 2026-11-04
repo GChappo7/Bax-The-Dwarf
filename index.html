@@ -886,12 +886,38 @@ function updateInventoryItem(id,field,value){const item=inventoryItems.find(item
 function renderInventory(){
  const list=document.getElementById("inventoryList"),select=document.getElementById("inventoryDatabaseSelect");if(!list)return;
  if(select){const current=select.value;select.innerHTML='<option value="">— Select an item —</option>'+databaseItems.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(item=>'<option value="'+escapeHtml(item.id)+'">'+escapeHtml(item.name)+' ('+escapeHtml(item.category)+')</option>').join('');if(databaseItems.some(item=>String(item.id)===String(current)))select.value=current}
- if(!inventoryItems.length){list.innerHTML='<p style="color:var(--muted);text-align:center;padding:10px 0">Your inventory is empty — add an item above.</p>';return}
- list.innerHTML=inventoryItems.map(item=>{
-  const dbItem=(item.databaseItemId!==undefined&&item.databaseItemId!==null)?databaseItems.find(db=>String(db.id)===String(item.databaseItemId)):null;
-  const name=dbItem?.name||item.name||"Unnamed Item";
-  return '<div class="feat-item"><div class="feat-head"><strong style="flex:1;min-width:0;overflow-wrap:anywhere">'+escapeHtml(name)+'</strong><div style="display:flex;align-items:center;gap:8px;flex-shrink:0"><button type="button" aria-label="Remove one '+escapeHtml(name)+'" onclick="changeInventoryQuantity(\''+item.id+'\',-1)" style="min-width:42px;min-height:42px;font-size:20px">−</button><strong style="min-width:22px;text-align:center">'+(Number(item.qty)||0)+'</strong><button type="button" aria-label="Add one '+escapeHtml(name)+'" onclick="changeInventoryQuantity(\''+item.id+'\',1)" style="min-width:42px;min-height:42px;font-size:20px">+</button>'+(getDatabaseItemType(dbItem||item)==='consumable'?'<button type="button" onclick="changeInventoryQuantity(\''+item.id+'\',-1)" aria-label="Use one '+escapeHtml(name)+'">Use 1</button>':'')+'<button class="wpn-del" onclick="removeInventoryItem(\''+item.id+'\')" aria-label="Remove item completely">✕</button></div></div>'+renderTileInfo(item.notes)+'</div>';
- }).join("");
+ const sections=[{id:'backpack',title:'Backpack'},{id:'potions',title:'Potions'},{id:'special',title:'Special Items'}];
+ list.replaceChildren();
+ sections.forEach(section=>{
+  const group=document.createElement('section');group.className='inventory-group inventory-group-'+section.id;
+  const heading=document.createElement('h3');heading.textContent=section.title;group.appendChild(heading);
+  const items=inventoryItems.filter(item=>{const dbItem=item.databaseItemId!=null?databaseItems.find(db=>String(db.id)===String(item.databaseItemId)):null;return getInventorySection(item,dbItem)===section.id});
+  if(!items.length){const empty=document.createElement('p');empty.className='inventory-empty';empty.textContent='No items yet.';group.appendChild(empty)}
+  items.forEach(item=>{
+   const dbItem=item.databaseItemId!=null?databaseItems.find(db=>String(db.id)===String(item.databaseItemId)):null;
+   const name=dbItem?.name||item.name||'Unnamed Item';
+   const card=document.createElement('div');card.className='feat-item inventory-item';
+   const head=document.createElement('div');head.className='feat-head';
+   const title=document.createElement('strong');title.textContent=name;head.appendChild(title);
+   const controls=document.createElement('div');controls.className='inventory-item-controls';
+   const makeButton=(label,aria,action,extraClass)=>{const button=document.createElement('button');button.type='button';button.textContent=label;button.setAttribute('aria-label',aria);if(extraClass)button.className=extraClass;button.addEventListener('click',action);return button};
+   controls.appendChild(makeButton('−','Remove one '+name,()=>changeInventoryQuantity(item.id,-1)));
+   const quantity=document.createElement('strong');quantity.textContent=String(Number(item.qty)||0);controls.appendChild(quantity);
+   controls.appendChild(makeButton('+','Add one '+name,()=>changeInventoryQuantity(item.id,1)));
+   if(getDatabaseItemType(dbItem||item)==='consumable')controls.appendChild(makeButton('Use 1','Use one '+name,()=>changeInventoryQuantity(item.id,-1)));
+   controls.appendChild(makeButton('✕','Remove item completely',()=>removeInventoryItem(item.id),'wpn-del'));
+   head.appendChild(controls);card.appendChild(head);
+   const notes=document.createElement('div');notes.innerHTML=renderTileInfo(item.notes);card.appendChild(notes);
+   if(section.id!=='potions'){
+    const moveLabel=document.createElement('label');moveLabel.className='inventory-move-label';moveLabel.textContent='Move to ';
+    const moveSelect=document.createElement('select');moveSelect.setAttribute('aria-label','Move '+name);
+    [['backpack','Backpack'],['special','Special Items']].forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;option.selected=value===section.id;moveSelect.appendChild(option)});
+    moveSelect.addEventListener('change',()=>setInventorySection(item.id,moveSelect.value));moveLabel.appendChild(moveSelect);card.appendChild(moveLabel);
+   }
+   group.appendChild(card);
+  });
+  list.appendChild(group);
+ });
 }
 renderInventory();
 
