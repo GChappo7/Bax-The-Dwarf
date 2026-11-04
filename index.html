@@ -1301,7 +1301,7 @@ document.getElementById('level')?.addEventListener('input',renderCharacterSkills
 
 function saveFeats(){localStorage.setItem('bax_feats',JSON.stringify(feats))}
 
-function removeFeat(id){feats=feats.filter(f=>f.id!==id);saveFeats();renderFeats()}
+function removeFeat(id){feats=feats.filter(f=>String(f.id)!==String(id));saveFeats();renderFeats();closeCharacterFeat()}
 function updateFeatName(id,value){const f=feats.find(f=>f.id===id);if(!f)return;f.name=value;saveFeats()}
 function updateFeatDesc(id,value){const f=feats.find(f=>f.id===id);if(!f)return;f.desc=value;saveFeats()}
 function featEscape(value){return String(value??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
