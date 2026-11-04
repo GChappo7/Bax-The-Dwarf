@@ -74,6 +74,23 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 #weaponsTable input[data-field]:not([data-field="name"]):not([data-field="dice"]){width:42px}
 .wpn-del{padding:6px 9px;background:#4a2b26;border-color:#6b3a32;flex-shrink:0}
 .feat-item{background:var(--panel2);border:1px solid #443528;border-radius:9px;padding:11px;margin-bottom:10px}
+.feat-row{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 6px;padding:12px;background:var(--panel2);border:1px solid #443528;border-radius:8px;text-align:left}
+.feat-row-name{min-width:0;color:var(--gold);font-size:14px;font-weight:750;overflow-wrap:anywhere}
+.feat-row-hint{flex:0 0 auto;color:var(--muted);font-size:11px;font-weight:600}
+#characterFeatDialog{width:min(560px,calc(100% - 28px));max-height:82dvh;margin:auto;padding:0;overflow:auto;background:var(--panel);color:var(--text);border:1px solid #806638;border-radius:13px}
+#characterFeatDialog::backdrop{background:rgba(0,0,0,.72)}
+.feat-dialog-header{position:sticky;top:0;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px;background:#211912;border-bottom:1px solid #51402f}
+.feat-dialog-header h2{margin:0;color:var(--gold);font-size:17px}
+.feat-dialog-header button{padding:4px 10px;font-size:18px}
+#characterFeatDialogBody{padding:13px}
+.feat-dialog-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.feat-dialog-meta>div{display:flex;flex-direction:column;gap:4px;padding:9px;background:var(--panel2);border:1px solid #443528;border-radius:8px}
+.feat-dialog-meta span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:800}
+.feat-dialog-meta strong{font-size:13px;color:var(--gold)}
+.feat-dialog-section{margin-top:12px;padding-top:10px;border-top:1px solid #443528}
+.feat-dialog-section h3{margin:0 0 5px;color:var(--gold);font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+.feat-dialog-section p{margin:0;color:var(--text);font-size:13px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+.feat-dialog-actions{display:flex;justify-content:space-between;gap:8px;margin-top:16px}
 .tile-info{display:flex;flex-direction:column;align-items:flex-start;gap:5px;margin:6px 0}.tile-info-button{width:27px;height:27px;min-width:27px;padding:0;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:#3a2d22;border:1px solid #806638;color:var(--gold);font-size:15px;font-weight:900;line-height:1}.tile-info-button[aria-expanded="true"]{background:#493821;border-color:var(--gold)}.tile-info-content{width:100%;margin:0;padding:8px 10px;border-left:2px solid var(--gold);border-radius:0 7px 7px 0;background:#1d1712;color:var(--muted);font-size:12px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}.tile-info-content[hidden]{display:none}
 .feat-badges{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
 .feat-badge{font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:4px 7px;border-radius:5px;background:#3b3022;color:var(--gold);border:1px solid #5b4730}
@@ -447,6 +464,11 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </div>
 </details>
 </section>
+
+<dialog id="characterFeatDialog" aria-labelledby="characterFeatDialogTitle">
+ <div class="feat-dialog-header"><h2 id="characterFeatDialogTitle">Feat details</h2><button type="button" aria-label="Close feat details" onclick="closeCharacterFeat()">×</button></div>
+ <div id="characterFeatDialogBody"></div>
+</dialog>
 
 <section id="powerDatabase" class="tab">
  <div class="card">
@@ -1297,29 +1319,41 @@ function featSections(description){
   if(!prerequisites&&/^No special prerequisite$/i.test(effect)){prerequisites='None';effect=''}
   return {prerequisites,effect,source,fighterBonus};
 }
-function toggleFeatEdit(id){const panel=document.getElementById('feat-edit-'+id);if(panel)panel.hidden=!panel.hidden}
 function renderFeats(){
   const list=document.getElementById('featsList');
+  if(!list)return;
   if(!feats.length){list.innerHTML='<p style="color:var(--muted);text-align:center;padding:10px 0">No feats added yet — to add a feat, use the Powers Database.</p>';return}
   list.innerHTML=feats.map(f=>{
-    const d=featSections(f.desc),safeId=Number(f.id);
-    const hasDetail=!!(d.prerequisites||d.effect||d.source);
-    return `
-    <div class="feat-item">
-      <div class="feat-head">
-        <input data-field="name" aria-label="Feat or ability name" value="${featEscape(f.name)}" onchange="updateFeatName(${safeId},this.value)">
-        <button type="button" onclick="toggleFeatEdit(${safeId})">Edit</button>
-        <button type="button" class="wpn-del" aria-label="Remove ${featEscape(f.name)}" onclick="removeFeat(${safeId})">✕</button>
-      </div>
-      <div class="feat-badges"><span class="feat-badge">Feat / Ability</span>${d.fighterBonus?'<span class="feat-badge">Fighter bonus feat</span>':''}</div>
-      ${hasDetail?`<div class="tile-info"><button type="button" class="tile-info-button" aria-label="Show feat description" aria-expanded="false" onclick="toggleTileInfo(this)">i</button><div class="tile-info-content" hidden>${d.prerequisites?`Prerequisites: ${featEscape(d.prerequisites)}\n`:''}${d.effect?`Effect: ${featEscape(d.effect)}\n`:''}${d.source?`Source: ${featEscape(d.source)}`:''}</div></div>`:'<div class="tile-info"><button type="button" class="tile-info-button" aria-label="Show feat description" aria-expanded="false" onclick="toggleTileInfo(this)">i</button><div class="tile-info-content" hidden>No details added yet.</div></div>'}
-      <div id="feat-edit-${safeId}" hidden style="margin-top:10px">
-        <label style="display:block;color:var(--muted);font-size:12px;margin-bottom:5px">Full description (you can include Prerequisites:, Effect, and Source: sections)</label>
-        <textarea placeholder="What it does, benefits, prerequisites..." onchange="updateFeatDesc(${safeId},this.value)">${featEscape(f.desc||'')}</textarea>
-      </div>
-    </div>`
-  }).join('')
+    const safeId=featEscape(String(f.id));
+    const d=featSections(f.desc);
+    return '<button type="button" class="feat-row" onclick="openCharacterFeat(\''+safeId+'\')"><span class="feat-row-name">'+featEscape(f.name)+'</span><span class="feat-row-hint">View details ›</span></button>';
+  }).join('');
 }
+function openCharacterFeat(id){
+  const f=feats.find(item=>String(item.id)===String(id));if(!f)return;
+  const db=Array.isArray(powerDatabase)?powerDatabase.find(item=>normalizeFeatName(item.name)===normalizeFeatName(f.name)):null;
+  const d=featSections(f.desc);
+  const description=String(db&&db.description||f.desc||'').trim();
+  const detail=featSections(description);
+  const source=(db&&db.source)||detail.source||d.source||'';
+  const action=db&&db.action||'Passive';
+  const maxUses=Number(db&&db.maxUses)||0;
+  const effects=db&&Array.isArray(db.effects)?db.effects:[];
+  const body=document.getElementById('characterFeatDialogBody');
+  const title=document.getElementById('characterFeatDialogTitle');
+  if(!body||!title)return;
+  title.textContent=f.name;
+  body.innerHTML=
+    (source?'<span class="badge">'+featEscape(source)+'</span>':'')+
+    '<div class="feat-dialog-meta"><div><span>How to use</span><strong>'+featEscape(action)+'</strong></div><div><span>Uses</span><strong>'+(maxUses>0?maxUses+' per '+featEscape(db.reset||'reset'):'Unlimited / passive')+'</strong></div></div>'+
+    (detail.prerequisites||d.prerequisites?'<section class="feat-dialog-section"><h3>Prerequisites</h3><p>'+featEscape(detail.prerequisites||d.prerequisites)+'</p></section>':'')+
+    (description?'<section class="feat-dialog-section"><h3>Description &amp; effect</h3><p>'+featEscape(detail.effect||description)+'</p></section>':'<p style="color:var(--muted)">No description has been added to this feat yet.</p>')+
+    (effects.length?'<section class="feat-dialog-section"><h3>Effects</h3>'+effects.map(e=>'<p><strong>'+featEscape(e.type||'Effect')+' '+(Number(e.value)>0?'+':'')+Number(e.value||0)+'</strong>'+(e.notes?' — '+featEscape(e.notes):'')+'</p>').join('')+'</section>':'')+
+    '<div class="feat-dialog-actions"><button type="button" class="wpn-del" onclick="removeFeat(\''+featEscape(String(f.id))+'\')">Remove from character</button><button type="button" onclick="closeCharacterFeat()">Close</button></div>';
+  const dialog=document.getElementById('characterFeatDialog');
+  if(dialog&&!dialog.open)dialog.showModal();
+}
+function closeCharacterFeat(){const dialog=document.getElementById('characterFeatDialog');if(dialog&&dialog.open)dialog.close()}
 renderFeats();
 
 
