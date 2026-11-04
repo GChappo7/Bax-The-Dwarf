@@ -410,8 +410,9 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </section>
 
 <section id="inventory" class="tab">
-<div class="card"><h2>Inventory</h2><p style="color:var(--muted);margin-top:0">Add items from your Item Database and adjust carried quantities with − and +. Inventory saves automatically on this phone.</p><div class="item-form" style="margin-bottom:12px"><label>Choose item from database<select id="inventoryDatabaseSelect"><option value="">— Select an item —</option></select></label><label>Quantity to add<input id="inventoryAddQuantity" type="number" min="1" step="1" value="1" inputmode="numeric"></label><button type="button" onclick="addDatabaseItemToInventory()" style="width:100%">+ Add to Inventory</button></div><div id="inventoryList" class="inventory-sections"></div><button onclick="addInventoryItem()" style="margin-top:12px;width:100%">+ Add Custom Inventory Item</button></div>
-<div class="card"><h2>Carrying Notes</h2><textarea data-save="inventoryNotes" placeholder="Coin totals, weight, storage, items to sell..."></textarea></div>
+<div class="item-form inventory-add-controls" style="margin-bottom:12px"><label>Choose item from database<select id="inventoryDatabaseSelect"><option value="">— Select an item —</option></select></label><label>Quantity to add<input id="inventoryAddQuantity" type="number" min="1" step="1" value="1" inputmode="numeric"></label><button type="button" onclick="addDatabaseItemToInventory()" style="width:100%">+ Add to Inventory</button></div>
+<div id="inventoryList" class="inventory-sections"></div>
+<button onclick="addInventoryItem()" style="margin-top:12px;width:100%">+ Add Custom Inventory Item</button>
 </section>
 
 <section id="itemDatabase" class="tab">
