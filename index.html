@@ -287,7 +287,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   transform:translateY(-3px);
 }
 
-.db-info-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}.db-info-heading h2{margin:0}.db-info-heading>.tile-info{margin:0;flex:0 0 auto}.db-info-heading .tile-info-content{position:relative}.db-modifier-heading{justify-content:flex-start;margin:16px 0 8px}.db-modifier-heading h2{margin:0}
+.db-info-heading{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:8px;row-gap:6px;margin-bottom:8px;min-width:0}.db-info-heading h2{margin:0;min-width:0;overflow-wrap:anywhere}.db-info-heading>.tile-info{display:contents}.db-info-heading>.tile-info>.tile-info-button{grid-column:2;grid-row:1;justify-self:end}.db-info-heading>.tile-info>.tile-info-content{grid-column:1 / -1;grid-row:2;width:100%;min-width:0;box-sizing:border-box;white-space:normal;overflow-wrap:anywhere}.db-modifier-heading{justify-content:flex-start;margin:16px 0 8px}.db-modifier-heading h2{margin:0}
 </style>
 </head>
 <body>
