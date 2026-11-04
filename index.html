@@ -118,12 +118,15 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .dashboard-bottom-row{grid-template-columns:repeat(2,minmax(0,1fr))}.xp-tile{grid-column:auto;padding:10px;text-align:left;align-self:stretch}.dashboard-info-tile{text-align:center;background:var(--panel2);border:1px solid #443528;border-radius:12px}.dashboard-info-tile .xp-title{text-align:center!important;font-size:11px!important;color:var(--gold)!important}.dashboard-info-tile .xp-values label{text-align:center;align-items:center}.dashboard-info-tile .xp-values input,.dashboard-info-tile .xp-values select{box-sizing:border-box;width:100%;min-width:0;text-align:center;background:#17130f;border:1px solid #51402f;border-radius:6px;color:var(--text);font:600 14px system-ui,-apple-system,Segoe UI,sans-serif;padding:5px}.character-details-tile{padding:10px 11px!important}.character-details-tile .xp-title{padding-bottom:7px;margin-bottom:5px;border-bottom:1px solid #51402f;letter-spacing:.09em!important}.character-details-values{gap:0!important}.character-details-values label{display:grid!important;grid-template-columns:65px minmax(0,1fr);align-items:center;width:100%;min-height:25px;padding:2px 0;border-bottom:1px solid rgba(129,101,69,.22);font-size:10px!important;text-align:left!important;gap:4px!important;color:var(--muted)}.character-details-values label:last-child{border-bottom:0}.character-details-values input,.character-details-values select{width:100%;min-width:0;font-size:12px!important;font-weight:650!important;padding:2px 0!important;text-align:left!important;text-align-last:left!important;background:transparent!important;border:0!important;border-radius:0!important;color:var(--text)!important;box-shadow:none!important;outline-offset:2px}.character-details-values input:focus,.character-details-values select:focus{outline:1px solid #806638;border-radius:3px!important;background:rgba(201,160,82,.06)!important}.character-details-values select{appearance:auto;-webkit-appearance:auto}.character-details-values select option{background:var(--panel);color:var(--text)}@media(max-width:390px){.character-details-tile{padding:9px 8px!important}.character-details-values label{grid-template-columns:58px minmax(0,1fr);font-size:9px!important;min-height:24px}.character-details-values input,.character-details-values select{font-size:11px!important}.xp-tile{padding:8px 6px}}.dashboard-info-tile .xp-values{align-items:stretch}.xp-title{display:block;text-align:left;font-size:11px!important;font-weight:800;letter-spacing:.07em;color:var(--gold)!important;margin-bottom:7px}.xp-values{display:flex;flex-direction:column;gap:7px}.xp-values label{display:flex;flex-direction:column;gap:3px;font-size:10px;color:var(--muted);text-align:left}.xp-values input{width:100%;min-width:0;padding:5px 7px;background:#17130f;border:1px solid #51402f;border-radius:6px;color:var(--text);font:600 16px system-ui,-apple-system,Segoe UI,sans-serif;text-align:center}.xp-tile .xp-values{gap:6px}.xp-tile .xp-values label{font-size:9px}.xp-tile .xp-values input{font-size:14px;padding:4px 5px}.level-up-button{width:100%;margin-top:9px;background:#3a633f;border-color:#6fa875;color:#fff3c4;font-size:12px;white-space:normal}.level-up-button[hidden]{display:none!important}#fireworksOverlay{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:999;overflow:hidden}
 
 .ability-score-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.ability-score-box{min-width:0;aspect-ratio:1/0.9;display:flex;flex-direction:column;justify-content:space-between;gap:8px;padding:12px;background:var(--panel2);border:1px solid #51402f;border-radius:10px}
-.ability-score-box>label{font-size:13px;font-weight:800;color:var(--gold)}
-.ability-score-box>input{width:100%;box-sizing:border-box;text-align:center;font-size:24px;font-weight:800;color:var(--gold);padding:6px}
-.ability-modifier-row{display:flex;align-items:center;justify-content:space-between;gap:6px;border-top:1px solid #443528;padding-top:8px}
+.ability-score-list{display:flex;flex-direction:column;gap:7px;width:min(100%,360px);padding:10px;border:1px solid #806638;border-radius:12px;background:rgba(0,0,0,.12);box-sizing:border-box}
+.ability-score-row{display:grid;grid-template-columns:66px minmax(64px,1fr);align-items:center;gap:12px;min-height:66px}
+.ability-score-box{position:relative;width:66px;height:66px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;padding:15px 4px 4px;background:var(--panel2);border:1px solid #806638;border-radius:9px}
+.ability-score-box>label{position:absolute;top:4px;left:5px;right:25px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:9px;font-weight:800;color:var(--gold)}
+.ability-score-box>input{width:100%;min-width:0;height:34px;box-sizing:border-box;text-align:center;font-size:21px;font-weight:800;color:var(--gold);padding:2px;background:transparent;border:0;outline-offset:1px}
+.ability-score-bonus{position:absolute;top:3px;right:3px;min-width:18px;height:18px;display:flex;align-items:center;justify-content:center;padding:0 2px;box-sizing:border-box;border:1px solid #b18b45;border-radius:4px;background:#382b1c;color:#f0c66d;font-size:10px;font-weight:800;line-height:1}
+.ability-modifier-row{display:flex;align-items:center;gap:7px;min-width:0}
 .ability-modifier-row span{font-size:11px;color:var(--muted)}
-.ability-modifier-row strong{font-size:20px;color:var(--gold)}
+.ability-modifier-row strong{font-size:22px;color:var(--gold)}
 @media(min-width:520px){.ability-score-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .skills-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .character-section{padding:0;overflow:hidden}
@@ -421,16 +424,13 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </section>
 
 <section id="stats" class="tab">
-<div class="card"><h2>Ability Scores</h2><p style="color:var(--muted);margin-top:0">Enter each ability score. Its modifier is calculated automatically and saved on this phone.</p>
-<div class="ability-score-grid">
-<div class="ability-score-box"><label for="ability_str">Strength</label><input id="ability_str" data-save="str" type="number" inputmode="numeric" aria-label="Base Strength score" placeholder="—"><div class="ability-modifier-row"><span>Effective score / modifier</span><strong id="effective_str">— / —</strong></div></div>
-<div class="ability-score-box"><label for="ability_dex">Dexterity</label><input id="ability_dex" data-save="dex" type="number" inputmode="numeric" aria-label="Dexterity score" placeholder="—"><div class="ability-modifier-row"><span>Modifier</span><strong id="modifier_dex">—</strong></div></div>
-<div class="ability-score-box"><label for="ability_con">Constitution</label><input id="ability_con" data-save="con" type="number" inputmode="numeric" aria-label="Constitution score" placeholder="—"><div class="ability-modifier-row"><span>Modifier</span><strong id="modifier_con">—</strong></div></div>
-<div class="ability-score-box"><label for="ability_int">Intelligence</label><input id="ability_int" data-save="int" type="number" inputmode="numeric" aria-label="Intelligence score" placeholder="—"><div class="ability-modifier-row"><span>Modifier</span><strong id="modifier_int">—</strong></div></div>
-<div class="ability-score-box"><label for="ability_wis">Wisdom</label><input id="ability_wis" data-save="wis" type="number" inputmode="numeric" aria-label="Wisdom score" placeholder="—"><div class="ability-modifier-row"><span>Modifier</span><strong id="modifier_wis">—</strong></div></div>
-<div class="ability-score-box"><label for="ability_cha">Charisma</label><input id="ability_cha" data-save="cha" type="number" inputmode="numeric" aria-label="Charisma score" placeholder="—"><div class="ability-modifier-row"><span>Modifier</span><strong id="modifier_cha">—</strong></div></div>
- <div class="ability-score-box"><label for="ability_com">Com.</label><input id="ability_com" data-save="com" type="number" inputmode="numeric" aria-label="Comeliness score" placeholder="—"><div class="ability-modifier-row"><span>Modifier</span><strong id="modifier_com">—</strong></div></div>
-</div></div>
+<div class="card"><h2>Ability Scores</h2><p style="color:var(--muted);margin-top:0">Enter your base scores in the squares. Equipment bonuses appear in the corner and are included in the modifier.</p><div class="ability-score-list"><div class="ability-score-row"><div class="ability-score-box"><label for="ability_str">Strength</label><input id="ability_str" data-save="str" type="number" inputmode="numeric" aria-label="Base Strength score" placeholder="—"><span class="ability-score-bonus" id="bonus_str" hidden></span></div><div class="ability-modifier-row"><span>Modifier</span><strong id="modifier_str">—</strong></div></div>
+<div class="ability-score-row"><div class="ability-score-box"><label for="ability_int">Intelligence</label><input id="ability_int" data-save="int" type="number" inputmode="numeric" aria-label="Base Intelligence score" placeholder="—"><span class="ability-score-bonus" id="bonus_int" hidden></span></div><div class="ability-modifier-row"><span>Modifier</span><strong id="modifier_int">—</strong></div></div>
+<div class="ability-score-row"><div class="ability-score-box"><label for="ability_wis">Wisdom</label><input id="ability_wis" data-save="wis" type="number" inputmode="numeric" aria-label="Base Wisdom score" placeholder="—"><span class="ability-score-bonus" id="bonus_wis" hidden></span></div><div class="ability-modifier-row"><span>Modifier</span><strong id="modifier_wis">—</strong></div></div>
+<div class="ability-score-row"><div class="ability-score-box"><label for="ability_dex">Dexterity</label><input id="ability_dex" data-save="dex" type="number" inputmode="numeric" aria-label="Base Dexterity score" placeholder="—"><span class="ability-score-bonus" id="bonus_dex" hidden></span></div><div class="ability-modifier-row"><span>Modifier</span><strong id="modifier_dex">—</strong></div></div>
+<div class="ability-score-row"><div class="ability-score-box"><label for="ability_con">Constitution</label><input id="ability_con" data-save="con" type="number" inputmode="numeric" aria-label="Base Constitution score" placeholder="—"><span class="ability-score-bonus" id="bonus_con" hidden></span></div><div class="ability-modifier-row"><span>Modifier</span><strong id="modifier_con">—</strong></div></div>
+<div class="ability-score-row"><div class="ability-score-box"><label for="ability_cha">Charisma</label><input id="ability_cha" data-save="cha" type="number" inputmode="numeric" aria-label="Base Charisma score" placeholder="—"><span class="ability-score-bonus" id="bonus_cha" hidden></span></div><div class="ability-modifier-row"><span>Modifier</span><strong id="modifier_cha">—</strong></div></div>
+<div class="ability-score-row"><div class="ability-score-box"><label for="ability_com">Com.</label><input id="ability_com" data-save="com" type="number" inputmode="numeric" aria-label="Base Com. score" placeholder="—"><span class="ability-score-bonus" id="bonus_com" hidden></span></div><div class="ability-modifier-row"><span>Modifier</span><strong id="modifier_com">—</strong></div></div></div></div>
 </section>
 
 <section id="weapons" class="tab">
@@ -732,14 +732,14 @@ function effectiveAbilityScore(key,baseScore){
   return Number.isFinite(base)?base+equippedAbilityBonus(key):null;
 }
 function renderAbilityScoreModifiers(){
-  [['str','ability_str'],['dex','ability_dex'],['con','ability_con'],['int','ability_int'],['wis','ability_wis'],['cha','ability_cha'],['com','ability_com']].forEach(([key,id])=>{
-    const input=document.getElementById(id),out=key==='str'?document.getElementById('effective_str'):document.getElementById('modifier_'+key);
+  [['str','ability_str'],['int','ability_int'],['wis','ability_wis'],['dex','ability_dex'],['con','ability_con'],['cha','ability_cha'],['com','ability_com']].forEach(([key,id])=>{
+    const input=document.getElementById(id),out=document.getElementById('modifier_'+key),bonusOut=document.getElementById('bonus_'+key);
     if(!input||!out)return;
-    const raw=input.value.trim();
-    if(raw===''){out.textContent='—';if(key==='str'){const effective=document.getElementById('effective_str');if(effective)effective.textContent='— / —'}return}
+    const raw=input.value.trim(),bonus=equippedAbilityBonus(key);
+    if(bonusOut){bonusOut.textContent=(bonus>0?'+':'')+bonus;bonusOut.hidden=!bonus}
+    if(raw===''){out.textContent='—';return}
     const score=effectiveAbilityScore(key,raw),mod=Math.floor((score-10)/2);
     out.textContent=(mod>0?'+':'')+mod;
-    if(key==='str'){const effective=document.getElementById('effective_str');if(effective)effective.textContent=String(score)+' / '+(mod>0?'+':'')+mod}
   });
 }
 document.querySelectorAll('#stats [data-save]').forEach(el=>el.addEventListener('input',()=>{renderAbilityScoreModifiers();if(typeof renderRoundCalc==='function')renderRoundCalc();if(typeof updateArmourClass==='function')updateArmourClass()}));
@@ -1191,7 +1191,7 @@ function addWeapon(){weapons.push({id:Date.now(),name:'New Weapon',atk:blankRoll
 function removeWeapon(id){weapons=weapons.filter(w=>w.id!==id);saveWeapons();if(typeof roundWeaponId!=='undefined'&&String(roundWeaponId)===String(id)){roundWeaponId='';localStorage.removeItem('bax_round_weapon')}renderWeapons();if(typeof roundWeaponId!=='undefined')renderRoundOptions()}
 function updateWeaponName(id,value){const w=weapons.find(w=>w.id===id);if(!w)return;w.name=value;saveWeapons();if(typeof roundWeaponId!=='undefined')renderRoundOptions()}
 function updateWeaponField(id,rollType,field,value){const w=weapons.find(w=>w.id===id);if(!w)return;w[rollType][field]=Number(value)||0;saveWeapons();renderWeapons();if(typeof renderRoundCalc==='function')renderRoundCalc()}
-function effectiveStrengthModifier(roll){const input=document.getElementById('ability_str');if(input&&input.value.trim()!=='')return Math.floor((Number(input.value)-10)/2);return Number(roll.str)||0}
+function effectiveStrengthModifier(roll){const input=document.getElementById('ability_str');if(input&&input.value.trim()!==''){const score=effectiveAbilityScore('str',input.value);return Math.floor((score-10)/2)}return Number(roll.str)||0}
 function effectiveRoll(roll){return {...roll,str:effectiveStrengthModifier(roll)}}
 function total(o){return(o.base||0)+(o.str||0)+(o.feats||0)+(o.wpn||0)}
 function renderWeapons(){
