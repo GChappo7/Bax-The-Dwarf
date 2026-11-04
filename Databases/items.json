@@ -810,5 +810,423 @@
     "description": "Grants a +2 morale bonus on attack rolls, damage rolls, saves and skill checks. Caster level 7. Market price: 1,050 gp.",
     "modifiers": [],
     "itemType": "Consumable"
+  },
+  {
+    "id": "bedroll",
+    "name": "Bedroll",
+    "category": "Adventuring Gear",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "1 sp; 5 lb. A portable bedding roll for sleeping outdoors.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "blanket-winter",
+    "name": "Blanket, Winter",
+    "category": "Adventuring Gear",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "5 sp; 3 lb. A thick blanket for warmth while resting.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "hempen-rope-50ft",
+    "name": "Rope, Hempen (50 ft.)",
+    "category": "Adventuring Gear",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "1 gp; 10 lb. 50 feet of strong hemp rope.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "silk-rope-50ft",
+    "name": "Rope, Silk (50 ft.)",
+    "category": "Adventuring Gear",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "10 gp; 5 lb. Lighter, stronger silk rope.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "waterskin",
+    "name": "Waterskin",
+    "category": "Containers",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "1 gp; 4 lb. when full (empty weight negligible in this entry). Holds enough water for one Medium creature's daily needs.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "trail-rations-1-day",
+    "name": "Trail Rations (1 day)",
+    "category": "Food & Drink",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "5 sp; 1 lb. Food for one person for one day.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "backpack",
+    "name": "Backpack",
+    "category": "Containers",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "2 gp; 2 lb. An ordinary adventurer's backpack.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "belt-pouch",
+    "name": "Belt Pouch",
+    "category": "Containers",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "1 gp; 1/2 lb. Small pouch for coins and small items.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "sack",
+    "name": "Sack",
+    "category": "Containers",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "1 sp; 1/2 lb. A simple cloth sack.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "pouch",
+    "name": "Pouch",
+    "category": "Containers",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "1 gp; 1/2 lb. Small pouch for carrying components or valuables.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "handy-haversack",
+    "name": "Handy Haversack",
+    "category": "Containers",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "2,000 gp; 5 lb. Wondrous item. Its extradimensional storage keeps contents organised and makes retrieving an item stored in it a move action that does not provoke attacks of opportunity. The central compartment holds 8 cubic feet (up to 80 lb.); each side pouch holds 2 cubic feet (up to 20 lb.).",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "arrows-20",
+    "name": "Arrows (20)",
+    "category": "Ammunition",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "1 gp; 3 lb. A standard bundle of 20 arrows for bows. Stored in a quiver.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "crossbow-bolts-10",
+    "name": "Crossbow Bolts (10)",
+    "category": "Ammunition",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "1 gp; 1 lb. A standard bundle of 10 bolts for crossbows.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "quiver",
+    "name": "Quiver",
+    "category": "Containers",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "1 gp; 1 lb. Holds up to 20 arrows.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "bolt-case",
+    "name": "Crossbow Bolt Case",
+    "category": "Containers",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "1 gp; 1 lb. A case for carrying crossbow bolts.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "sling-bullets-10",
+    "name": "Sling Bullets (10)",
+    "category": "Ammunition",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "1 sp; 5 lb. Ten metal bullets for a sling.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "flint-and-steel",
+    "name": "Flint and Steel",
+    "category": "Tools & Kits",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "1 gp. Used to light a fire; lighting a torch takes a full-round action, and other fires take at least as long.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "torch",
+    "name": "Torch",
+    "category": "Adventuring Gear",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "1 cp; 1 lb. Burns for 1 hour, clearly illuminating a 20-foot radius and providing shadowy illumination for another 20 feet.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "hooded-lantern",
+    "name": "Hooded Lantern",
+    "category": "Adventuring Gear",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "7 gp; 2 lb. Provides normal illumination in a 30-foot radius and increases the radius of shadowy illumination by 30 feet; burns one flask of oil for 6 hours.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "oil-flask",
+    "name": "Oil (1-pint Flask)",
+    "category": "Adventuring Gear",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "1 sp; 1 lb. Fuels a lamp or lantern; can also be used as a splash weapon.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "tinder-twig",
+    "name": "Tindertwig",
+    "category": "Adventuring Gear",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "1 gp; —. A alchemical fire-lighting stick that ignites when struck; burns for 1d2 rounds.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "crowbar",
+    "name": "Crowbar",
+    "category": "Tools & Kits",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "2 gp; 5 lb. Grants a +2 circumstance bonus on Strength checks made to force open a door or chest.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "grappling-hook",
+    "name": "Grappling Hook",
+    "category": "Tools & Kits",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "1 gp; 4 lb. A hooked device used with rope for climbing or securing lines.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "hammer",
+    "name": "Hammer",
+    "category": "Tools & Kits",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "5 sp; 2 lb. A basic hammer.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "pitons-10",
+    "name": "Pitons (10)",
+    "category": "Tools & Kits",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "1 gp; 5 lb. Ten iron spikes used to secure ropes or aid climbing.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "climbers-kit",
+    "name": "Climber's Kit",
+    "category": "Tools & Kits",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "80 gp; 5 lb. Includes special pitons, boot tips, gloves and a harness; grants a +2 circumstance bonus on Climb checks.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "healers-kit",
+    "name": "Healer's Kit",
+    "category": "Tools & Kits",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "50 gp; 1 lb. Contains bandages, salves and splints; has 10 uses and grants a +2 circumstance bonus on Heal checks.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "mess-kit",
+    "name": "Mess Kit",
+    "category": "Adventuring Gear",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "2 sp; 1 lb. Basic utensils and a small plate or bowl for preparing and eating meals.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "waterskin-full",
+    "name": "Waterskin (Full)",
+    "category": "Containers",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "1 gp; 4 lb. Filled waterskin; contents provide drinking water for one Medium creature for one day.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "soap",
+    "name": "Soap (1 lb.)",
+    "category": "Adventuring Gear",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "5 sp; 1 lb. Basic cleaning soap.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "bedroll-winter",
+    "name": "Winter Bedroll",
+    "category": "Adventuring Gear",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "3 gp; 5 lb. A warmer bedroll suitable for cold-weather travel (campaign variant item).",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "tent",
+    "name": "Tent",
+    "category": "Adventuring Gear",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "10 gp; 20 lb. A simple tent providing shelter for one or more travellers, depending on size.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "fishing-net",
+    "name": "Fishing Net (25 sq. ft.)",
+    "category": "Tools & Kits",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "4 gp; 5 lb. A net used for fishing or catching small creatures.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "iron-pot",
+    "name": "Iron Pot",
+    "category": "Adventuring Gear",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "5 sp; 10 lb. A cooking pot suitable for preparing meals over a fire.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "shovel",
+    "name": "Shovel",
+    "category": "Tools & Kits",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "2 gp; 8 lb. Used for digging.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "chalk-10",
+    "name": "Chalk (10 pieces)",
+    "category": "Tools & Kits",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "1 sp; negligible weight. Ten pieces of chalk for marking routes and surfaces.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "map-case",
+    "name": "Map or Scroll Case",
+    "category": "Containers",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "1 gp; 1/2 lb. Protects maps, papers or scrolls from damage.",
+    "modifiers": [],
+    "itemType": "Inventory"
+  },
+  {
+    "id": "waterskin-empty",
+    "name": "Waterskin (Empty)",
+    "category": "Containers",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "1 gp; 1 lb. Empty leather container for carrying water.",
+    "modifiers": [],
+    "itemType": "Inventory"
   }
 ]
