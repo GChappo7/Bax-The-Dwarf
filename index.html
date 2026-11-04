@@ -444,8 +444,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <details class="card character-section" id="characterSkillsSection">
 <summary class="db-item-summary"><span class="db-item-title">Skills</span><span class="db-item-chevron" aria-hidden="true">▾</span></summary>
 <div class="character-section-content">
-<p style="color:var(--muted);font-size:12px;margin-top:0">Import the standard D&amp;D 3.5e skill list, then add the skills Bax has ranks in. Ability modifiers are calculated from your Ability Scores.</p>
-<div class="skill-library-actions"><button type="button" onclick="loadDefaultSkills()">Import / Refresh Skills Database</button><span id="skillLibraryStatus" aria-live="polite">Skills database not imported yet.</span></div>
+<p style="color:var(--muted);font-size:12px;margin-top:0">Choose the skills Bax has ranks in. Import or refresh the standard D&amp;D 3.5e skill list from the Powers Database. Ability modifiers are calculated from your Ability Scores.</p>
 <label class="skill-add-label">Choose a skill<select id="characterSkillSelect"><option value="">— Import the database first —</option></select></label>
 <button type="button" onclick="addCharacterSkill()" style="width:100%;margin:8px 0 12px">+ Add Skill to Character</button>
 <div id="characterSkillsList"></div>
@@ -455,6 +454,13 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 
 <section id="powerDatabase" class="tab">
  <div class="card">
+  <details class="card character-section" id="skillsDatabaseImportSection">
+   <summary class="db-item-summary"><span class="db-item-title">Import Skills Database</span><span class="db-item-chevron" aria-hidden="true">▾</span></summary>
+   <div class="character-section-content">
+    <p style="color:var(--muted);font-size:12px;margin-top:0">Load or refresh the standard D&amp;D 3.5e skills available to add from the character Skills section.</p>
+    <div class="skill-library-actions"><button type="button" onclick="loadDefaultSkills()">Import / Refresh Skills Database</button><span id="skillLibraryStatus" aria-live="polite">Skills database not imported yet.</span></div>
+   </div>
+  </details>
   <div class="db-info-heading"><h2>Powers, Feats &amp; Abilities Database</h2><div class="tile-info"><button type="button" class="tile-info-button" aria-label="Show description" aria-expanded="false" aria-controls="dbInfoPowerDatabase" onclick="toggleTileInfo(this)">i</button><div id="dbInfoPowerDatabase" class="tile-info-content" hidden>Create reusable feats, class features, racial abilities, powers and special actions. Entries save locally on this device.</div></div></div>
   <details class="power-create-details"><summary class="db-item-summary"><span class="db-item-title">Create / Edit Power, Feat or Ability</span><span class="db-item-chevron" aria-hidden="true">▾</span></summary><div class="item-form power-create-form">
    <label>Name<input id="powerName" placeholder="e.g. Power Attack"></label>
@@ -472,7 +478,10 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
  </div>
  <div class="card"><div class="db-info-heading"><h2>My Powers, Feats &amp; Abilities</h2><div class="tile-info"><button type="button" class="tile-info-button" aria-label="Show description" aria-expanded="false" aria-controls="dbInfoMyPowers" onclick="toggleTileInfo(this)">i</button><div id="dbInfoMyPowers" class="tile-info-content" hidden>Add saved entries to Bax's list, enable effects, track uses and reset them when appropriate.</div></div></div><label style="display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:13px">Choose from database<select id="characterPowerSelect"><option value="">— Select an entry —</option></select></label><button type="button" onclick="addCharacterPower()" style="width:100%;margin:10px 0 12px">+ Add to Character</button><div id="characterPowersList"></div></div>
  <div class="card"><div class="db-info-heading"><h2>Fighter Feat Catalogue</h2><div class="tile-info"><button type="button" class="tile-info-button" aria-label="Show description" aria-expanded="false" aria-controls="dbInfoFighterCatalogue" onclick="toggleTileInfo(this)">i</button><div id="dbInfoFighterCatalogue" class="tile-info-content" hidden>Import a deduplicated D&amp;D 3.5e fighter-oriented catalogue. Descriptions are concise summaries; situational and weapon-specific rules remain manual so they do not incorrectly alter every attack.</div></div></div><button type="button" onclick="importFighterFeatCatalog()">Import Fighter Feat Catalogue</button><p id="fighterFeatImportStatus" style="color:var(--muted);font-size:12px"></p></div>
- <div class="card"><h2>Saved Database Entries</h2><div id="powerDatabaseList"></div></div>
+ <details class="card character-section" id="savedPowerDatabaseEntries">
+   <summary class="db-item-summary"><span class="db-item-title">Saved Database Entries</span><span class="db-item-chevron" aria-hidden="true">▾</span></summary>
+   <div class="character-section-content"><div id="powerDatabaseList"></div></div>
+  </details>
 </section>
 
 <section id="armour" class="tab">
