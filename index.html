@@ -296,15 +296,16 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .inventory-group-backpack{grid-area:backpack}
 .inventory-group-potions{grid-area:potions}
 .inventory-group-special{grid-area:special}
-.inventory-item{margin:0 0 8px;padding:9px!important}
+.inventory-item{margin:0 0 5px;padding:5px 7px!important}
 .inventory-item:last-child{margin-bottom:0}
-.inventory-item .feat-head{display:flex;flex-direction:column;align-items:stretch;gap:7px}
-.inventory-item .feat-head>strong{font-size:13px}
-.inventory-item-controls{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.inventory-item-controls button{min-width:30px;min-height:32px;padding:3px 8px;font-size:14px}
-.inventory-item-controls strong{min-width:20px;text-align:center}
-.inventory-move-label{display:flex;align-items:center;gap:6px;margin-top:7px;font-size:11px;color:var(--muted)}
-.inventory-move-label select{min-width:0;flex:1;padding:5px;font-size:12px}
+.inventory-item .feat-head{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:6px;min-width:0}
+.inventory-item .feat-head>strong{font-size:12px;line-height:1.2;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.inventory-item-controls{display:flex;align-items:center;justify-content:flex-end;gap:3px;flex:0 0 auto;flex-wrap:nowrap}
+.inventory-item-controls button{min-width:23px;min-height:24px;padding:1px 5px;font-size:12px;line-height:1}
+.inventory-item-controls strong{min-width:15px;text-align:center;font-size:12px}
+.inventory-move-label{display:flex;align-items:center;gap:3px;margin:0;font-size:10px;color:var(--muted);white-space:nowrap}
+.inventory-move-label select{width:auto;max-width:82px;min-width:0;padding:2px 3px;font-size:10px}
+.inventory-item-notes{font-size:11px;line-height:1.2;margin-top:3px}
 .inventory-empty{font-size:12px;color:var(--muted);margin:4px 0}
 .inventory-add-wrap{display:flex;justify-content:center;margin:12px 0 2px}
 .inventory-add-button{width:34px;height:34px;min-width:34px;padding:0;border-radius:50%;font-size:22px;line-height:1;display:flex;align-items:center;justify-content:center}
@@ -950,12 +951,12 @@ function renderInventory(){
    if(getDatabaseItemType(dbItem||item)==='consumable')controls.appendChild(makeButton('Use 1','Use one '+name,()=>changeInventoryQuantity(item.id,-1)));
    controls.appendChild(makeButton('✕','Remove item completely',()=>removeInventoryItem(item.id),'wpn-del'));
    head.appendChild(controls);card.appendChild(head);
-   const notes=document.createElement('div');notes.innerHTML=renderTileInfo(item.notes);card.appendChild(notes);
+   if(item.notes){const notes=document.createElement('div');notes.className='inventory-item-notes';notes.innerHTML=renderTileInfo(item.notes);card.appendChild(notes)}
    if(section.id!=='potions'){
     const moveLabel=document.createElement('label');moveLabel.className='inventory-move-label';moveLabel.textContent='Move to ';
     const moveSelect=document.createElement('select');moveSelect.setAttribute('aria-label','Move '+name);
     [['backpack','Backpack'],['special','Special Items']].forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;option.selected=value===section.id;moveSelect.appendChild(option)});
-    moveSelect.addEventListener('change',()=>setInventorySection(item.id,moveSelect.value));moveLabel.appendChild(moveSelect);card.appendChild(moveLabel);
+    moveSelect.addEventListener('change',()=>setInventorySection(item.id,moveSelect.value));moveLabel.appendChild(moveSelect);controls.appendChild(moveLabel);
    }
    group.appendChild(card);
   });
