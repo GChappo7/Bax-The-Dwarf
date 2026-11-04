@@ -312,6 +312,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .inventory-dialog{width:min(100%,420px);max-height:min(80vh,620px);overflow:auto;background:var(--panel,#211b16);border:1px solid var(--gold,#b89452);border-radius:14px;padding:14px;box-shadow:0 16px 50px rgba(0,0,0,.55)}
 .inventory-dialog-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
 .inventory-dialog-header h3{margin:0;color:var(--gold,#d4af62);font-size:17px}
+.inventory-dialog-search{display:block;width:100%;box-sizing:border-box;margin:0 0 10px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:rgba(0,0,0,.18);color:var(--text);font:inherit;font-size:14px}
+.inventory-dialog-search::placeholder{color:var(--muted)}
 .inventory-dialog-close{width:32px;height:32px;min-width:32px;padding:0;font-size:22px;line-height:1}
 .inventory-dialog-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--border)}
 .inventory-dialog-item:last-child{border-bottom:0}
@@ -966,7 +968,7 @@ function renderInventory(){
 function closeInventoryAddDialog(){
  const dialog=document.getElementById('inventoryAddDialog');if(dialog)dialog.remove();
 }
-function openInventoryAddDialog(sectionId,title){
+function openInventoryAddDialog(sectionId,title,searchTerm=''){
  closeInventoryAddDialog();
  const overlay=document.createElement('div');overlay.id='inventoryAddDialog';overlay.className='inventory-dialog-overlay';
  overlay.addEventListener('click',event=>{if(event.target===overlay)closeInventoryAddDialog()});
@@ -974,13 +976,14 @@ function openInventoryAddDialog(sectionId,title){
  const top=document.createElement('div');top.className='inventory-dialog-header';
  const heading=document.createElement('h3');heading.textContent='Add to '+title;top.appendChild(heading);
  const close=document.createElement('button');close.type='button';close.className='inventory-dialog-close';close.textContent='×';close.setAttribute('aria-label','Close');close.addEventListener('click',closeInventoryAddDialog);top.appendChild(close);dialog.appendChild(top);
+ const search=document.createElement('input');search.type='search';search.className='inventory-dialog-search';search.placeholder='Search '+title.toLowerCase()+'...';search.setAttribute('aria-label','Search available '+title.toLowerCase());search.value=searchTerm;dialog.appendChild(search);
  const list=document.createElement('div');list.className='inventory-dialog-items';
  const existingIds=new Set(inventoryItems.filter(item=>item.databaseItemId!=null).map(item=>String(item.databaseItemId)));
  const available=databaseItems.filter(dbItem=>{
   const candidate={name:dbItem.name,category:dbItem.category,rarity:dbItem.rarity};
   return getInventorySection(candidate,dbItem)===sectionId&&!existingIds.has(String(dbItem.id));
  }).sort((a,b)=>String(a.name||'').localeCompare(String(b.name||'')));
- if(!available.length){const empty=document.createElement('p');empty.className='inventory-empty';empty.textContent='No available items in this category.';list.appendChild(empty)}
+ const rows=[];
  available.forEach(dbItem=>{
   const row=document.createElement('div');row.className='inventory-dialog-item';
   const name=document.createElement('span');name.textContent=dbItem.name||'Unnamed item';row.appendChild(name);
@@ -988,10 +991,13 @@ function openInventoryAddDialog(sectionId,title){
    const existing=inventoryItems.find(item=>String(item.databaseItemId)===String(dbItem.id));
    if(existing)existing.qty=(Number(existing.qty)||0)+1;
    else inventoryItems.push({id:Date.now()+Math.random(),databaseItemId:dbItem.id,name:dbItem.name,qty:1,notes:dbItem.description||''});
-   saveInventory();renderInventory();openInventoryAddDialog(sectionId,title);
-  });row.appendChild(add);list.appendChild(row);
+   saveInventory();renderInventory();openInventoryAddDialog(sectionId,title,search.value);
+  });row.appendChild(add);list.appendChild(row);rows.push({row,name:String(dbItem.name||'').toLocaleLowerCase()});
  });
- dialog.appendChild(list);overlay.appendChild(dialog);document.body.appendChild(overlay);close.focus();
+ const empty=document.createElement('p');empty.className='inventory-empty';empty.textContent=available.length?'No matching items found.':'No available items in this category.';list.appendChild(empty);
+ const filterRows=()=>{const query=search.value.trim().toLocaleLowerCase();let visible=0;rows.forEach(entry=>{const match=entry.name.includes(query);entry.row.hidden=!match;if(match)visible++});empty.hidden=visible>0;};
+ search.addEventListener('input',filterRows);filterRows();
+ dialog.appendChild(list);overlay.appendChild(dialog);document.body.appendChild(overlay);search.focus();
 }
 renderInventory();
 
