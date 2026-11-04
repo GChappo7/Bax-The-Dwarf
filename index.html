@@ -1990,7 +1990,12 @@ window.addEventListener("error",function(event){const status=document.getElement
   window.updateNoteField=function(sectionId,fieldId,value){
     const section=sections.find(item=>item.id===sectionId);
     const field=section?.fields.find(item=>item.id===fieldId);
-    if(field){field.text=value;save()}
+    if(field){
+      field.text=value;save();
+      const row=getRoot()?.querySelector('[data-section-id="'+sectionId+'"]');
+      const preview=row?.querySelector('.notes-section-preview');
+      if(preview){const first=section.fields.map(item=>String(item.text||'').trim()).find(Boolean)||'';preview.textContent=first?first.replace(/\\s+/g,' ').slice(0,90):'No entries yet'}
+    }
   };
   window.addNoteField=function(id){
     const section=sections.find(item=>item.id===id);if(!section)return;
