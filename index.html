@@ -1011,7 +1011,9 @@ function openInventoryAddDialog(sectionId,title,searchTerm=''){
   if(!owned.length){const none=document.createElement('p');none.className='inventory-empty';none.textContent='You have no spare equipment.';list.appendChild(none)}
   owned.forEach(item=>{
    const dbItem=databaseItems.find(db=>String(db.id)===String(item.databaseItemId)),row=document.createElement('div');row.className='inventory-dialog-item';
-   const name=document.createElement('span');name.textContent=(dbItem?.name||item.name||'Unnamed item')+' × '+(Number(item.qty)||0);row.appendChild(name);
+   const name=document.createElement('span');name.textContent=(dbItem?.name||item.name||'Unnamed item');row.appendChild(name);
+   const quantity=document.createElement('strong');quantity.textContent=String(Number(item.qty)||0);quantity.style.cssText='min-width:18px;text-align:center;font-size:12px';row.appendChild(quantity);
+   const remove=document.createElement('button');remove.type='button';remove.textContent='−';remove.setAttribute('aria-label','Remove one '+name.textContent);remove.addEventListener('click',()=>{changeInventoryQuantity(item.id,-1);openInventoryAddDialog('spare','Spare Equipment',search.value)});row.appendChild(remove);
    const add=document.createElement('button');add.type='button';add.textContent='+';add.setAttribute('aria-label','Add one '+name.textContent);add.addEventListener('click',()=>{changeInventoryQuantity(item.id,1);openInventoryAddDialog('spare','Spare Equipment',search.value)});row.appendChild(add);list.appendChild(row);
   });
   const divider=document.createElement('h4');divider.textContent='Add spare equipment';divider.style.cssText='margin:14px 0 8px;color:var(--gold)';list.appendChild(divider);
