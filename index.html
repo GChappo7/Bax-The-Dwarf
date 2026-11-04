@@ -401,10 +401,10 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .dashboard-bottom-row>.character-details-tile>.character-details-main>.xp-title{display:block;margin-bottom:7px;padding-bottom:6px;border-bottom:1px solid #51402f;letter-spacing:.09em!important}
 .dashboard-bottom-row>.character-details-tile>.character-details-main>.xp-values{display:flex;flex-direction:column;gap:5px;align-items:stretch}
 .dashboard-bottom-row>.character-details-tile>.character-details-main>.xp-values label{min-width:0}
-.dashboard-bottom-row>.character-details-tile>.character-details-main>.character-languages-row{display:flex;flex-direction:column;gap:3px;margin-top:7px;padding-top:7px;border-top:1px solid rgba(129,101,69,.35);min-width:0;font-size:9px;line-height:1.3}
-.dashboard-bottom-row>.character-details-tile>.character-details-main>.character-languages-row>span{color:var(--muted)}
-.dashboard-bottom-row>.character-details-tile>.character-details-main>.character-languages-row>strong{color:var(--gold);font-size:10px;font-weight:650;overflow-wrap:anywhere;white-space:normal}
-.dashboard-bottom-row>.character-details-tile>.dashboard-combat-summary{grid-column:2;grid-row:2;min-width:0;margin:0;padding:8px 0 0 8px;border-top:1px solid rgba(129,101,69,.35);border-left:1px solid rgba(129,101,69,.25);align-self:stretch}
+.dashboard-bottom-row>.character-details-tile>.character-details-main>.dashboard-combat-summary{display:grid;grid-template-columns:minmax(0,1fr);gap:0;margin-top:7px;padding:7px 0 0;border-top:1px solid rgba(129,101,69,.35);min-width:0}
+.dashboard-bottom-row>.character-details-tile>.character-languages-row{grid-column:2;grid-row:2;display:flex;flex-direction:column;gap:3px;min-width:0;margin:0;padding:8px 0 0 8px;border-top:1px solid rgba(129,101,69,.35);border-left:1px solid rgba(129,101,69,.25);align-self:stretch;font-size:9px;line-height:1.3}
+.dashboard-bottom-row>.character-details-tile>.character-languages-row>span{color:var(--muted)}
+.dashboard-bottom-row>.character-details-tile>.character-languages-row>strong{color:var(--gold);font-size:10px;font-weight:650;overflow-wrap:anywhere;white-space:normal}
 .dashboard-bottom-row>.xp-tile:not(.character-details-tile){grid-column:2;grid-row:1;align-self:start;z-index:1;min-width:0;margin:0 0 0 8px;padding:9px 8px;box-shadow:0 0 0 4px var(--bg)}
 .dashboard-bottom-row>.xp-tile:not(.character-details-tile) .xp-title{padding-bottom:6px;margin-bottom:7px;border-bottom:1px solid #51402f;letter-spacing:.09em!important}
 .dashboard-bottom-row>.xp-tile:not(.character-details-tile) .xp-values{display:flex;flex-direction:column;gap:3px;align-items:stretch}
@@ -423,7 +423,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 #dashboardLanguagesDialog::backdrop{background:rgba(0,0,0,.72)}
 #dashboardLanguagesDialogBody{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:13px}
 .dashboard-language-dialog-item{padding:8px;background:var(--panel2);border:1px solid #443528;border-radius:7px;color:var(--gold);font-size:12px}
-@media(max-width:390px){.dashboard-bottom-row{gap:6px}.dashboard-bottom-row>.character-details-tile{gap:6px 0;padding:8px 6px}.dashboard-bottom-row>.character-details-tile>.character-details-main{padding-right:6px}.dashboard-bottom-row>.character-details-tile>.dashboard-combat-summary{padding-left:6px}.dashboard-bottom-row>.xp-tile:not(.character-details-tile){padding:8px 5px}.dashboard-bottom-row>.xp-tile:not(.character-details-tile) .xp-values label{font-size:8px}.dashboard-bottom-row>.xp-tile:not(.character-details-tile) .xp-values input{font-size:11px}.dashboard-combat-stat{font-size:8px}.dashboard-combat-stat>strong{font-size:9px}}
+@media(max-width:390px){.dashboard-bottom-row{gap:6px}.dashboard-bottom-row>.character-details-tile{gap:6px 0;padding:8px 6px}.dashboard-bottom-row>.character-details-tile>.character-details-main{padding-right:6px}.dashboard-bottom-row>.xp-tile:not(.character-details-tile){padding:8px 5px}.dashboard-bottom-row>.xp-tile:not(.character-details-tile) .xp-values label{font-size:8px}.dashboard-bottom-row>.xp-tile:not(.character-details-tile) .xp-values input{font-size:11px}.dashboard-combat-stat{font-size:8px}.dashboard-combat-stat>strong{font-size:9px}}
 </style>
 </head>
 <body>
@@ -450,14 +450,14 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <label>Psi ability<input id="psiAbility" data-save="psiAbility" type="text" value="" placeholder="—"></label>
 <label>Social class<input id="socialClass" data-save="socialClass" type="text" value="43"></label>
 <label>Alignment<select id="alignment" data-save="alignment"><option>Lawful Good</option><option>Neutral Good</option><option>Chaotic Good</option><option>Lawful Neutral</option><option>Neutral</option><option>Chaotic Neutral</option><option>Lawful Evil</option><option>Neutral Evil</option><option>Chaotic Evil</option></select></label>
-</div><div class="character-languages-row"><span>Languages</span><strong id="dashboardLanguages">Common, Dwarven</strong></div></div>
+</div>
 <div class="dashboard-combat-summary" aria-label="Additional character details">
 <div class="dashboard-combat-stat"><span>Movement speed</span><strong id="dashboardMovementSpeed">20 ft</strong></div>
 <div class="dashboard-combat-stat"><span>Initiative</span><strong id="dashboardInitiative">+7</strong></div>
 <div class="dashboard-combat-stat"><span>Armour penalty</span><strong id="dashboardArmourPenalty">0</strong></div>
-
 </div>
 </div>
+<div class="character-languages-row"><span>Languages</span><strong id="dashboardLanguages">Common, Dwarven</strong></div>
 <div class="stat xp-tile dashboard-info-tile"><span class="xp-title">EXPERIENCE</span><div class="xp-values"><label>Previous Level XP<input id="xpPrevious" data-save="xpPrevious" type="number" min="0" value="60000" inputmode="numeric"></label><label>Current XP<input id="xpCurrent" data-save="xpCurrent" type="number" min="0" value="0" inputmode="numeric"></label><label>Next Level XP<input id="xpNext" data-save="xpNext" type="number" min="0" value="" placeholder="Enter target" inputmode="numeric"></label></div><button type="button" id="levelUpButton" class="level-up-button" hidden onclick="confirmLevelUp()">🎉 Confirm Level Up</button></div>
 
 </div>
