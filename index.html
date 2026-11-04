@@ -306,6 +306,17 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .inventory-move-label{display:flex;align-items:center;gap:6px;margin-top:7px;font-size:11px;color:var(--muted)}
 .inventory-move-label select{min-width:0;flex:1;padding:5px;font-size:12px}
 .inventory-empty{font-size:12px;color:var(--muted);margin:4px 0}
+.inventory-add-wrap{display:flex;justify-content:center;margin:12px 0 2px}
+.inventory-add-button{width:34px;height:34px;min-width:34px;padding:0;border-radius:50%;font-size:22px;line-height:1;display:flex;align-items:center;justify-content:center}
+.inventory-dialog-overlay{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:18px}
+.inventory-dialog{width:min(100%,420px);max-height:min(80vh,620px);overflow:auto;background:var(--panel,#211b16);border:1px solid var(--gold,#b89452);border-radius:14px;padding:14px;box-shadow:0 16px 50px rgba(0,0,0,.55)}
+.inventory-dialog-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.inventory-dialog-header h3{margin:0;color:var(--gold,#d4af62);font-size:17px}
+.inventory-dialog-close{width:32px;height:32px;min-width:32px;padding:0;font-size:22px;line-height:1}
+.inventory-dialog-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--border)}
+.inventory-dialog-item:last-child{border-bottom:0}
+.inventory-dialog-item span{min-width:0;overflow-wrap:anywhere;font-size:13px}
+.inventory-dialog-item button{flex:0 0 auto;min-width:54px;padding:6px 10px}
 @media(max-width:380px){.inventory-sections{gap:7px}.inventory-group{padding:7px}.inventory-item-controls{gap:4px}.inventory-item-controls button{min-width:27px;padding:2px 6px}}
 </style>
 </head>
@@ -946,8 +957,41 @@ function renderInventory(){
    }
    group.appendChild(card);
   });
+  const addWrap=document.createElement('div');addWrap.className='inventory-add-wrap';
+  const addButton=document.createElement('button');addButton.type='button';addButton.className='inventory-add-button';addButton.textContent='+';addButton.setAttribute('aria-label','Add item to '+section.title);
+  addButton.addEventListener('click',()=>openInventoryAddDialog(section.id,section.title));addWrap.appendChild(addButton);group.appendChild(addWrap);
   list.appendChild(group);
  });
+}
+function closeInventoryAddDialog(){
+ const dialog=document.getElementById('inventoryAddDialog');if(dialog)dialog.remove();
+}
+function openInventoryAddDialog(sectionId,title){
+ closeInventoryAddDialog();
+ const overlay=document.createElement('div');overlay.id='inventoryAddDialog';overlay.className='inventory-dialog-overlay';
+ overlay.addEventListener('click',event=>{if(event.target===overlay)closeInventoryAddDialog()});
+ const dialog=document.createElement('div');dialog.className='inventory-dialog';dialog.setAttribute('role','dialog');dialog.setAttribute('aria-modal','true');dialog.setAttribute('aria-label','Add item to '+title);
+ const top=document.createElement('div');top.className='inventory-dialog-header';
+ const heading=document.createElement('h3');heading.textContent='Add to '+title;top.appendChild(heading);
+ const close=document.createElement('button');close.type='button';close.className='inventory-dialog-close';close.textContent='×';close.setAttribute('aria-label','Close');close.addEventListener('click',closeInventoryAddDialog);top.appendChild(close);dialog.appendChild(top);
+ const list=document.createElement('div');list.className='inventory-dialog-items';
+ const existingIds=new Set(inventoryItems.filter(item=>item.databaseItemId!=null).map(item=>String(item.databaseItemId)));
+ const available=databaseItems.filter(dbItem=>{
+  const candidate={name:dbItem.name,category:dbItem.category,rarity:dbItem.rarity};
+  return getInventorySection(candidate,dbItem)===sectionId&&!existingIds.has(String(dbItem.id));
+ }).sort((a,b)=>String(a.name||'').localeCompare(String(b.name||'')));
+ if(!available.length){const empty=document.createElement('p');empty.className='inventory-empty';empty.textContent='No available items in this category.';list.appendChild(empty)}
+ available.forEach(dbItem=>{
+  const row=document.createElement('div');row.className='inventory-dialog-item';
+  const name=document.createElement('span');name.textContent=dbItem.name||'Unnamed item';row.appendChild(name);
+  const add=document.createElement('button');add.type='button';add.textContent='Add';add.addEventListener('click',()=>{
+   const existing=inventoryItems.find(item=>String(item.databaseItemId)===String(dbItem.id));
+   if(existing)existing.qty=(Number(existing.qty)||0)+1;
+   else inventoryItems.push({id:Date.now()+Math.random(),databaseItemId:dbItem.id,name:dbItem.name,qty:1,notes:dbItem.description||''});
+   saveInventory();renderInventory();openInventoryAddDialog(sectionId,title);
+  });row.appendChild(add);list.appendChild(row);
+ });
+ dialog.appendChild(list);overlay.appendChild(dialog);document.body.appendChild(overlay);close.focus();
 }
 renderInventory();
 
