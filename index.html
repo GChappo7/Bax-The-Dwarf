@@ -388,6 +388,37 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .inventory-dialog-item span{min-width:0;overflow-wrap:anywhere;font-size:13px}
 .inventory-dialog-item button{flex:0 0 auto;min-width:54px;padding:6px 10px}
 @media(max-width:380px){.inventory-sections{gap:4px}.inventory-group{padding:3px}.inventory-item-controls{gap:1px}.inventory-item-controls button{min-width:12px!important;min-height:12px!important;width:12px;height:12px;padding:0!important}}
+
+/* Campaign notebook */
+.notes-page-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px}
+.notes-page-heading h2{margin:0;color:var(--gold);font-size:19px}
+.notes-page-heading p{margin:4px 0 0;color:var(--muted);font-size:11px;line-height:1.4}
+.notes-heading-actions{display:flex;gap:7px;align-items:center}
+.notes-add-section{flex:0 0 auto;padding:9px 12px;font-size:12px;font-weight:700;white-space:nowrap}
+.notes-search{width:100%;margin:0 0 10px;padding:10px 12px;border:1px solid #51402e;border-radius:8px;background:rgba(0,0,0,.2);color:var(--text);font:inherit;font-size:13px}
+.notes-search::placeholder{color:var(--muted)}
+.notes-sections{display:flex;flex-direction:column;gap:8px}
+.notes-section{margin:0!important;padding:0!important;overflow:hidden;border:1px solid #51402e;border-radius:10px;background:var(--panel)}
+.notes-section summary{list-style:none;display:flex;align-items:center;gap:9px;min-height:54px;padding:10px 12px;cursor:pointer;color:var(--text)}
+.notes-section summary::-webkit-details-marker{display:none}
+.notes-section summary:before{content:'›';color:var(--gold);font-size:22px;line-height:1;transition:transform .15s}
+.notes-section[open] summary:before{transform:rotate(90deg)}
+.notes-summary-copy{min-width:0;flex:1;display:flex;flex-direction:column;gap:3px}
+.notes-section-title{font-size:13px;font-weight:750;overflow-wrap:anywhere}
+.notes-section-preview{font-size:10px;font-weight:400;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.notes-section-count{color:var(--muted);font-size:10px;white-space:nowrap}
+.notes-section-body{padding:0 12px 12px;border-top:1px solid rgba(216,173,85,.18)}
+.notes-title-edit{width:100%;margin:10px 0 4px;padding:9px 10px;border:1px solid #51402e;border-radius:7px;background:rgba(0,0,0,.2);color:var(--gold);font:inherit;font-size:13px;font-weight:700}
+.notes-field{position:relative;margin:9px 0 0}
+.notes-field textarea{display:block;width:100%;min-height:105px;resize:vertical;padding:10px 40px 10px 10px;border:1px solid #51402e;border-radius:8px;background:rgba(0,0,0,.2);color:var(--text);font:inherit;font-size:13px;line-height:1.45}
+.notes-field textarea::placeholder{color:var(--muted)}
+.notes-field-remove{position:absolute;right:7px;top:7px;min-width:27px;width:27px;height:27px;padding:0;border-radius:6px;font-size:15px;line-height:1;background:#3a2922;color:#e4a19a}
+.notes-section-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:10px}
+.notes-section-actions button{padding:8px 10px;font-size:11px}
+.notes-section-actions .notes-delete-section{margin-left:auto;color:#e4a19a;border-color:#75433d}
+.notes-empty{padding:18px 12px;text-align:center;color:var(--muted);font-size:12px}
+@media(max-width:380px){.notes-page-heading h2{font-size:17px}.notes-add-section{padding:8px 9px;font-size:11px}.notes-section summary{padding:9px 10px}}
+
 </style>
 </head>
 <body>
@@ -652,8 +683,9 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </div></section>
 
 <section id="notes" class="tab">
-<div class="card"><h2>Notes</h2><textarea data-save="notes" placeholder="Character notes, abilities, equipment, session notes..."></textarea></div>
-<div class="card"><h2>Custom Items</h2><input data-save="items" placeholder="Weapons, armour, equipment..."></div>
+<div class="notes-page-heading"><div><h2>Campaign Notebook</h2><p>Keep your sessions, characters, locations and reminders organised.</p></div><button type="button" class="notes-add-section" data-note-action="new">＋ New Note</button></div>
+<input id="notesSearch" class="notes-search" type="search" placeholder="Search your notes…" aria-label="Search your notes">
+<div id="notesSections" class="notes-sections" aria-live="polite"></div>
 </section>
 </main>
 <nav><button onclick="show('home')"><img src="assets/Ui/UI%20sprites/Armour.png" alt="">Char</button><button onclick="show('round')"><img src="assets/Ui/UI%20sprites/Combat.png" alt="">Round</button><button onclick="show('notes')"><img src="assets/Ui/UI%20sprites/Notes.png" alt="">Notes</button></nav>
@@ -1909,4 +1941,124 @@ window.addEventListener("error",function(event){const status=document.getElement
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',renderFallback);else renderFallback();
 })();
 </script>
+
+<script>
+/* Expandable campaign notebook with local autosave and one-time legacy note migration. */
+(function(){
+  const storageKey='bax_note_sections';
+  let sections=[];
+  const openIds=new Set();
+  const root=document.getElementById('notesSections');
+  const search=document.getElementById('notesSearch');
+  if(!root||!search)return;
+  function makeId(){return 'n'+Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
+  function cleanSection(section){
+    return {
+      id:String(section.id||makeId()),
+      title:String(section.title||'Untitled Note'),
+      fields:Array.isArray(section.fields)?section.fields.map(field=>({id:String(field.id||makeId()),text:String(field.text||'')})):[]
+    };
+  }
+  function save(){
+    try{localStorage.setItem(storageKey,JSON.stringify(sections))}
+    catch(error){console.error('Could not save campaign notes',error)}
+  }
+  function load(){
+    const stored=localStorage.getItem(storageKey);
+    if(stored!==null){
+      try{
+        const parsed=JSON.parse(stored);
+        if(Array.isArray(parsed)){sections=parsed.map(cleanSection);return}
+      }catch(error){console.warn('Could not read saved notebook; attempting legacy note migration',error)}
+    }
+    const oldNotes=localStorage.getItem('bax_notes')||'';
+    const oldItems=localStorage.getItem('bax_items')||'';
+    if(oldNotes.trim())sections.push({id:makeId(),title:'General Notes',fields:[{id:makeId(),text:oldNotes}]});
+    if(oldItems.trim())sections.push({id:makeId(),title:'Custom Items',fields:[{id:makeId(),text:oldItems}]});
+    save();
+  }
+  function preview(section){
+    const text=section.fields.map(field=>field.text.trim()).filter(Boolean).join(' · ').replace(/\s+/g,' ');
+    if(!text)return 'Tap to add your notes';
+    return text.length>115?text.slice(0,112)+'…':text;
+  }
+  function render(){
+    const query=search.value.trim().toLowerCase();
+    const visible=sections.filter(section=>(section.title+' '+section.fields.map(field=>field.text).join(' ')).toLowerCase().includes(query));
+    if(!visible.length){
+      root.innerHTML='<div class="card notes-empty">'+(sections.length?'No notes match your search.':'Your notebook is empty. Select ＋ New Note to create your first note.')+'</div>';
+      return;
+    }
+    root.innerHTML=visible.map(section=>{
+      const id=escapeHtml(section.id);
+      const fields=section.fields.map((field,index)=>
+        '<div class="notes-field"><textarea data-note-field="'+escapeHtml(field.id)+'" data-note-section="'+id+'" aria-label="Writing area '+(index+1)+'" placeholder="Write your notes here…">'+escapeHtml(field.text)+'</textarea><button type="button" class="notes-field-remove" data-note-action="remove-field" data-note-section="'+id+'" data-note-field="'+escapeHtml(field.id)+'" aria-label="Remove writing area" title="Remove writing area">×</button></div>'
+      ).join('');
+      return '<details class="card notes-section" data-note-id="'+id+'" '+(openIds.has(section.id)?'open':'')+'><summary><span class="notes-summary-copy"><span class="notes-section-title">'+escapeHtml(section.title||'Untitled Note')+'</span><span class="notes-section-preview">'+escapeHtml(preview(section))+'</span></span><span class="notes-section-count">'+section.fields.length+' area'+(section.fields.length===1?'':'s')+'</span></summary><div class="notes-section-body"><input class="notes-title-edit" data-note-title="'+id+'" maxlength="100" value="'+escapeHtml(section.title)+'" placeholder="Give this note a title" aria-label="Note title">'+fields+'<div class="notes-section-actions"><button type="button" data-note-action="add-field" data-note-section="'+id+'">＋ Add writing area</button><button type="button" class="notes-delete-section" data-note-action="delete" data-note-section="'+id+'">Delete note</button></div></div></details>';
+    }).join('');
+  }
+  function getSection(id){return sections.find(section=>section.id===id)}
+  function focusAfterRender(selector){
+    const element=root.querySelector(selector);
+    if(element){element.focus({preventScroll:true});if(element.setSelectionRange)element.setSelectionRange(element.value.length,element.value.length)}
+  }
+  function refreshSummary(id){
+    const section=getSection(id),card=root.querySelector('[data-note-id="'+id+'"]');
+    if(!section||!card)return;
+    const title=card.querySelector('.notes-section-title');
+    const previewText=card.querySelector('.notes-section-preview');
+    const count=card.querySelector('.notes-section-count');
+    if(title)title.textContent=section.title.trim()||'Untitled Note';
+    if(previewText)previewText.textContent=preview(section);
+    if(count)count.textContent=section.fields.length+' area'+(section.fields.length===1?'':'s');
+  }
+  document.getElementById('notes').addEventListener('click',function(event){
+    const action=event.target.closest('[data-note-action]');
+    if(!action)return;
+    const type=action.dataset.noteAction;
+    const sectionId=action.dataset.noteSection;
+    if(type==='new'){
+      const section={id:makeId(),title:'New Note',fields:[{id:makeId(),text:''}]};
+      sections.push(section);openIds.add(section.id);save();render();
+      focusAfterRender('[data-note-title="'+section.id+'"]');
+      const card=root.querySelector('[data-note-id="'+section.id+'"]');
+      if(card)card.scrollIntoView({block:'center',behavior:'smooth'});
+    }else if(type==='add-field'){
+      const section=getSection(sectionId);if(!section)return;
+      const field={id:makeId(),text:''};section.fields.push(field);openIds.add(sectionId);save();render();
+      focusAfterRender('[data-note-field="'+field.id+'"]');
+    }else if(type==='remove-field'){
+      const section=getSection(sectionId);if(!section)return;
+      section.fields=section.fields.filter(field=>field.id!==action.dataset.noteField);
+      openIds.add(sectionId);save();render();
+    }else if(type==='delete'){
+      if(!confirm('Delete this note and all of its writing areas?'))return;
+      sections=sections.filter(section=>section.id!==sectionId);openIds.delete(sectionId);save();render();
+    }
+  });
+  root.addEventListener('click',function(event){
+    const summary=event.target.closest('summary');
+    if(!summary)return;
+    const card=summary.closest('.notes-section');if(!card)return;
+    const id=card.dataset.noteId;
+    if(card.open)openIds.delete(id);else openIds.add(id);
+  });
+  root.addEventListener('input',function(event){
+    const title=event.target.closest('[data-note-title]');
+    if(title){
+      const section=getSection(title.dataset.noteTitle);if(!section)return;
+      section.title=title.value;save();refreshSummary(section.id);return;
+    }
+    const area=event.target.closest('[data-note-field]');
+    if(area){
+      const section=getSection(area.dataset.noteSection);if(!section)return;
+      const field=section.fields.find(item=>item.id===area.dataset.noteField);
+      if(field){field.text=area.value;save();refreshSummary(section.id)}
+    }
+  });
+  search.addEventListener('input',render);
+  load();render();
+})();
+</script>
+
 </body></html>
