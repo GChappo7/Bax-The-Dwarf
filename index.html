@@ -1006,7 +1006,7 @@ function openInventoryItemDialog(itemId){
  const top=document.createElement('div');top.className='inventory-dialog-header';
  const heading=document.createElement('h3');heading.textContent=name;top.appendChild(heading);
  const close=document.createElement('button');close.type='button';close.className='inventory-dialog-close';close.textContent='×';close.setAttribute('aria-label','Close');close.addEventListener('click',closeInventoryItemDialog);top.appendChild(close);dialog.appendChild(top);
- const description=document.createElement('div');description.className='inventory-item-dialog-description';description.innerHTML=renderTileInfo(item.notes||dbItem?.description||'No description available.');dialog.appendChild(description);
+ const description=document.createElement('div');description.className='inventory-item-dialog-description';description.textContent=item.notes||dbItem?.description||'No description available.';dialog.appendChild(description);
  const moveLabel=document.createElement('label');moveLabel.className='inventory-item-dialog-move';moveLabel.textContent='Move to ';
  const moveSelect=document.createElement('select');moveSelect.setAttribute('aria-label','Move '+name+' to');
  [['backpack','Backpack'],['potions','Potions'],['special','Special Items']].forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;option.selected=getInventorySection(item,dbItem)===value;moveSelect.appendChild(option)});
