@@ -1237,5 +1237,16 @@
     "description": "Wondrous item; 5,400 gp; 1 lb. Removing the stopper produces a thick cloud of smoke that fills a 50-foot cube per round. The bottle takes 10 minutes to fill the full volume; smoke persists for 10 minutes after the bottle is stoppered. The smoke obscures vision like a fog cloud and can be dispersed by strong wind.",
     "modifiers": [],
     "itemType": "Inventory"
+  },
+  {
+    "id": "winter-outfit",
+    "name": "Winter Outfit",
+    "category": "Adventuring Gear",
+    "rarity": [
+      "Standard"
+    ],
+    "description": "Spare winter clothing packed in the backpack. A winter outfit includes a wool coat, linen shirt, wool cap, heavy cloak, thick trousers or skirt, and boots. Weight: 7 lb; price: 8 gp.",
+    "modifiers": [],
+    "itemType": "Inventory"
   }
 ]
