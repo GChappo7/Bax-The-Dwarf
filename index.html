@@ -135,27 +135,17 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .skill-library-actions span{font-size:11px;color:var(--muted)}
 .skill-add-label{display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:12px}
 .skill-add-label select,.character-skill-row input{box-sizing:border-box;width:100%;min-width:0;background:#17130f;color:var(--text);border:1px solid #51402f;border-radius:7px;padding:8px;font:inherit}
-#characterSkillsList{width:100%;min-width:0}
-.character-skill-row{display:grid;grid-template-columns:minmax(0,1.55fr) repeat(4,minmax(0,.62fr)) minmax(0,.72fr) 20px;align-items:center;gap:3px;width:100%;min-width:0;box-sizing:border-box;padding:5px 0;border-bottom:1px solid #443528}
+#characterSkillsList{overflow-x:auto}
+.character-skill-row{display:grid;grid-template-columns:minmax(112px,1.5fr) repeat(4,minmax(42px,.55fr)) minmax(48px,.65fr) 24px;align-items:center;gap:5px;min-width:430px;padding:5px 0;border-bottom:1px solid #443528}
 .character-skill-head{display:contents}
-.character-skill-head strong{min-width:0;color:var(--gold);font-size:10px;line-height:1.1;overflow-wrap:anywhere}
-.character-skill-name{display:block;width:100%;min-width:0;padding:3px 1px;background:transparent;border:0;color:var(--gold);font-size:10px;font-weight:750;text-align:left;line-height:1.15;overflow-wrap:anywhere}
+.character-skill-head strong{min-width:0;color:var(--gold);font-size:11px;line-height:1.15;overflow-wrap:anywhere}
 .character-skill-head small,.character-skill-description{display:none}
 .character-skill-values{display:contents}
-.character-skill-values label{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0;color:var(--muted);font-size:8px;line-height:1}
-.character-skill-values input{box-sizing:border-box;width:100%;min-width:0;height:24px;text-align:center;padding:1px 0;font-size:10px;font-weight:700}
-.character-skill-total{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0;font-size:8px;line-height:1;color:var(--muted)}
-.character-skill-total strong{color:var(--gold);font-size:12px}
-.character-skill-remove{padding:2px 3px;font-size:10px;min-width:0}
-#characterSkillDialog{width:min(520px,calc(100% - 28px));max-height:82dvh;margin:auto;padding:0;overflow:auto;background:var(--panel);color:var(--text);border:1px solid #806638;border-radius:13px}
-#characterSkillDialog::backdrop{background:rgba(0,0,0,.72)}
-#characterSkillDialogBody{padding:13px}
-.skill-dialog-description{margin:0 0 14px;color:var(--text);font-size:13px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
-.skill-dialog-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.skill-dialog-fields label{display:flex;flex-direction:column;gap:5px;color:var(--muted);font-size:11px}
-.skill-dialog-fields input{width:100%;box-sizing:border-box;text-align:center;font-size:18px;font-weight:750;padding:9px}
-.skill-dialog-total{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding:10px;background:var(--panel2);border:1px solid #443528;border-radius:8px}
-.skill-dialog-total strong{font-size:22px;color:var(--gold)}
+.character-skill-values label{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0;color:var(--muted);font-size:9px;line-height:1}
+.character-skill-values input{box-sizing:border-box;width:100%;min-width:0;height:27px;text-align:center;padding:2px;font-size:12px;font-weight:700}
+.character-skill-total{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:9px;line-height:1;color:var(--muted)}
+.character-skill-total strong{color:var(--gold);font-size:14px}
+.character-skill-remove{padding:3px 4px;font-size:10px;min-width:0}
 
 .round-calc-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border,#454b50)}
 .attack-calc-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin-top:8px}
@@ -478,10 +468,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <dialog id="characterFeatDialog" aria-labelledby="characterFeatDialogTitle">
  <div class="feat-dialog-header"><h2 id="characterFeatDialogTitle">Feat details</h2><button type="button" aria-label="Close feat details" onclick="closeCharacterFeat()">×</button></div>
  <div id="characterFeatDialogBody"></div>
-</dialog>
-<dialog id="characterSkillDialog" aria-labelledby="characterSkillDialogTitle">
- <div class="feat-dialog-header"><h2 id="characterSkillDialogTitle">Skill details</h2><button type="button" aria-label="Close skill details" onclick="closeCharacterSkill()">×</button></div>
- <div id="characterSkillDialogBody"></div>
 </dialog>
 
 <section id="powerDatabase" class="tab">
@@ -1296,17 +1282,6 @@ function updateCharacterSkill(id,key,value){
  saveCharacterSkills();renderCharacterSkills();
 }
 function removeCharacterSkill(id){characterSkills=characterSkills.filter(x=>String(x.id)!==String(id));saveCharacterSkills();renderCharacterSkills();renderCharacterSkillOptions()}
-function openCharacterSkill(id){
- const skill=characterSkills.find(x=>String(x.id)===String(id));if(!skill)return;
- const ability=skillAbilityModifier(skill.ability),ranks=Math.max(0,Number(skill.ranks)||0),misc=Number(skill.misc)||0;
- const classSkills=characterClassSkillNames(),classSkill=classSkills.has(String(skill.name||'').replace(/\\s*\\([^)]*\\)$/,'').toLowerCase());
- const cap=classSkill?Number(document.getElementById('level')?.value||1)+3:(Number(document.getElementById('level')?.value||1)+3)/2;
- const total=skill.ability==='None'?ranks+misc:ranks+ability+misc;
- document.getElementById('characterSkillDialogTitle').textContent=skill.name;
- document.getElementById('characterSkillDialogBody').innerHTML='<div class="skill-dialog-description">'+escapeHtml(skill.description||'No description available for this skill.')+'</div><div class="feat-badges"><span class="feat-badge">'+(classSkill?'Class skill':'Cross-class')+'</span>'+(skill.trainedOnly?'<span class="feat-badge">Trained only</span>':'')+(skill.armorCheck?'<span class="feat-badge">Armour check penalty</span>':'')+'</div><div class="skill-dialog-fields"><label>Ranks<input type="number" min="0" step="0.5" inputmode="decimal" value="'+ranks+'" onchange="updateCharacterSkill(\\''+escapeHtml(skill.id)+'\\',\\'ranks\\',this.value);openCharacterSkill(\\''+escapeHtml(skill.id)+'\\')"></label><label>Ability modifier<input type="text" readonly value="'+(skill.ability==='None'?'—':(ability>=0?'+':'')+ability)+'"></label><label>Miscellaneous bonus<input type="number" step="1" inputmode="numeric" value="'+misc+'" onchange="updateCharacterSkill(\\''+escapeHtml(skill.id)+'\\',\\'misc\\',this.value);openCharacterSkill(\\''+escapeHtml(skill.id)+'\\')"></label><label>Maximum ranks<input type="text" readonly value="'+cap+'"></label></div><div class="skill-dialog-total"><span>Skill check modifier</span><strong>'+(total>=0?'+':'')+total+'</strong></div>';
- const dialog=document.getElementById('characterSkillDialog');if(dialog&&!dialog.open)dialog.showModal();
-}
-function closeCharacterSkill(){const dialog=document.getElementById('characterSkillDialog');if(dialog&&dialog.open)dialog.close()}
 function renderCharacterSkills(){
  const box=document.getElementById('characterSkillsList');if(!box)return;
  if(!characterSkills.length){box.innerHTML='<p style="color:var(--muted);text-align:center;padding:10px 0">No skills added yet. Import the database and select the skills Bax uses.</p>';renderCharacterSkillOptions();return}
@@ -1316,7 +1291,7 @@ function renderCharacterSkills(){
   const classSkill=classSkills.has(String(skill.name||'').replace(/\s*\([^)]*\)$/,'').toLowerCase());
   const total=skill.ability==='None'?ranks+misc:ranks+ability+misc;
   const cap=classSkill?Number(document.getElementById('level')?.value||1)+3:(Number(document.getElementById('level')?.value||1)+3)/2;
-  return '<div class="character-skill-row"><div class="character-skill-head"><button type="button" class="character-skill-name" title="'+(classSkill?'Class skill':'Cross-class')+(skill.trainedOnly?' · Trained only':'')+(skill.armorCheck?' · Armour check penalty':'')+'" onclick="openCharacterSkill(\''+escapeHtml(skill.id)+'\')">'+escapeHtml(skill.name)+'</button><small></small><button type="button" class="wpn-del character-skill-remove" aria-label="Remove '+escapeHtml(skill.name)+'" onclick="removeCharacterSkill(\''+escapeHtml(skill.id)+'\')">✕</button></div><div class="character-skill-values"><label>Rk<input aria-label="'+escapeHtml(skill.name)+' ranks" type="number" min="0" step="0.5" inputmode="decimal" value="'+ranks+'" onchange="updateCharacterSkill(\''+escapeHtml(skill.id)+'\',\'ranks\',this.value)"></label><label>Ab<input aria-label="'+escapeHtml(skill.name)+' ability modifier" type="text" readonly value="'+(skill.ability==='None'?'—':(ability>=0?'+':'')+ability)+'"></label><label>Misc<input aria-label="'+escapeHtml(skill.name)+' miscellaneous bonus" type="number" step="1" inputmode="numeric" value="'+misc+'" onchange="updateCharacterSkill(\''+escapeHtml(skill.id)+'\',\'misc\',this.value)"></label><label>Max<input aria-label="'+escapeHtml(skill.name)+' maximum ranks" type="text" readonly value="'+cap+'"></label></div><div class="character-skill-total"><span>Total</span><strong>'+(total>=0?'+':'')+total+'</strong></div></div>'
+  return '<div class="character-skill-row" title="'+(classSkill?'Class skill':'Cross-class')+(skill.trainedOnly?' · Trained only':'')+(skill.armorCheck?' · Armour check penalty':'')+'"><div class="character-skill-head"><strong>'+escapeHtml(skill.name)+'</strong><small></small><button type="button" class="wpn-del character-skill-remove" aria-label="Remove '+escapeHtml(skill.name)+'" onclick="removeCharacterSkill(\''+escapeHtml(skill.id)+'\')">✕</button></div><div class="character-skill-values"><label>Ranks<input aria-label="'+escapeHtml(skill.name)+' ranks" type="number" min="0" step="0.5" inputmode="decimal" value="'+ranks+'" onchange="updateCharacterSkill(\''+escapeHtml(skill.id)+'\',\'ranks\',this.value)"></label><label>Ability<input aria-label="'+escapeHtml(skill.name)+' ability modifier" type="text" readonly value="'+(skill.ability==='None'?'—':(ability>=0?'+':'')+ability)+'"></label><label>Misc.<input aria-label="'+escapeHtml(skill.name)+' miscellaneous bonus" type="number" step="1" inputmode="numeric" value="'+misc+'" onchange="updateCharacterSkill(\''+escapeHtml(skill.id)+'\',\'misc\',this.value)"></label><label>Max<input aria-label="'+escapeHtml(skill.name)+' maximum ranks" type="text" readonly value="'+cap+'"></label></div><div class="character-skill-total"><span>Total</span><strong>'+(total>=0?'+':'')+total+'</strong></div></div>'
  }).join('');
  renderCharacterSkillOptions();
 }
