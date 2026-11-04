@@ -290,12 +290,14 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .db-info-heading{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:8px;row-gap:6px;margin-bottom:8px;min-width:0}.db-info-heading h2{margin:0;min-width:0;overflow-wrap:anywhere}.db-info-heading>.tile-info{display:contents}.db-info-heading>.tile-info>.tile-info-button{grid-column:2;grid-row:1;justify-self:end}.db-info-heading>.tile-info>.tile-info-content{grid-column:1 / -1;grid-row:2;width:100%;min-width:0;box-sizing:border-box;white-space:normal;overflow-wrap:anywhere}.db-modifier-heading{justify-content:flex-start;margin:16px 0 8px}.db-modifier-heading h2{margin:0}
 .power-create-details{border:1px solid #443528;border-radius:9px;overflow:hidden;margin-top:8px}.power-create-details>.db-item-summary{padding:10px;background:var(--panel2);cursor:pointer}.power-create-form{padding:10px}.character-power-item{margin-bottom:8px}.character-power-item .db-item-content{padding-top:8px}.character-power-item .db-item-description{margin:4px 0 10px}.db-item-description{white-space:normal;overflow-wrap:anywhere}
 
-.inventory-sections{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"backpack potions" ". special";gap:12px;align-items:start}
+.inventory-sections{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"backpack potions" ". special" "spare spare";gap:12px;align-items:start}
 .inventory-group{min-width:0;border:1px solid var(--border);border-radius:12px;padding:10px}
 .inventory-group h3{font-size:15px;margin:0 0 9px;color:var(--gold,#d4af62)}
 .inventory-group-backpack{grid-area:backpack;background:rgba(91,112,69,.20);border-color:rgba(137,164,105,.55)}
 .inventory-group-potions{grid-area:potions;background:rgba(112,65,105,.22);border-color:rgba(177,112,165,.58)}
 .inventory-group-special{grid-area:special;background:rgba(67,91,125,.23);border-color:rgba(112,145,190,.58)}
+.inventory-group-spare{grid-area:spare;background:rgba(133,99,54,.20);border-color:rgba(190,147,83,.58)}
+.inventory-item-spare{background:rgba(133,99,54,.32)!important}
 .inventory-item{margin:0 0 5px;padding:5px 7px!important;border:1px solid rgba(255,255,255,.10)!important;border-radius:7px!important}
 .inventory-item-backpack{background:rgba(91,112,69,.32)!important}
 .inventory-item-potions{background:rgba(112,65,105,.34)!important}
@@ -917,11 +919,14 @@ function changeInventoryQuantity(id,delta){
 }
 function removeInventoryItem(id){inventoryItems=inventoryItems.filter(item=>String(item.id)!==String(id));saveInventory();renderInventory()}
 function updateInventoryItem(id,field,value){const item=inventoryItems.find(item=>String(item.id)===String(id));if(!item)return;item[field]=field==="qty"?(Number(value)||0):value;saveInventory()}
+function isDatabaseItemEquipped(dbItem){
+ if(!dbItem||getDatabaseItemType(dbItem)!=='equipment')return false;
+ return equipmentCategories.some(category=>getEquippedIds(category).includes(String(dbItem.id)));
+}
 function getInventorySection(item,dbItem){
  const source=dbItem||item||{},category=String(source.category||'').trim().toLowerCase(),name=String(source.name||item?.name||'').trim().toLowerCase();
  if(category==='potions')return 'potions';
- // Equipment belongs with carried gear, never in the Special Items section.
- if(getDatabaseItemType(source)==='equipment')return 'backpack';
+ if(getDatabaseItemType(source)==='equipment')return 'spare';
  if(item?.inventorySection&&['backpack','special'].includes(item.inventorySection))return item.inventorySection;
  const rarity=Array.isArray(source.rarity)?source.rarity.map(value=>String(value).toLowerCase()):String(source.rarity||'').toLowerCase().split(/[;,|+]/).map(value=>value.trim());
  if(['book','books','tome','tomes'].includes(category)||name.includes('book')||name.includes('tome')||rarity.some(value=>['magic','magical','artifact'].includes(value)))return 'special';
@@ -935,12 +940,12 @@ function setInventorySection(id,section){
 function renderInventory(){
  const list=document.getElementById("inventoryList"),select=document.getElementById("inventoryDatabaseSelect");if(!list)return;
  if(select){const current=select.value;select.innerHTML='<option value="">— Select an item —</option>'+databaseItems.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(item=>'<option value="'+escapeHtml(item.id)+'">'+escapeHtml(item.name)+' ('+escapeHtml(item.category)+')</option>').join('');if(databaseItems.some(item=>String(item.id)===String(current)))select.value=current}
- const sections=[{id:'backpack',title:'Backpack'},{id:'potions',title:'Potions'},{id:'special',title:'Special Items'}];
+ const sections=[{id:'backpack',title:'Backpack'},{id:'potions',title:'Potions'},{id:'special',title:'Special Items'},{id:'spare',title:'Spare Equipment'}];
  list.replaceChildren();
  sections.forEach(section=>{
   const group=document.createElement('section');group.className='inventory-group inventory-group-'+section.id;
   const heading=document.createElement('h3');heading.textContent=section.title;group.appendChild(heading);
-  const items=inventoryItems.filter(item=>{const dbItem=item.databaseItemId!=null?databaseItems.find(db=>String(db.id)===String(item.databaseItemId)):null;return getInventorySection(item,dbItem)===section.id});
+  const items=inventoryItems.filter(item=>{const dbItem=item.databaseItemId!=null?databaseItems.find(db=>String(db.id)===String(item.databaseItemId)):null;return getInventorySection(item,dbItem)===section.id&&!(section.id==='spare'&&isDatabaseItemEquipped(dbItem))});
   if(!items.length){const empty=document.createElement('p');empty.className='inventory-empty';empty.textContent='No items yet.';group.appendChild(empty)}
   items.forEach(item=>{
    const dbItem=item.databaseItemId!=null?databaseItems.find(db=>String(db.id)===String(item.databaseItemId)):null;
@@ -957,7 +962,7 @@ function renderInventory(){
    controls.appendChild(makeButton('✕','Remove item completely',()=>removeInventoryItem(item.id),'wpn-del'));
    head.appendChild(controls);card.appendChild(head);
    if(item.notes){const notes=document.createElement('div');notes.className='inventory-item-notes';notes.innerHTML=renderTileInfo(item.notes);card.appendChild(notes)}
-   if(section.id!=='potions'){
+   if(section.id==='backpack'||section.id==='special'){
     const moveLabel=document.createElement('label');moveLabel.className='inventory-move-label';moveLabel.textContent='Move to ';
     const moveSelect=document.createElement('select');moveSelect.setAttribute('aria-label','Move '+name);
     [['backpack','Backpack'],['special','Special Items']].forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;option.selected=value===section.id;moveSelect.appendChild(option)});
@@ -987,7 +992,7 @@ function openInventoryAddDialog(sectionId,title,searchTerm=''){
  const existingIds=new Set(inventoryItems.filter(item=>item.databaseItemId!=null).map(item=>String(item.databaseItemId)));
  const available=databaseItems.filter(dbItem=>{
   const candidate={name:dbItem.name,category:dbItem.category,rarity:dbItem.rarity};
-  return getInventorySection(candidate,dbItem)===sectionId&&!existingIds.has(String(dbItem.id));
+  return getInventorySection(candidate,dbItem)===sectionId&&!existingIds.has(String(dbItem.id))&&!(sectionId==='spare'&&isDatabaseItemEquipped(dbItem));
  }).sort((a,b)=>String(a.name||'').localeCompare(String(b.name||'')));
  const rows=[];
  available.forEach(dbItem=>{
