@@ -290,7 +290,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .db-info-heading{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:8px;row-gap:6px;margin-bottom:8px;min-width:0}.db-info-heading h2{margin:0;min-width:0;overflow-wrap:anywhere}.db-info-heading>.tile-info{display:contents}.db-info-heading>.tile-info>.tile-info-button{grid-column:2;grid-row:1;justify-self:end}.db-info-heading>.tile-info>.tile-info-content{grid-column:1 / -1;grid-row:2;width:100%;min-width:0;box-sizing:border-box;white-space:normal;overflow-wrap:anywhere}.db-modifier-heading{justify-content:flex-start;margin:16px 0 8px}.db-modifier-heading h2{margin:0}
 .power-create-details{border:1px solid #443528;border-radius:9px;overflow:hidden;margin-top:8px}.power-create-details>.db-item-summary{padding:10px;background:var(--panel2);cursor:pointer}.power-create-form{padding:10px}.character-power-item{margin-bottom:8px}.character-power-item .db-item-content{padding-top:8px}.character-power-item .db-item-description{margin:4px 0 10px}.db-item-description{white-space:normal;overflow-wrap:anywhere}
 
-.inventory-sections{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"backpack potions" ". special" "spare spare";gap:12px;align-items:start}
+.inventory-sections{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr) minmax(0,1fr) auto;grid-template-areas:"backpack potions" "backpack special" "spare spare";gap:12px;align-items:stretch}
 .inventory-group{min-width:0;border:1px solid var(--border);border-radius:12px;padding:10px}
 .inventory-group h3{font-size:15px;margin:0 0 9px;color:var(--gold,#d4af62)}
 .inventory-group-backpack{grid-area:backpack;background:rgba(91,112,69,.20);border-color:rgba(137,164,105,.55)}
@@ -306,9 +306,9 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .inventory-item-potions{background:rgba(112,65,105,.34)!important}
 .inventory-item-special{background:rgba(67,91,125,.36)!important}
 .inventory-item:last-child{margin-bottom:0}
-.inventory-item .feat-head{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:5px;min-width:0;flex-wrap:nowrap}
-.inventory-item .feat-head>strong{font-size:11px;line-height:1.2;flex:1;min-width:0;white-space:normal;overflow-wrap:anywhere}
-.inventory-item-controls{display:flex;align-items:center;justify-content:flex-start;gap:2px;flex:0 0 auto;flex-wrap:nowrap}
+.inventory-item .feat-head{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:3px;min-width:0;flex-wrap:wrap}
+.inventory-item .feat-head> .inventory-item-disclosure{display:block;flex:1 0 100%;width:100%;min-width:0;font-size:clamp(8px,2.8vw,11px);line-height:1.15;white-space:nowrap;overflow:visible;text-overflow:clip}
+.inventory-item-controls{display:flex;align-items:center;justify-content:flex-start;gap:2px;flex:1 0 100%;flex-wrap:nowrap}
 .inventory-item-controls button{min-width:17px;min-height:17px;width:17px;height:17px;padding:0;font-size:9px;line-height:1;border-radius:4px}
 .inventory-item-controls strong{min-width:11px;text-align:center;font-size:10px;line-height:1}
 .inventory-item-disclosure{border:0;background:transparent;padding:0;color:inherit;text-align:left;font:inherit;cursor:pointer}
@@ -331,7 +331,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .inventory-dialog-item:last-child{border-bottom:0}
 .inventory-dialog-item span{min-width:0;overflow-wrap:anywhere;font-size:13px}
 .inventory-dialog-item button{flex:0 0 auto;min-width:54px;padding:6px 10px}
-@media(max-width:380px){.inventory-sections{gap:7px}.inventory-group{padding:7px}.inventory-item-controls{gap:4px}.inventory-item-controls button{min-width:27px;padding:2px 6px}}
+@media(max-width:380px){.inventory-sections{gap:7px}.inventory-group{padding:7px}.inventory-item-controls{gap:2px}.inventory-item-controls button{min-width:17px;width:17px;height:17px;padding:0}}
 </style>
 </head>
 <body>
