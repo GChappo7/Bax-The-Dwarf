@@ -290,13 +290,13 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .db-info-heading{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:8px;row-gap:6px;margin-bottom:8px;min-width:0}.db-info-heading h2{margin:0;min-width:0;overflow-wrap:anywhere}.db-info-heading>.tile-info{display:contents}.db-info-heading>.tile-info>.tile-info-button{grid-column:2;grid-row:1;justify-self:end}.db-info-heading>.tile-info>.tile-info-content{grid-column:1 / -1;grid-row:2;width:100%;min-width:0;box-sizing:border-box;white-space:normal;overflow-wrap:anywhere}.db-modifier-heading{justify-content:flex-start;margin:16px 0 8px}.db-modifier-heading h2{margin:0}
 .power-create-details{border:1px solid #443528;border-radius:9px;overflow:hidden;margin-top:8px}.power-create-details>.db-item-summary{padding:10px;background:var(--panel2);cursor:pointer}.power-create-form{padding:10px}.character-power-item{margin-bottom:8px}.character-power-item .db-item-content{padding-top:8px}.character-power-item .db-item-description{margin:4px 0 10px}.db-item-description{white-space:normal;overflow-wrap:anywhere}
 
-.inventory-sections{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr) minmax(0,1fr) auto;grid-template-areas:"backpack potions" "backpack special" "spare spare";gap:5px;align-items:stretch}
+.inventory-sections{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"backpack potions" "backpack special";gap:5px;align-items:stretch;min-height:calc(100dvh - 170px);box-sizing:border-box}
 .inventory-group{min-width:0;border:1px solid var(--border);border-radius:8px;padding:4px}
 .inventory-group h3{font-size:11px;margin:0 0 4px;color:var(--gold,#d4af62)}
 .inventory-group-backpack{grid-area:backpack;background:rgba(91,112,69,.20);border-color:rgba(137,164,105,.55)}
 .inventory-group-potions{grid-area:potions;background:rgba(112,65,105,.22);border-color:rgba(177,112,165,.58)}
 .inventory-group-special{grid-area:special;background:rgba(67,91,125,.23);border-color:rgba(112,145,190,.58)}
-.inventory-group-spare{grid-area:spare;position:fixed;left:8px;right:8px;bottom:68px;z-index:9;align-self:end;background:rgba(42,31,21,.97);border-color:rgba(190,147,83,.75);padding:5px 9px;box-shadow:0 -3px 12px rgba(0,0,0,.35)}
+.inventory-group-spare{position:fixed;left:8px;right:8px;bottom:76px;z-index:9;align-self:end;background:rgba(42,31,21,.97);border-color:rgba(190,147,83,.75);padding:5px 9px;box-shadow:0 -3px 12px rgba(0,0,0,.35)}
 #inventoryList{padding-bottom:62px}
 .inventory-group-spare h3{margin:0;font-size:13px}
 .inventory-spare-open{display:flex;width:100%;align-items:center;justify-content:space-between;gap:8px;padding:2px 0;border:0;background:transparent;color:var(--text);text-align:left;font:inherit;cursor:pointer}
