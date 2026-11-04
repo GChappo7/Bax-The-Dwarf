@@ -388,6 +388,9 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .inventory-dialog-item span{min-width:0;overflow-wrap:anywhere;font-size:13px}
 .inventory-dialog-item button{flex:0 0 auto;min-width:54px;padding:6px 10px}
 @media(max-width:380px){.inventory-sections{gap:4px}.inventory-group{padding:3px}.inventory-item-controls{gap:1px}.inventory-item-controls button{min-width:12px!important;min-height:12px!important;width:12px;height:12px;padding:0!important}}
+
+/* Campaign notebook */
+.notes-page-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px;padding:2px 0}.notes-page-heading h2{margin:0;color:var(--gold);font-size:19px}.notes-page-heading p{margin:4px 0 0;color:var(--muted);font-size:11px;line-height:1.35}.notes-add-section{flex:0 0 auto;padding:9px 12px;font-size:12px;font-weight:700;white-space:nowrap}.notes-sections{display:flex;flex-direction:column;gap:8px}.notes-section{margin:0!important;padding:0!important;overflow:hidden;border:1px solid #51402e;border-radius:10px;background:var(--panel)}.notes-section summary{list-style:none;display:flex;align-items:center;gap:9px;min-height:48px;padding:11px 12px;cursor:pointer;font-size:14px;font-weight:750;color:var(--text)}.notes-section summary::-webkit-details-marker{display:none}.notes-section summary:before{content:'›';color:var(--gold);font-size:22px;line-height:1;transform:rotate(0);transition:transform .15s}.notes-section[open] summary:before{transform:rotate(90deg)}.notes-section-title{min-width:0;flex:1;overflow-wrap:anywhere}.notes-section-count{color:var(--muted);font-size:10px;font-weight:500;white-space:nowrap}.notes-section-body{padding:0 12px 12px;border-top:1px solid rgba(216,173,85,.18)}.notes-title-edit{width:100%;margin:10px 0;padding:8px 9px;border:1px solid #51402e;border-radius:7px;background:rgba(0,0,0,.2);color:var(--gold);font:inherit;font-size:13px;font-weight:700}.notes-field{position:relative;margin:9px 0 0}.notes-field textarea{display:block;width:100%;min-height:100px;resize:vertical;padding:10px;border:1px solid #51402e;border-radius:8px;background:rgba(0,0,0,.2);color:var(--text);font:inherit;font-size:13px;line-height:1.45}.notes-field textarea::placeholder{color:var(--muted)}.notes-field-remove{position:absolute;right:7px;top:7px;min-width:26px;width:26px;height:26px;padding:0;border-radius:6px;font-size:15px;line-height:1;background:#3a2922}.notes-field textarea{padding-right:38px}.notes-section-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:10px}.notes-section-actions button{padding:7px 10px;font-size:11px}.notes-section-actions .notes-delete-section{margin-left:auto;color:#e4a19a;border-color:#75433d}@media(max-width:380px){.notes-page-heading h2{font-size:17px}.notes-add-section{padding:8px 9px;font-size:11px}.notes-section summary{padding:10px;font-size:13px}}
 </style>
 </head>
 <body>
@@ -652,8 +655,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </div></section>
 
 <section id="notes" class="tab">
-<div class="card"><h2>Notes</h2><textarea data-save="notes" placeholder="Character notes, abilities, equipment, session notes..."></textarea></div>
-<div class="card"><h2>Custom Items</h2><input data-save="items" placeholder="Weapons, armour, equipment..."></div>
+<div class="notes-page-heading"><div><h2>Campaign Notebook</h2><p>Keep your sessions, characters, locations and reminders organised.</p></div><button type="button" class="notes-add-section" onclick="addNoteSection()">＋ New Note</button></div>
+<div id="notesSections" class="notes-sections"></div>
 </section>
 </main>
 <nav><button onclick="show('home')"><img src="assets/Ui/UI%20sprites/Armour.png" alt="">Char</button><button onclick="show('round')"><img src="assets/Ui/UI%20sprites/Combat.png" alt="">Round</button><button onclick="show('notes')"><img src="assets/Ui/UI%20sprites/Notes.png" alt="">Notes</button></nav>
@@ -1907,6 +1910,40 @@ window.addEventListener("error",function(event){const status=document.getElement
     try{if(typeof renderEquippedSelectors==='function')renderEquippedSelectors()}catch(err){}
   },true);
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',renderFallback);else renderFallback();
+})();
+</script>
+
+<script>
+/* Titled, expandable campaign notes. Existing Notes and Custom Items are migrated once. */
+(function(){
+  const storageKey='bax_note_sections';
+  let sections=[];
+  function makeId(){return 'n'+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+  function save(){try{localStorage.setItem(storageKey,JSON.stringify(sections))}catch(e){console.error('Could not save notes',e)}}
+  function load(){
+    try{const saved=JSON.parse(localStorage.getItem(storageKey)||'null');if(Array.isArray(saved)){sections=saved.map(section=>({id:String(section.id||makeId()),title:String(section.title||'Untitled Note'),fields:Array.isArray(section.fields)?section.fields.map(field=>({id:String(field.id||makeId()),text:String(field.text||'')})):[{id:makeId(),text:String(section.text||'')}]}));return}}catch(e){}
+    const oldNotes=localStorage.getItem('bax_notes')||'';
+    const oldItems=localStorage.getItem('bax_items')||'';
+    if(oldNotes.trim())sections.push({id:makeId(),title:'General Notes',fields:[{id:makeId(),text:oldNotes}]});
+    if(oldItems.trim())sections.push({id:makeId(),title:'Custom Items',fields:[{id:makeId(),text:oldItems}]});
+    save();
+  }
+  function render(){
+    const root=document.getElementById('notesSections');if(!root)return;
+    if(!sections.length){root.innerHTML='<div class="card"><p style="margin:0;color:var(--muted);font-size:13px;text-align:center">No notes yet. Select <strong>＋ New Note</strong> to create your first section.</p></div>';return}
+    root.innerHTML=sections.map(section=>{
+      const id=escapeHtml(section.id),title=escapeHtml(section.title);
+      const fields=section.fields.map((field,index)=>'<div class="notes-field"><textarea aria-label="Text field '+(index+1)+'" placeholder="Write your notes here…" oninput="updateNoteField(\''+id+'\',\''+escapeHtml(field.id)+'\',this.value)">'+escapeHtml(field.text)+'</textarea><button type="button" class="notes-field-remove" aria-label="Remove text field" title="Remove text field" onclick="removeNoteField(\''+id+'\',\''+escapeHtml(field.id)+'\')">×</button></div>').join('');
+      return '<details class="card notes-section"><summary><span class="notes-section-title">'+(title||'Untitled Note')+'</span><span class="notes-section-count">'+section.fields.length+' field'+(section.fields.length===1?'':'s')+'</span></summary><div class="notes-section-body"><input class="notes-title-edit" aria-label="Note title" maxlength="100" value="'+title+'" placeholder="Give this note a title" oninput="updateNoteTitle(\''+id+'\',this.value,this)">'+fields+'<div class="notes-section-actions"><button type="button" onclick="addNoteField(\''+id+'\')">＋ Add text field</button><button type="button" class="notes-delete-section" onclick="deleteNoteSection(\''+id+'\')">Delete note</button></div></div></details>';
+    }).join('');
+  }
+  window.addNoteSection=function(){sections.push({id:makeId(),title:'New Note',fields:[{id:makeId(),text:''}]});save();render()};
+  window.updateNoteTitle=function(id,value,input){const section=sections.find(item=>item.id===id);if(!section)return;section.title=value;save();const summary=input.closest('.notes-section')?.querySelector('.notes-section-title');if(summary)summary.textContent=value.trim()||'Untitled Note'};
+  window.addNoteField=function(id){const section=sections.find(item=>item.id===id);if(!section)return;section.fields.push({id:makeId(),text:''});save();render();const rows=document.querySelectorAll('.notes-section');rows.forEach(row=>{if(row.querySelector('.notes-title-edit')?.getAttribute('oninput')?.includes(id))row.open=true});};
+  window.updateNoteField=function(sectionId,fieldId,value){const section=sections.find(item=>item.id===sectionId);const field=section?.fields.find(item=>item.id===fieldId);if(field){field.text=value;save()}};
+  window.removeNoteField=function(sectionId,fieldId){const section=sections.find(item=>item.id===sectionId);if(!section)return;section.fields=section.fields.filter(field=>field.id!==fieldId);if(!section.fields.length)section.fields.push({id:makeId(),text:''});save();render()};
+  window.deleteNoteSection=function(id){if(!confirm('Delete this note and all of its text fields?'))return;sections=sections.filter(section=>section.id!==id);save();render()};
+  load();render();
 })();
 </script>
 </body></html>
