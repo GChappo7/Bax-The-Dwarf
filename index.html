@@ -289,23 +289,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 
 .db-info-heading{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:8px;row-gap:6px;margin-bottom:8px;min-width:0}.db-info-heading h2{margin:0;min-width:0;overflow-wrap:anywhere}.db-info-heading>.tile-info{display:contents}.db-info-heading>.tile-info>.tile-info-button{grid-column:2;grid-row:1;justify-self:end}.db-info-heading>.tile-info>.tile-info-content{grid-column:1 / -1;grid-row:2;width:100%;min-width:0;box-sizing:border-box;white-space:normal;overflow-wrap:anywhere}.db-modifier-heading{justify-content:flex-start;margin:16px 0 8px}.db-modifier-heading h2{margin:0}
 .power-create-details{border:1px solid #443528;border-radius:9px;overflow:hidden;margin-top:8px}.power-create-details>.db-item-summary{padding:10px;background:var(--panel2);cursor:pointer}.power-create-form{padding:10px}.character-power-item{margin-bottom:8px}.character-power-item .db-item-content{padding-top:8px}.character-power-item .db-item-description{margin:4px 0 10px}.db-item-description{white-space:normal;overflow-wrap:anywhere}
-
-/* Inventory layout */
-.inventory-sections{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:start}
-.inventory-group{min-width:0;border:1px solid var(--border);border-radius:12px;padding:10px;background:rgba(0,0,0,.08)}
-.inventory-group h3{font-size:15px;margin:0 0 9px;color:var(--gold,#d4af62)}
-.inventory-group-special{grid-column:1/-1}
-.inventory-item{margin:0 0 8px;padding:9px!important}
-.inventory-item:last-child{margin-bottom:0}
-.inventory-item .feat-head{display:flex;flex-direction:column;align-items:stretch;gap:7px}
-.inventory-item .feat-head>strong{font-size:13px}
-.inventory-item-controls{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.inventory-item-controls button{min-width:30px;min-height:32px;padding:3px 8px;font-size:14px}
-.inventory-item-controls strong{min-width:20px;text-align:center}
-.inventory-move-label{display:flex;align-items:center;gap:6px;margin-top:7px;font-size:11px;color:var(--muted)}
-.inventory-move-label select{min-width:0;flex:1;padding:5px;font-size:12px}
-.inventory-empty{font-size:12px;color:var(--muted);margin:4px 0}
-@media(max-width:380px){.inventory-sections{gap:7px}.inventory-group{padding:7px}.inventory-item-controls{gap:4px}.inventory-item-controls button{min-width:27px;padding:2px 6px}}
 </style>
 </head>
 <body>
@@ -411,7 +394,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </section>
 
 <section id="inventory" class="tab">
-<div class="card"><h2>Inventory</h2><p style="color:var(--muted);margin-top:0">Items are organised into your Backpack, Potions and Special Items. Quantities save automatically on this phone.</p><div class="item-form" style="margin-bottom:12px"><label>Choose item from database<select id="inventoryDatabaseSelect"><option value="">— Select an item —</option></select></label><label>Quantity to add<input id="inventoryAddQuantity" type="number" min="1" step="1" value="1" inputmode="numeric"></label><button type="button" onclick="addDatabaseItemToInventory()" style="width:100%">+ Add to Inventory</button></div><div id="inventoryList" class="inventory-sections"></div><button onclick="addInventoryItem()" style="margin-top:12px;width:100%">+ Add Custom Inventory Item</button></div>
+<div class="card"><h2>Inventory</h2><p style="color:var(--muted);margin-top:0">Add items from your Item Database and adjust carried quantities with − and +. Inventory saves automatically on this phone.</p><div class="item-form" style="margin-bottom:12px"><label>Choose item from database<select id="inventoryDatabaseSelect"><option value="">— Select an item —</option></select></label><label>Quantity to add<input id="inventoryAddQuantity" type="number" min="1" step="1" value="1" inputmode="numeric"></label><button type="button" onclick="addDatabaseItemToInventory()" style="width:100%">+ Add to Inventory</button></div><div id="inventoryList"></div><button onclick="addInventoryItem()" style="margin-top:12px;width:100%">+ Add Custom Inventory Item</button></div>
 <div class="card"><h2>Carrying Notes</h2><textarea data-save="inventoryNotes" placeholder="Coin totals, weight, storage, items to sell..."></textarea></div>
 </section>
 
@@ -879,16 +862,7 @@ addPendingModifier();renderDatabaseItems();renderCategoryVisibility();renderEqui
 let inventoryItems=[];
 try{inventoryItems=JSON.parse(localStorage.getItem("bax_inventory")||"[]")}catch(e){inventoryItems=[]}
 function saveInventory(){localStorage.setItem("bax_inventory",JSON.stringify(inventoryItems))}
-function getInventorySection(item,dbItem){
- const source=dbItem||item||{},category=String(source.category||'').trim().toLowerCase(),name=String(source.name||item.name||'').trim().toLowerCase();
- if(category==='potions')return 'potions';
- if(item.inventorySection&&['backpack','special'].includes(item.inventorySection))return item.inventorySection;
- const rarity=Array.isArray(source.rarity)?source.rarity.map(value=>String(value).toLowerCase()):String(source.rarity||'').toLowerCase().split(/[;,|+]/).map(value=>value.trim());
- if(['book','books','tome','tomes'].includes(category)||/\\b(book|tome)\\b/.test(name)||rarity.some(value=>['magic','magical','artifact'].includes(value)))return 'special';
- return 'backpack';
-}
-function setInventorySection(id,section){const item=inventoryItems.find(entry=>String(entry.id)===String(id));if(!item||!['backpack','special'].includes(section))return;item.inventorySection=section;saveInventory();renderInventory()}
-function addInventoryItem(){inventoryItems.push({id:Date.now()+Math.random(),name:"New Item",qty:1,notes:"",inventorySection:"backpack"});saveInventory();renderInventory()}
+function addInventoryItem(){inventoryItems.push({id:Date.now()+Math.random(),name:"New Item",qty:1,notes:""});saveInventory();renderInventory()}
 function addDatabaseItemToInventory(){
  const select=document.getElementById("inventoryDatabaseSelect");
  const dbItem=databaseItems.find(item=>String(item.id)===String(select?.value||""));
@@ -912,19 +886,12 @@ function updateInventoryItem(id,field,value){const item=inventoryItems.find(item
 function renderInventory(){
  const list=document.getElementById("inventoryList"),select=document.getElementById("inventoryDatabaseSelect");if(!list)return;
  if(select){const current=select.value;select.innerHTML='<option value="">— Select an item —</option>'+databaseItems.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(item=>'<option value="'+escapeHtml(item.id)+'">'+escapeHtml(item.name)+' ('+escapeHtml(item.category)+')</option>').join('');if(databaseItems.some(item=>String(item.id)===String(current)))select.value=current}
- const sections=[{id:'backpack',title:'Backpack'},{id:'potions',title:'Potions'},{id:'special',title:'Special Items'}];
- const renderItem=item=>{
+ if(!inventoryItems.length){list.innerHTML='<p style="color:var(--muted);text-align:center;padding:10px 0">Your inventory is empty — add an item above.</p>';return}
+ list.innerHTML=inventoryItems.map(item=>{
   const dbItem=(item.databaseItemId!==undefined&&item.databaseItemId!==null)?databaseItems.find(db=>String(db.id)===String(item.databaseItemId)):null;
-  const name=dbItem?.name||item.name||"Unnamed Item",section=getInventorySection(item,dbItem);
-  const controls='<div class="inventory-item-controls"><button type="button" aria-label="Remove one '+escapeHtml(name)+'" onclick="changeInventoryQuantity(\\''+item.id+'\\',-1)">−</button><strong>'+(Number(item.qty)||0)+'</strong><button type="button" aria-label="Add one '+escapeHtml(name)+'" onclick="changeInventoryQuantity(\\''+item.id+'\\',1)">+</button>'+(getDatabaseItemType(dbItem||item)==='consumable'?'<button type="button" onclick="changeInventoryQuantity(\\''+item.id+'\\',-1)" aria-label="Use one '+escapeHtml(name)+'">Use 1</button>':'')+'<button class="wpn-del" onclick="removeInventoryItem(\\''+item.id+'\\')" aria-label="Remove item completely">✕</button></div>';
-  const move=section==='potions'?'':'<label class="inventory-move-label">Move to<select aria-label="Move '+escapeHtml(name)+'" onchange="setInventorySection(\\''+item.id+'\\',this.value)"><option value="backpack" '+(section==='backpack'?'selected':'')+'>Backpack</option><option value="special" '+(section==='special'?'selected':'')+'>Special Items</option></select></label>';
-  return '<div class="feat-item inventory-item"><div class="feat-head"><strong>'+escapeHtml(name)+'</strong>'+controls+'</div>'+renderTileInfo(item.notes)+move+'</div>';
- };
- list.innerHTML=sections.map(section=>{
-  const items=inventoryItems.filter(item=>{const dbItem=item.databaseItemId!=null?databaseItems.find(db=>String(db.id)===String(item.databaseItemId)):null;return getInventorySection(item,dbItem)===section.id});
-  const content=items.length?items.map(renderItem).join(''):'<p class="inventory-empty">No items yet.</p>';
-  return '<section class="inventory-group inventory-group-'+section.id+'"><h3>'+section.title+'</h3>'+content+'</section>';
- }).join('');
+  const name=dbItem?.name||item.name||"Unnamed Item";
+  return '<div class="feat-item"><div class="feat-head"><strong style="flex:1;min-width:0;overflow-wrap:anywhere">'+escapeHtml(name)+'</strong><div style="display:flex;align-items:center;gap:8px;flex-shrink:0"><button type="button" aria-label="Remove one '+escapeHtml(name)+'" onclick="changeInventoryQuantity(\''+item.id+'\',-1)" style="min-width:42px;min-height:42px;font-size:20px">−</button><strong style="min-width:22px;text-align:center">'+(Number(item.qty)||0)+'</strong><button type="button" aria-label="Add one '+escapeHtml(name)+'" onclick="changeInventoryQuantity(\''+item.id+'\',1)" style="min-width:42px;min-height:42px;font-size:20px">+</button>'+(getDatabaseItemType(dbItem||item)==='consumable'?'<button type="button" onclick="changeInventoryQuantity(\''+item.id+'\',-1)" aria-label="Use one '+escapeHtml(name)+'">Use 1</button>':'')+'<button class="wpn-del" onclick="removeInventoryItem(\''+item.id+'\')" aria-label="Remove item completely">✕</button></div></div>'+renderTileInfo(item.notes)+'</div>';
+ }).join("");
 }
 renderInventory();
 
